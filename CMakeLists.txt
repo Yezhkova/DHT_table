@@ -14,9 +14,6 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
 add_executable(dht_table main.cpp)
 
-message(STATUS "bOOST include dir: ${Boost_INCLUDE_DIR}")
-
-
 set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
 set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
 set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
@@ -24,6 +21,7 @@ set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
 find_package(Boost COMPONENTS chrono)
 if(Boost_FOUND)
+  message(STATUS "bOOST include dir: ${Boost_INCLUDE_DIR}")
   include_directories(${Boost_INCLUDE_DIRS})
   target_link_libraries(dht_table ${Boost_LIBRARIES})
 endif()
