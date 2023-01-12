@@ -1,16 +1,25 @@
-#include <boost/chrono.hpp>
-#include <iostream>
-#include <math.h>
+#include "ID.cpp"
 
 int main(void) {
-boost::chrono::system_clock::time_point start = boost::chrono::system_clock::now();
 
-int a = 1;
-int b = 8;
-int c = a ^ b;
-std::cout << c << std::endl;
+    ID er("elden ring");
+    ID ds("dark souls");
 
-boost::chrono::duration<double> sec = boost::chrono::system_clock::now() - start;
-std::cout << "took " << sec.count() << " seconds\n";
-return 0;
+    std::bitset<160> c = er.compare(ds);
+    std::cout << c;
+
+    ID id(7364);
+
+    id.print();
+    auto bits = id.get_bits_ID();
+    std::cout << bits;
+
+//    for(int i = 0; i < 160; i++){
+//        std::cout << bits[i];
+//    }
+    std::cout << std::endl;
+    return 0;
 }
+
+
+
