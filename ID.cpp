@@ -65,7 +65,7 @@ public:
         return m_id_bits ^ another_id.m_id_bits;
     }
 
-private:
+public:
 
     const std::bitset<160> get_bitset_from_string() const
     {
@@ -91,7 +91,7 @@ private:
         }
         return m_id_string_bits;
     }
-public: //test !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     const std::string get_string_from_bitset() const
     {
         std::string m_id_bits_string = "";
@@ -108,7 +108,7 @@ public: //test !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 b[j] = m_id_bits[i * 40 + j];
             }
             std::stringstream ss;
-            ss << std::hex << std::uppercase << b.to_ulong();
+            ss << std::hex << b.to_ulong();
             m_id_bits_string += ss.str();
         }
         return m_id_bits_string;
