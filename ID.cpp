@@ -12,14 +12,14 @@ public:
     std::string m_id_string;
     std::bitset<160> m_id_bits;
 public:
+
+    // random bitset generation
+
     ID()
     {
-        auto gen = std::bind( std::uniform_int_distribution<>(0,1),
-                              std::default_random_engine()
-                            );
-        for(size_t i = 0; i < 40; i++)
+        for(size_t i = 0; i < 160; i++)
         {
-            m_id_bits[i] = gen();
+            m_id_bits[i] = rand() % 2 == 0;
         }
         m_id_string = get_string_from_bitset();
     };
@@ -38,6 +38,9 @@ public:
         m_id_string = buf;
         m_id_bits = get_bitset_from_string();
     };
+
+
+    // PROBLEM - this makes a fake string
 
     ID(long long l)
     {
@@ -65,6 +68,9 @@ public:
         return m_id_bits ^ another_id.m_id_bits;
     }
 
+
+    // make private after tests
+
 public:
 
     const std::bitset<160> get_bitset_from_string() const
@@ -72,11 +78,6 @@ public:
         std::bitset<160> m_id_string_bits;
         for(uint16_t i = 0; i <= 30; i += 10)
         {
-            // 0  30
-            // 10 20
-            // 20 10
-            // 30 0
-
             std::string s (std::begin(m_id_string) + i, std::end(m_id_string) - (m_id_string.size() - 10 - i));
             std::stringstream ss;
             ss << std::hex << s;
@@ -97,11 +98,6 @@ public:
         std::string m_id_bits_string = "";
         for(uint16_t i = 0; i < 4; i++)
         {
-            // 0 39
-            // 40 79
-            // 80 119
-            // 120 159
-
             std::bitset<40> b;
             for(uint16_t j = 0; j < 40; j++)
             {
