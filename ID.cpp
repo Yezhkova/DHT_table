@@ -1,18 +1,27 @@
 
+#include <functional>
 #include <iostream>
+#include <sstream>
 #include <bitset>
 #include <boost/uuid/detail/sha1.hpp>
-#include <boost/algorithm/hex.hpp>
+#include <random>
 //#include <boost/lexical_cast.hpp>
 class ID
 {
 public:
-    std::string m_id;
-
+    std::string m_id_string;
+    std::bitset<160> m_id_bits;
 public:
     ID()
     {
-        //randomizer
+        auto gen = std::bind( std::uniform_int_distribution<>(0,1),
+                              std::default_random_engine()
+                            );
+        for(size_t i = 0; i < 40; i++)
+        {
+            m_id_bits[i] = gen();
+        }
+        m_id_string = get_string_from_bitset();
     };
 
     ID(const std::string &s)
@@ -26,7 +35,8 @@ public:
         {
             std::sprintf(buf + (i << 3), "%08x", hash[i]);
         }
-        m_id = buf;
+        m_id_string = buf;
+        m_id_bits = get_bitset_from_string();
     };
 
     ID(long long l)
@@ -35,17 +45,39 @@ public:
         ID(std::to_string(l));
     }
 
-    const std::bitset<160> get_bits_ID() const
+    const std::string get_ID_string()
     {
-        std::bitset<160> m_id_bits;
-        for(size_t i = 0; i <= 30; i += 10)
+        return m_id_string;
+    }
+
+    const std::bitset<160> get_ID_bits()
+    {
+        return m_id_bits;
+    }
+
+    void print()
+    {
+        std::cout << "[ " << m_id_string << " ]" << std::endl;
+    }
+
+    auto compare(const ID &another_id)
+    {
+        return m_id_bits ^ another_id.m_id_bits;
+    }
+
+private:
+
+    const std::bitset<160> get_bitset_from_string() const
+    {
+        std::bitset<160> m_id_string_bits;
+        for(uint16_t i = 0; i <= 30; i += 10)
         {
             // 0  30
             // 10 20
             // 20 10
             // 30 0
 
-            std::string s (std::begin(m_id) + i, std::end(m_id) - (m_id.size() - 10 - i));
+            std::string s (std::begin(m_id_string) + i, std::end(m_id_string) - (m_id_string.size() - 10 - i));
             std::stringstream ss;
             ss << std::hex << s;
             unsigned long long n;
@@ -54,28 +86,34 @@ public:
             //0 40  80  120
             for(size_t j = 0; j < 40; j++)
             {
-                m_id_bits[i * 4 + j] = tmp_bitset[j];
+                m_id_string_bits[i * 4 + j] = tmp_bitset[j];
             }
         }
-        return m_id_bits;
+        return m_id_string_bits;
     }
-
-    const std::string getID()
+public: //test !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    const std::string get_string_from_bitset() const
     {
-        return m_id;
+        std::string m_id_bits_string = "";
+        for(uint16_t i = 0; i < 4; i++)
+        {
+            // 0 39
+            // 40 79
+            // 80 119
+            // 120 159
+
+            std::bitset<40> b;
+            for(uint16_t j = 0; j < 40; j++)
+            {
+                b[j] = m_id_bits[i * 40 + j];
+            }
+            std::stringstream ss;
+            ss << std::hex << std::uppercase << b.to_ulong();
+            m_id_bits_string += ss.str();
+        }
+        return m_id_bits_string;
     }
 
-    void print()
-    {
-        std::cout << "[ " << m_id << " ]" << std::endl;
-    }
-
-    auto compare(const ID &another_id)
-    {
-        return get_bits_ID() ^ another_id.get_bits_ID();
-    }
-
-private:
 protected:
 
 };
