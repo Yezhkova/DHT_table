@@ -6,127 +6,51 @@
 #include <boost/uuid/detail/sha1.hpp>
 #include <random>
 //#include <boost/lexical_cast.hpp>
+
+#define DIGEST 160
+
 class ID
 {
 public:
-    std::string m_id_string;
-    std::bitset<160> m_id_bits;
+    std::bitset<DIGEST> m_id_bits;
+
 public:
 
-    // random bitset generation
-
-    ID()
+    ID() // zeros, for random - make static
     {
-        for(size_t i = 0; i < 160; i++)
-        {
-            m_id_bits[i] = rand() % 2 == 0;
-        }
-        m_id_string = get_string_from_bitset();
+        m_id_bits = std::bitset<DIGEST>{0};
     };
 
-    ID(const std::string &s)
-    {
-        boost::uuids::detail::sha1 sha;
-        sha.process_bytes(s.data(), s.size());
-        unsigned int hash[5] = {0};
-        sha.get_digest(hash);
-        char buf[41] = {0};
-        for (uint16_t i = 0; i < 5; ++i)
-        {
-            std::sprintf(buf + (i << 3), "%08x", hash[i]);
-        }
-        m_id_string = buf;
-        m_id_bits = get_bitset_from_string();
-    };
-
-
-    // PROBLEM - this makes a fake string
-
-    ID(long long l)
-    {
-//        ID(boost::lexical_cast<std::string>(l));
-        ID(std::to_string(l));
-    }
-
-    const std::string get_ID_string()
-    {
-        return m_id_string;
-    }
-
-    const std::bitset<160> get_ID_bits()
+    const std::bitset<DIGEST> get_ID_bits()
     {
         return m_id_bits;
     }
 
-    void print()
+    const std::string get_ID_string()
     {
-        std::cout << "[ " << m_id_string << " ]" << std::endl;
+        char c [40];
+        for(uint16_t i = 0; i < 160; i += 4)
+        {
+            uint16_t symbol = m_id_bits[i+3] * 8 +
+                              m_id_bits[i+2] * 4 +
+                              m_id_bits[i+1] * 2 +
+                              m_id_bits[i+0] * 1 ;
+            std::ostringstream ss;
+            ss << std::hex << symbol;
+            std::string result = ss.str();
+            c[39 - i / 4] = ss.str()[0];
+        }
+        return std::string(c);
     }
 
-    auto compare(const ID &another_id)
+    void print()
+    {
+        std::cout << std::endl << get_ID_string() << std::endl;
+    }
+
+    std::bitset<DIGEST> compare(const ID & another_id)
     {
         return m_id_bits ^ another_id.m_id_bits;
     }
 
-
-    // make private after tests
-
-public:
-
-    const std::bitset<160> get_bitset_from_string() const
-    {
-        std::bitset<160> m_id_string_bits;
-        for(uint16_t i = 0; i <= 30; i += 10)
-        {
-            std::string s (std::begin(m_id_string) + i, std::end(m_id_string) - (m_id_string.size() - 10 - i));
-            std::stringstream ss;
-            ss << std::hex << s;
-            unsigned long long n;
-            ss >> n;
-            std::bitset<40> tmp_bitset(n);
-            //0 40  80  120
-            for(size_t j = 0; j < 40; j++)
-            {
-                m_id_string_bits[i * 4 + j] = tmp_bitset[j];
-            }
-        }
-        return m_id_string_bits;
-    }
-
-    const std::string get_string_from_bitset() const
-    {
-        std::string m_id_bits_string = "";
-        for(uint16_t i = 0; i < 4; i++)
-        {
-            std::bitset<40> b;
-            for(uint16_t j = 0; j < 40; j++)
-            {
-                b[j] = m_id_bits[i * 40 + j];
-            }
-            std::stringstream ss;
-            ss << std::hex << b.to_ulong();
-            m_id_bits_string += ss.str();
-        }
-        return m_id_bits_string;
-    }
-
-protected:
-
 };
-
-/*
- * bit / 8 chooses an element from your array.
- * Each element contains 8 bits, so dividing by 8
- * is an easy way to convert a bit index to an element index.
- *
- * bit % 8 chooses a bit inside the element.
- * This is most straightforward choice of indexing;
- * it counts bits from the least significant bit to most
- * significant bit (little-endian).
- *
- * Another variant is 7 - bit % 8
- * This variant counts the bits in reverse order (big-endian).
- * Sometimes you have to use it (e.g. in JPEG) for compatibility reasons.
- *
- * (... >> ...) & 1 extracts one bit from a number.
- */
