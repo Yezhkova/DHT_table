@@ -10,7 +10,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SOURCE main.cpp
-           ID.cpp
+           ID.h                     ID.cpp
+           utils.h                  utils.cpp
+           node.h                   node.cpp
+           bucket.h                 bucket.cpp
+           bucket_list.h            bucket_list.cpp
+           contact.h                contact.cpp
 )
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
