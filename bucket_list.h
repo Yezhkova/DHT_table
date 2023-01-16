@@ -3,13 +3,12 @@
 #include "bucket.h"
 #include <list>
 
-class bucket_list
+class bucket_array
 {
 private:
-    std::list<bucket> m_list;
-    uint16_t          size = 160;
+    std::array<bucket, 160> m_buckets;
 
 public:
-    bucket_list();
-    bool add_node(const node & new_node, const ID & id);
+    bucket_array();
+    bool add_node(const node & new_node, ID & id);
 };
