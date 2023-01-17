@@ -5,8 +5,8 @@
 class contact
 {
 private:
-    node        m_node;
-    bucket_list m_bucket_list;
+    node         m_node;
+    bucket_array m_bucket_list;
 
 public:
     contact();

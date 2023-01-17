@@ -1,6 +1,6 @@
 #pragma once
 #include "node.h"
-#include <forward_list>
+#include <map> // key = id, value = lastseen time and others  - STRUCT
 
 class bucket
 {

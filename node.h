@@ -17,7 +17,7 @@ public:
 
     bool create_endpoint();
 
-    ID get_node_id() const
+    const ID & get_node_id() const
     {
         return m_id;
     }
@@ -27,4 +27,5 @@ public:
         return l.m_id == r.m_id;
     }
 
+    // ping, ...
 };

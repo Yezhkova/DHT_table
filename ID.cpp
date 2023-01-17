@@ -4,8 +4,7 @@
 
 static std::mt19937 random_generator_;
 
-/*
-const std::string ID::get_ID_string()
+const std::string ID::to_string()
 {
     char c [PART];
     for(uint16_t i = 0; i < DIGEST; i += BITS)
@@ -19,15 +18,11 @@ const std::string ID::get_ID_string()
     }
     return std::string(c);
 }
-*/
 
 std::bitset<DIGEST> ID::get_random_id()
 {
     std::uniform_int_distribution<unsigned long long> range(0, 1);
     std::bitset<DIGEST> res;
-    std::random_device device;
-    random_generator_.seed(device());
-
     for(uint16_t i = 0; i < DIGEST; i++)
     {
         res[i] = range(random_generator_);
@@ -35,7 +30,7 @@ std::bitset<DIGEST> ID::get_random_id()
     return res;
 }
 
-uint16_t ID::prefix_length(const ID & another_ID)
+uint16_t ID::prefix_length(const ID & another_ID) const
 {
     if(m_id_bits == another_ID.m_id_bits)
     {
@@ -59,5 +54,10 @@ std::array<std::bitset<PART>,BITS> ID::get_partition_id() const
         arr[i] = tmp;
     }
     return arr;
+}
+
+bool operator==(const ID & l, const ID & r)
+{
+    return l.m_id_bits == r.m_id_bits;
 }
 

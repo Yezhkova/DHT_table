@@ -14,7 +14,7 @@ set(SOURCE main.cpp
            utils.h                  utils.cpp
            node.h                   node.cpp
            bucket.h                 bucket.cpp
-           bucket_list.h            bucket_list.cpp
+           bucket_array.h           bucket_array.cpp
            contact.h                contact.cpp
 )
 
