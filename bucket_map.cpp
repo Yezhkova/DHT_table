@@ -1,7 +1,14 @@
-#include "bucket_array.h"
+#include "bucket_map.h"
 
-bool bucket_array::add_node(const node & new_node, const ID & id)
+size_t BucketMap::calc_bucket_index(ID id)
 {
-    uint16_t bucket_index = DIGEST - 1 - id.prefix_length(new_node.get_node_id());
+    // if prefix_length == 160, gives -1
+    return DIGEST - 1 - m_id.prefix_length(id);
+}
+
+bool BucketMap::addNode(const Node & new_node)
+{
+    uint16_t bucket_index =  calc_bucket_index(new_node.get_node_id());
     return m_buckets[bucket_index].add_node(new_node);
 }
+

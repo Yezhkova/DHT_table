@@ -1,5 +1,4 @@
-#ifndef NODEINFO_H
-#define NODEINFO_H
+#pragma once
 
 
 class NodeInfo
@@ -8,4 +7,3 @@ public:
     NodeInfo();
 };
 
-#endif // NODEINFO_H

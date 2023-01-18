@@ -1,6 +1,4 @@
-#ifndef SWARMSIMULATOR_H
-#define SWARMSIMULATOR_H
-
+#pragma once
 
 class SwarmSimulator
 {
@@ -8,4 +6,3 @@ public:
     SwarmSimulator();
 };
 
-#endif // SWARMSIMULATOR_H

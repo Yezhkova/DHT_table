@@ -1,11 +1,7 @@
-#ifndef SWARM_H
-#define SWARM_H
-
-
+#pragma once
 class Swarm
 {
 public:
     Swarm();
 };
 
-#endif // SWARM_H

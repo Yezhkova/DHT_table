@@ -1,26 +1,29 @@
 #pragma once
-#include "node.h"
-#include <map> // key = id, value = lastseen time and others  - STRUCT
+#include "ID.h"
+#include "nodeinfo.h"
+#include <map> // key = ID, value = lastseen time and others  - STRUCT NodeInfo
+
+class Node;
 
 class Bucket
 {
 private:
-    std::forward_list<node> m_bucket;
-    uint16_t                m_depth = 0;
-    uint16_t                m_max_bucket_size = 20;
+    std::map<ID, NodeInfo>  m_bucket;
+    size_t                  m_depth = 0;
+    size_t                  m_max_bucket_size = 20;
     bool                    m_empty = true;
 
 public:
-    bucket();
-    bucket(uint16_t depth) : m_depth(depth) {};
-    bucket(uint16_t depth, uint16_t size) : m_depth(depth),
-                                            m_max_bucket_size(size) {};
+    Bucket() = delete;
+    Bucket(size_t depth) : m_depth(depth) {};
+    Bucket(size_t depth, size_t size) : m_depth(depth),
+                                        m_max_bucket_size(size) {};
 
-    std::_Fwd_list_iterator<node> find_node(node node);
-    bool add_node(const node & new_node);
-    bool contains_node(const node & node);
-    bool remove_node(const node & node);
+    std::map<ID, NodeInfo>::iterator find_node(const Node & node);
+    bool add_node(const Node & new_node);
+    bool contains_node(const Node & node);
+    bool remove_node(const Node & node);
     bool is_full();
-    uint16_t size();
+    size_t size();
 
 };

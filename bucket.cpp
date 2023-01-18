@@ -1,40 +1,40 @@
 #include "bucket.h"
 
-std::_Fwd_list_iterator<node> bucket::find_node(node node)
+std::map<ID, NodeInfo>::iterator Bucket::find_node(const Node & node)
 {
-    return std::find(m_bucket.begin(), m_bucket.end(), node);
+    return m_bucket.find(node.get_node_id());
 }
 
-uint16_t bucket::size()
+size_t Bucket::size()
 {
-    return distance(m_bucket.begin(), m_bucket.end());
+    return m_bucket.size();
 }
 
-bool bucket::is_full()
+bool Bucket::is_full()
 {
-    return size() > m_max_bucket_size;
+    return m_bucket.size() > m_max_bucket_size;
 }
 
-bool bucket::add_node(const node & new_node)
+bool Bucket::add_node(const Node & new_node)
 {
     if(!is_full() && !contains_node(new_node)) // do we check here or elsewhere?
     {
-        m_bucket.push_front(new_node);
+        m_bucket[new_node.get_node_id()] = new_node.get_node_info();
         return true;
     }
     return false;
 }
 
-bool bucket::contains_node(const node & node)
+bool Bucket::contains_node(const Node & node)
 {
     return find_node(node) != m_bucket.end();
 }
 
-bool bucket::remove_node(const node & node)
+bool Bucket::remove_node(const Node & node)
 {
-    if (bucket::contains_node(node))
+    if (Bucket::contains_node(node))
     {
-        m_bucket.erase_after(find_node(node));
+        m_bucket.erase(find_node(node));
         return true;
     }
     return false;

@@ -6,7 +6,7 @@ int main(void) {
     ID noname2;
 //    noname2.randomize();
     LOG(noname2.get_ID_bits());
-    LOG(noname2.to_string());
+    LOG(std::string(noname2));
     return 0;
 }
 
