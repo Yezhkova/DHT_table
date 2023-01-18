@@ -2,7 +2,7 @@
 #include "ID.h"
 #include <boost/asio.hpp>
 
-class node
+class Node
 {
 private:
     ID                              m_id;
@@ -11,8 +11,8 @@ private:
     boost::asio::ip::tcp::endpoint  m_endpoint;
 
 public:
-    node();
-    node(std::string address, uint32_t port)
+    Node();
+    Node(std::string address, uint32_t port)
         : m_port(port), m_address(address) {}
 
     bool create_endpoint();
@@ -22,7 +22,7 @@ public:
         return m_id;
     }
 
-    friend bool operator==(const node & l, const node & r)
+    friend bool operator==(const Node & l, const Node & r)
     {
         return l.m_id == r.m_id;
     }

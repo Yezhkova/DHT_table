@@ -2,7 +2,7 @@
 #include "node.h"
 #include <map> // key = id, value = lastseen time and others  - STRUCT
 
-class bucket
+class Bucket
 {
 private:
     std::forward_list<node> m_bucket;

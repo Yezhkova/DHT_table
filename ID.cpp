@@ -4,7 +4,29 @@
 
 static std::mt19937 random_generator_;
 
-const std::string ID::to_string()
+ID::ID()
+{
+    m_id_bits = std::bitset<DIGEST>{0};
+};
+
+ID ID::create_random_id()
+{
+    ID id;
+    id.randomize();
+    return id;
+}
+
+const std::bitset<DIGEST> ID::get_ID_bits()
+{
+    return m_id_bits;
+}
+
+const std::bitset<DIGEST> ID::distance(const ID & another_id)
+{
+    return m_id_bits ^ another_id.m_id_bits;
+}
+
+ID::operator std::string() const
 {
     char c [PART];
     for(uint16_t i = 0; i < DIGEST; i += BITS)
@@ -19,15 +41,14 @@ const std::string ID::to_string()
     return std::string(c);
 }
 
-std::bitset<DIGEST> ID::get_random_id()
+void ID::randomize()
 {
     std::uniform_int_distribution<unsigned long long> range(0, 1);
     std::bitset<DIGEST> res;
     for(uint16_t i = 0; i < DIGEST; i++)
     {
-        res[i] = range(random_generator_);
+        m_id_bits[i] = range(random_generator_);
     }
-    return res;
 }
 
 uint16_t ID::prefix_length(const ID & another_ID) const

@@ -5,12 +5,7 @@ namespace utils
 
 size_t pow_2(size_t power)
 {
-    size_t res = 1;
-    for(size_t i = 0; i < power; i++)
-    {
-        res *= 2;
-    }
-    return res;
+    return 1 << power;
 }
 
 char hex(uint16_t symbol)
