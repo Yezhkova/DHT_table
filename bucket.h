@@ -14,16 +14,17 @@ private:
     bool                    m_empty = true;
 
 public:
-    Bucket() = delete;
+    Bucket() = default;
     Bucket(size_t depth) : m_depth(depth) {};
     Bucket(size_t depth, size_t size) : m_depth(depth),
                                         m_max_bucket_size(size) {};
 
-    std::map<ID, NodeInfo>::iterator find_node(const Node & node);
-    bool add_node(const Node & new_node);
-    bool contains_node(const Node & node);
-    bool remove_node(const Node & node);
+    std::map<ID, NodeInfo>::iterator find_node(const ID &id);
+    bool add_node(const ID &id, const NodeInfo &node_info);
+    bool contains_node(const ID &id);
+    bool remove_node(const ID &id);
     bool is_full();
+    bool is_empty();
     size_t size();
 
 };

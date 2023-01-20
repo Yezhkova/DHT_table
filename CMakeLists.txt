@@ -17,8 +17,12 @@ set(SOURCE main.cpp
            bucket.h                 bucket.cpp
            bucket_map.h             bucket_map.cpp
            peer.h                   peer.cpp
-           swarmsimulator.h         swarmsimulator.cpp
-           swarm.h                  swarm.cpp
+           swarmsimulator.h             swarmsimulator.cpp
+           swarm.h                      swarm.cpp
+           isimulationtask.h            isimulationtask.cpp
+           bootstrapnode.h              bootstrapnode.cpp
+           ikademliatransportprotocol.h ikademliatransportprotocol.cpp
+           SimulationKtp.h              SimulationKtp.cpp
 )
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)

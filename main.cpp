@@ -1,12 +1,23 @@
 #include "ID.h"
 #include "utils.h"
+#include "swarmsimulator.h"
 
 int main(void) {
-    ID noname;
-    ID noname2;
-//    noname2.randomize();
-    LOG(noname2.get_ID_bits());
-    LOG(std::string(noname2));
+
+    SwarmSimulator simulator(false); // как у Swarm
+    simulator.addTask([&](SwarmSimulator & simulatorRef){
+        auto & peers = simulatorRef.swarm().peers();
+        for(auto & peer1 : peers)
+        {
+            for(auto & peer2 : peers)
+            {
+                peer2.ping(peer1); // can print
+                // simulatorRef.addTask([&]{peer2.ping(peer1);});
+            }
+        }
+    });
+    simulator.run();
+    LOG("simulation done");
     return 0;
 }
 

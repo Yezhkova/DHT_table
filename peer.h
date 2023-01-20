@@ -8,7 +8,9 @@ private:
     Node         m_node;
 
 public:
-    Peer();
+    Peer() = default;
     Peer(const Node & node) : m_node(node) {};
+
+    void randomize();
 };
 

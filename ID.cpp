@@ -45,7 +45,7 @@ void ID::randomize()
 {
     std::uniform_int_distribution<unsigned long long> range(0, 1);
     std::bitset<DIGEST> res;
-    for(uint16_t i = 0; i < DIGEST; i++)
+    for(uint16_t i = 0; i < DIGEST; ++i)
     {
         m_id_bits[i] = range(random_generator_);
     }
@@ -58,17 +58,17 @@ uint16_t ID::prefix_length(const ID & another_ID) const
         return DIGEST;
     }
     uint16_t len = 0;
-    for(; m_id_bits[DIGEST-1-len] == another_ID.m_id_bits[DIGEST-1-len]; len++);
+    for(; m_id_bits[DIGEST-1-len] == another_ID.m_id_bits[DIGEST-1-len]; ++len);
     return len;
 }
 
 std::array<std::bitset<PART>,BITS> ID::get_partition_id() const
 {
     std::array<std::bitset<PART>,BITS> arr;
-    for(uint16_t i = 0; i < BITS; i++)
+    for(uint16_t i = 0; i < BITS; ++i)
     {
         std::bitset<PART> tmp;
-        for(uint16_t j = 0; j < PART; j++)
+        for(uint16_t j = 0; j < PART; ++j)
         {
             tmp[j] = m_id_bits[i*PART + j];
         }
@@ -81,4 +81,10 @@ bool operator==(const ID & l, const ID & r)
 {
     return l.m_id_bits == r.m_id_bits;
 }
+
+bool operator<(const ID & l, const ID & r)
+{
+    return l.m_id_bits.to_string() < r.m_id_bits.to_string();
+}
+
 

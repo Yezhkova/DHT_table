@@ -1,6 +1,6 @@
 #include "swarmsimulator.h"
 
-SwarmSimulator::SwarmSimulator()
+SwarmSimulator::SwarmSimulator(bool useTcpMode, int initialPeerNumber) : m_swarm(useTcpMode, initialPeerNumber)
 {
+};
 
-}

@@ -29,5 +29,6 @@ public:
 
     operator std::string() const;
     friend bool operator==(const ID & l, const ID & r);
+    friend bool operator<(const ID & l, const ID & r);
 
 };
