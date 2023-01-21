@@ -1,18 +1,18 @@
-#include "ID.h"
-#include "utils.h"
-#include "swarmsimulator.h"
+#include "SwarmSimulator.h"
+#include "Utils.h"
 
 int main(void) {
 
-    SwarmSimulator simulator(false); // как у Swarm
-    simulator.addTask([&](SwarmSimulator & simulatorRef){
-        auto & peers = simulatorRef.swarm().peers();
-        for(auto & peer1 : peers)
+    SwarmSimulator simulator(false, 10);
+    simulator.addTask([&](SwarmSimulator & simulatorRef)
+    {
+        auto Peers = simulatorRef.getSwarm().Peers();
+        for(auto & Peer1 : Peers)
         {
-            for(auto & peer2 : peers)
+            for(auto & Peer2 : Peers)
             {
-                peer2.ping(peer1); // can print
-                // simulatorRef.addTask([&]{peer2.ping(peer1);});
+                Peer2.ping(Peer1); // can print
+                // simulatorRef.addTask([&]{Peer2.ping(Peer1);});
             }
         }
     });

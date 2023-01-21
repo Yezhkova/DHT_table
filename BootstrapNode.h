@@ -1,8 +1,6 @@
-#include "node.h"
-
 #pragma once
 
-class BootstrapNode : public Node
+class BootstrapNode
 {
 public:
     BootstrapNode() = default;

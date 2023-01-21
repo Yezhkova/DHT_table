@@ -22,10 +22,10 @@ inline std::mutex gLogMutex;
 #endif
 
 
-namespace utils
+namespace Utils
 {
 
-size_t pow_2(size_t power);
+size_t pow2(size_t power);
 
 char hex(uint16_t symbol);
 

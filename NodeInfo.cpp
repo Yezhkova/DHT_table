@@ -1,4 +1,4 @@
-#include "nodeinfo.h"
+#include "NodeInfo.h"
 
 NodeInfo::NodeInfo()
 {

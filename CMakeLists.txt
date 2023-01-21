@@ -10,19 +10,19 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SOURCE main.cpp
-           ID.h                     ID.cpp
-           utils.h                  utils.cpp
-           node.h                   node.cpp
-           nodeinfo.h               nodeinfo.cpp
-           bucket.h                 bucket.cpp
-           bucket_map.h             bucket_map.cpp
-           peer.h                   peer.cpp
-           swarmsimulator.h             swarmsimulator.cpp
-           swarm.h                      swarm.cpp
-           isimulationtask.h            isimulationtask.cpp
-           bootstrapnode.h              bootstrapnode.cpp
-           ikademliatransportprotocol.h ikademliatransportprotocol.cpp
-           SimulationKtp.h              SimulationKtp.cpp
+           ID.h                             ID.cpp
+           Utils.h                          Utils.cpp
+           Node.h                           Node.cpp
+           NodeInfo.h                       NodeInfo.cpp
+           Bucket.h                         Bucket.cpp
+           BucketMap.h                      BucketMap.cpp
+           Peer.h                           Peer.cpp
+           SwarmSimulator.h                 SwarmSimulator.cpp
+           Swarm.h                          Swarm.cpp
+           ISimulationTask.h                ISimulationTask.cpp
+           BootstrapNode.h                  BootstrapNode.cpp
+           IKademliaTransportProtocol.h     IKademliaTransportProtocol.cpp
+           SimulationKtp.h                  SimulationKtp.cpp
 )
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)

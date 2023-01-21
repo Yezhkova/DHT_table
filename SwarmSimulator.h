@@ -1,14 +1,14 @@
 #pragma once
 
-#include "isimulationtask.h"
-#include "swarm.h"
+#include "ISimulationTask.h"
+#include "Swarm.h"
 
 class SwarmSimulator
 {
 private:
-    Swarm                       m_swarm;
-    ISimulationTask             m_sim_task;
-    boost::asio::io_context     m_io_context;
+    Swarm                       m_Swarm;
+    ISimulationTask             m_simTask;
+    boost::asio::io_context     m_ioContext;
 
 public:
     SwarmSimulator(bool useTcpMode, int initialPeerNumber);
@@ -18,6 +18,6 @@ public:
     void run();
     void stop();
 
-    Swarm& swarm() { return m_swarm; }
+    Swarm& getSwarm() { return m_Swarm; }
 };
 

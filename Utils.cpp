@@ -1,9 +1,9 @@
-#include "utils.h"
+#include "Utils.h"
 
-namespace utils
+namespace Utils
 {
 
-size_t pow_2(size_t power)
+size_t pow2(size_t power)
 {
     return 1 << power;
 }

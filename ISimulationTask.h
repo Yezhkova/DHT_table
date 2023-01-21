@@ -4,6 +4,4 @@ class ISimulationTask
 {
 public:
     ISimulationTask();
-
-    void simulation();
 };

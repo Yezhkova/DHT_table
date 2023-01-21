@@ -1,29 +1,29 @@
 
 #include "ID.h"
-#include "utils.h"
+#include "Utils.h"
 
 static std::mt19937 random_generator_;
 
 ID::ID()
 {
-    m_id_bits = std::bitset<DIGEST>{0};
+    m_idBits = std::bitset<DIGEST>{0};
 };
 
-ID ID::create_random_id()
+ID ID::createRandomId()
 {
     ID id;
     id.randomize();
     return id;
 }
 
-const std::bitset<DIGEST> ID::get_ID_bits()
+const std::bitset<DIGEST> ID::getIdBits()
 {
-    return m_id_bits;
+    return m_idBits;
 }
 
 const std::bitset<DIGEST> ID::distance(const ID & another_id)
 {
-    return m_id_bits ^ another_id.m_id_bits;
+    return m_idBits ^ another_id.m_idBits;
 }
 
 ID::operator std::string() const
@@ -34,9 +34,9 @@ ID::operator std::string() const
         uint16_t symbol = 0;
         for(int j = BITS - 1; j >= 0; --j)
         {
-            symbol += m_id_bits.test(i+j) * utils::pow_2(j);
+            symbol += m_idBits.test(i+j) * Utils::pow2(j);
         }
-        c[(PART - 1) - i/BITS] = utils::hex(symbol);
+        c[(PART - 1) - i/BITS] = Utils::hex(symbol);
     }
     return std::string(c);
 }
@@ -47,22 +47,22 @@ void ID::randomize()
     std::bitset<DIGEST> res;
     for(uint16_t i = 0; i < DIGEST; ++i)
     {
-        m_id_bits[i] = range(random_generator_);
+        m_idBits[i] = range(random_generator_);
     }
 }
 
-uint16_t ID::prefix_length(const ID & another_ID) const
+uint16_t ID::prefixLength(const ID & another_ID) const
 {
-    if(m_id_bits == another_ID.m_id_bits)
+    if(m_idBits == another_ID.m_idBits)
     {
         return DIGEST;
     }
     uint16_t len = 0;
-    for(; m_id_bits[DIGEST-1-len] == another_ID.m_id_bits[DIGEST-1-len]; ++len);
+    for(; m_idBits[DIGEST-1-len] == another_ID.m_idBits[DIGEST-1-len]; ++len);
     return len;
 }
 
-std::array<std::bitset<PART>,BITS> ID::get_partition_id() const
+std::array<std::bitset<PART>,BITS> ID::getPartitionId() const
 {
     std::array<std::bitset<PART>,BITS> arr;
     for(uint16_t i = 0; i < BITS; ++i)
@@ -70,7 +70,7 @@ std::array<std::bitset<PART>,BITS> ID::get_partition_id() const
         std::bitset<PART> tmp;
         for(uint16_t j = 0; j < PART; ++j)
         {
-            tmp[j] = m_id_bits[i*PART + j];
+            tmp[j] = m_idBits[i*PART + j];
         }
         arr[i] = tmp;
     }
@@ -79,12 +79,12 @@ std::array<std::bitset<PART>,BITS> ID::get_partition_id() const
 
 bool operator==(const ID & l, const ID & r)
 {
-    return l.m_id_bits == r.m_id_bits;
+    return l.m_idBits == r.m_idBits;
 }
 
 bool operator<(const ID & l, const ID & r)
 {
-    return l.m_id_bits.to_string() < r.m_id_bits.to_string();
+    return l.m_idBits.to_string() < r.m_idBits.to_string();
 }
 
 
