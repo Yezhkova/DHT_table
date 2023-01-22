@@ -1,10 +1,13 @@
 #include "SwarmSimulator.h"
 #include "Utils.h"
 
+#define TCP true
+#define SIM false
+
 int main(void) {
 
-    SwarmSimulator simulator(false, 10);
-    simulator.addTask([&](SwarmSimulator & simulatorRef)
+    SwarmSimulator simulator(SIM, 2);
+    simulator.addTask(std::make_shared<SwarmSimulator>(simulator), [&](SwarmSimulator & simulatorRef)
     {
         auto Peers = simulatorRef.getSwarm().Peers();
         for(auto & Peer1 : Peers)
@@ -12,7 +15,7 @@ int main(void) {
             for(auto & Peer2 : Peers)
             {
                 Peer2.ping(Peer1); // can print
-                // simulatorRef.addTask([&]{Peer2.ping(Peer1);});
+                // simulatorRef.addTask([&] (SwarmSimulator & simulatorRef) {Peer2.ping(Peer1);}); // for TCP simulator
             }
         }
     });
