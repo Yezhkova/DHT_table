@@ -23,6 +23,7 @@ set(SOURCE main.cpp
            BootstrapNode.h                  BootstrapNode.cpp
            IKademliaTransportProtocol.h     IKademliaTransportProtocol.cpp
            SimulationKtp.h                  SimulationKtp.cpp
+           TcpKtp.h                         TcpKtp.cpp
 )
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)

@@ -7,7 +7,7 @@
 int main(void) {
 
     SwarmSimulator simulator(SIM, 2);
-    simulator.addTask(std::make_shared<SwarmSimulator>(simulator), [&](SwarmSimulator & simulatorRef)
+    simulator.addTask(std::make_shared<SwarmSimulator>(simulator), [&](SwarmSimulator & simulatorRef) // [&] = this?
     {
         auto Peers = simulatorRef.getSwarm().Peers();
         for(auto & Peer1 : Peers)

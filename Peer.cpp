@@ -8,12 +8,6 @@ void Peer::randomize()
 
 void Peer::ping(Peer otherPeer)
 {
-//    m_Node.ping(otherPeer.m_Node.getNodeId());
-    if(!m_useTcp)
-    {
-        SimulationKtp protocol;
-        protocol.ping(otherPeer.m_Node.getNodeId());
-    }
-
+    m_protocol->ping(otherPeer.m_Node.getNodeId());
 }
 

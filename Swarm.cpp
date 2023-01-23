@@ -4,9 +4,9 @@ void Swarm::generateSwarm(size_t Peers, bool mode)
 {
     for(size_t i = 0; i < Peers; ++i)
     {
-        Peer p;
-        p.setTcp(mode);
+        Peer p(m_useTcp);
         p.randomize();
-        m_Peers.push_back(p);
+        m_peers.push_back(p);
     }
 }
+

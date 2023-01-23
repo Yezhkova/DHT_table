@@ -19,8 +19,9 @@ void SwarmSimulator::run()
     while(!m_tasks.empty())
     {
         auto pair = m_tasks.front();
+        std::shared_ptr<SwarmSimulator> arg = pair.first;
         std::function<void (SwarmSimulator&)> function = pair.second;
-        function(*pair.first);
+        function(*arg);
         m_tasks.pop();
     }
 }
