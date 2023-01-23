@@ -6,20 +6,21 @@
 
 int main(void) {
 
-    SwarmSimulator simulator(SIM, 2);
-    simulator.addTask(std::make_shared<SwarmSimulator>(simulator), [&](SwarmSimulator & simulatorRef) // [&] = this?
+//    SwarmSimulator simulator();
+    auto simulator = std::make_shared<SwarmSimulator>(SIM, 2);
+    simulator->addTask([simulator = simulator]
     {
-        auto Peers = simulatorRef.getSwarm().Peers();
+        auto Peers = simulator->getSwarm().Peers();
         for(auto & Peer1 : Peers)
         {
             for(auto & Peer2 : Peers)
             {
-                Peer2.ping(Peer1); // can print
+                Peer2.second->ping(*Peer1.second); // can print
                 // simulatorRef.addTask([&] (SwarmSimulator & simulatorRef) {Peer2.ping(Peer1);}); // for TCP simulator
             }
         }
     });
-    simulator.run();
+    simulator->run();
     LOG("simulation done");
     return 0;
 }

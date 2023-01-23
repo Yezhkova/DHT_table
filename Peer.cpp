@@ -6,8 +6,8 @@ void Peer::randomize()
     m_Node.randomizeId();
 }
 
-void Peer::ping(Peer otherPeer)
+void Peer::ping(const Peer & otherPeer)
 {
-    m_protocol->ping(otherPeer.m_Node.getNodeId());
+    m_Node.protocol().ping(otherPeer.m_Node.getNodeId());
 }
 

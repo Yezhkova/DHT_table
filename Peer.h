@@ -7,25 +7,21 @@
 class Peer
 {
 private:
-    Node                                            m_Node;
-    std::shared_ptr<IKademliaTransportProtocol>     m_protocol = nullptr;
+    Node                            m_Node;
+//    IKademliaTransportProtocol&     m_protocol;
 
 public:
-    Peer() = default;
-    Peer(bool useTcp)
-    {
-        if (!useTcp)
-        {
-            m_protocol = std::make_shared<SimulationKtp>();
-        }
-        else {
-            m_protocol = std::make_shared<TcpKtp>();
-        }
-    };
+    Peer() = delete;
+    Peer(Peer && ) = default;
 
-    Peer(const Node & node) : m_Node(node) {};
+    Peer(ID id, IKademliaTransportProtocol& protocol) : m_Node(id, protocol) {};
 
+    const ID & id() const { return m_Node.getNodeId(); };
     void randomize();
-    void ping(Peer peer);
+    void ping(const Peer & peer);
+    void ping(const ID & id)
+    {
+        m_Node.ping(id);
+    };
 };
 

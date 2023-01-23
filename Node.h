@@ -9,23 +9,23 @@
 class Swarm;
 class Node
 {
-protected:
-    ID                              m_id;
-    std::uint16_t                   m_port;
-    std::string                     m_address;
-    boost::asio::ip::tcp::endpoint  m_endpoint;
-    bool                            m_endpointSet = false;
-    BucketMap                       m_BucketMap;
-    NodeInfo                        m_info;
-    size_t                          m_treeSize = 160;
-    std::unique_ptr<IKademliaTransportProtocol> m_protocol;
+private:
+    ID                                          m_id;
+    std::uint16_t                               m_port;
+    std::string                                 m_address;
+    boost::asio::ip::tcp::endpoint              m_endpoint;
+    bool                                        m_endpointSet = false;
+    BucketMap                                   m_BucketMap;
+    NodeInfo                                    m_info;
+    size_t                                      m_treeSize = 160;
+    IKademliaTransportProtocol&                 m_protocol;
 
 public:
-    Node() = default;
-    Node(std::string address, uint32_t port);
-    Node(std::string address, uint32_t port, std::weak_ptr<Swarm> Swarm);
-    Node(const Node& n);
-
+    Node() = delete;
+    Node(Node &&) = default;
+//    Node(std::string address, uint32_t port);
+//    Node(std::string address, uint32_t port, std::weak_ptr<Swarm> Swarm);
+    Node(ID id, IKademliaTransportProtocol& protocol) : m_id(id), m_protocol(protocol) { }
 
     void randomizeId();
     bool createEndpoint();
@@ -38,5 +38,9 @@ public:
     void addNode(const Node & newNode);
 
     friend bool operator==(const Node & l, const Node & r);
+    IKademliaTransportProtocol& protocol()
+    {
+        return m_protocol;
+    }
 
 };

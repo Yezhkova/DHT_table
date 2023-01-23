@@ -11,16 +11,13 @@ private:
     Swarm                                                   m_Swarm;
     ISimulationTask                                         m_simTask;
     boost::asio::io_context                                 m_ioContext;
-    std::queue<std::pair
-        <std::shared_ptr<SwarmSimulator>,
-        std::function<void (SwarmSimulator&)>>>             m_tasks; // task queue: < arg, fn(arg) >
 
 public:
 
     SwarmSimulator(bool useTcpMode, int initialPeerNumber);
     SwarmSimulator(const SwarmSimulator& ss); // copy constructor for shared_ptr < SwarmSimulator >
 
-    void addTask(std::shared_ptr<SwarmSimulator>(simulator), std::function<void (SwarmSimulator&)> F);
+    void addTask(std::function<void ()> F);
 
     void run();
     void stop();
