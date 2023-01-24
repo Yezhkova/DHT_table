@@ -5,12 +5,12 @@
 #include <queue>
 #include <utility>
 
-class SwarmSimulator : public std::enable_shared_from_this<SwarmSimulator>
+class SwarmSimulator //: public std::enable_shared_from_this<SwarmSimulator>
 {
 private:
-    Swarm                                                   m_Swarm;
-    ISimulationTask                                         m_simTask;
-    boost::asio::io_context                                 m_ioContext;
+    Swarm                     m_Swarm;
+    ISimulationTask           m_simTask;
+    boost::asio::io_context   m_ioContext;
 
 public:
 
@@ -22,6 +22,6 @@ public:
     void run();
     void stop();
 
-    Swarm& getSwarm() { return m_Swarm; }
+    const Swarm& getSwarm() const { return m_Swarm; }
 };
 

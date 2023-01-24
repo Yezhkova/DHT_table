@@ -20,7 +20,6 @@ set(SOURCE main.cpp
            SwarmSimulator.h                 SwarmSimulator.cpp
            Swarm.h                          Swarm.cpp
            ISimulationTask.h                ISimulationTask.cpp
-           BootstrapNode.h                  BootstrapNode.cpp
            IKademliaTransportProtocol.h     IKademliaTransportProtocol.cpp
 )
 

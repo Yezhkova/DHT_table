@@ -8,8 +8,10 @@ public:
     virtual void ping(const ID & id) = 0;
     virtual void pingResponse(const ID & queryingId, const ID & queriedId) = 0;
 
-    virtual void findNode(ID myId, ID queriedId) = 0;
+    virtual void findNode(const ID & myId, const ID & queriedId) = 0;
+    virtual void findNodeResponse(const ID & myId, const ID & queriedId) = 0;
 
-// TODO:   virtual void store(ID id) = 0;
-// TODO:   virtual void findValue(ID myId, ID queriedId) = 0;
+
+// TODO:   virtual void store(const ID & id) = 0;
+// TODO:   virtual void findValue(const ID & myId, const ID & queriedId) = 0;
 };

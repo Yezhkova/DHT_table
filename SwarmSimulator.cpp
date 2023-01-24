@@ -10,7 +10,6 @@ SwarmSimulator::SwarmSimulator(const SwarmSimulator& ss)
 
 void SwarmSimulator::addTask(std::function<void ()> F)
 {
-    //m_tasks.push(std::make_pair(simulator, F));
     m_ioContext.post(F);
 }
 

@@ -1,27 +1,5 @@
 #include "Node.h"
 
-//Node::Node(std::string address, uint32_t port)
-//    : m_address(address)
-//    , m_port(port)
-//{
-//    randomizeId();
-//    m_BucketMap = BucketMap(m_id);
-//}
-
-//Node::Node(std::string address, uint32_t port, std::weak_ptr<Swarm> Swarm)
-//{
-//    // std::weak_ptr<Swarm> Swarm goes to m_protocol;
-//}
-
-//Node::Node(const Node& n)
-//    : m_id(n.m_id)
-//    , m_port(n.m_port)
-//    , m_address(n.m_address)
-//    , m_endpoint(n.m_endpoint)
-//    , m_BucketMap(n.m_BucketMap)
-//    , m_info(n.m_info) { }
-
-
 const ID & Node::getNodeId() const
 {
     return m_id;
@@ -72,4 +50,14 @@ void Node::ping(const ID & queryingId, const ID & id)
 {
 
 }
+void Node::ping(const ID & id)
+{
+
+}
+
+IKademliaTransportProtocol& Node::protocol()
+{
+    return m_protocol;
+}
+
 

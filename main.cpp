@@ -6,11 +6,12 @@
 
 int main(void) {
 
-//    SwarmSimulator simulator();
-    auto simulator = std::make_shared<SwarmSimulator>(SIM, 2);
-    simulator->addTask([simulator = simulator]
+//    auto simulator = std::make_shared<SwarmSimulator>(SIM, 2);
+
+    SwarmSimulator simulator(SIM,2);
+    simulator.addTask([simulator]
     {
-        auto Peers = simulator->getSwarm().Peers();
+        auto Peers = simulator.getSwarm().peers();
         for(auto & Peer1 : Peers)
         {
             for(auto & Peer2 : Peers)
@@ -20,7 +21,7 @@ int main(void) {
             }
         }
     });
-    simulator->run();
+    simulator.run();
     LOG("simulation done");
     return 0;
 }

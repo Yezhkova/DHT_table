@@ -1,14 +1,11 @@
 #pragma once
 
 #include "Node.h"
-#include "SimulationKtp.h"
-#include "TcpKtp.h"
 
 class Peer
 {
 private:
-    Node                            m_Node;
-//    IKademliaTransportProtocol&     m_protocol;
+    Node m_Node;
 
 public:
     Peer() = delete;

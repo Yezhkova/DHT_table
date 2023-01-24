@@ -1,5 +1,4 @@
 #include "Peer.h"
-#include "SimulationKtp.h"
 
 void Peer::randomize()
 {
