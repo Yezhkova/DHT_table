@@ -10,11 +10,15 @@ void Swarm::generateSwarm(size_t Peers, bool mode)
     }
 }
 
-void Swarm::ping(const ID & id)
+void Swarm::ping(const ID & queryingId, const ID & queriedId)
 {
-    if(auto it = m_peers.find(id); it != m_peers.end())
+    if(auto it = m_peers.find(queryingId); it != m_peers.end())
     {
-        it->second->ping(id);
+        it->second->node().ping(queriedId);
+        //TODO: wait for the answer for some time
+        //      receive message "i'm alive"
+        //      if online: LOG(std::string(queriedId) << " is online\n");
+        //      else LOG(std::string(queriedId) << " failed to respond\n")
     }
 }
 

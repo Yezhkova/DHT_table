@@ -1,6 +1,6 @@
 #include "Node.h"
 
-const ID & Node::getNodeId() const
+const ID & Node::id() const
 {
     return m_id;
 }
@@ -19,7 +19,8 @@ NodeInfo Node::getNodeInfo() const
 bool Node::createEndpoint()
 {
     boost::system::error_code ec;
-    boost::asio::ip::address ip_address = boost::asio::ip::address::from_string(m_address, ec);
+    boost::asio::ip::address ip_address =
+            boost::asio::ip::address::from_string(m_address, ec);
     if (ec.value() != 0) {
         std::cerr
                 << "Failed to parse the IP address. Error code = "
@@ -38,7 +39,7 @@ void Node::randomizeId()
 
 void Node::addNode(const Node & newNode)
 {
-    m_BucketMap.addNode(newNode.getNodeId(), newNode.getNodeInfo());
+    m_BucketMap.addNode(newNode.id(), newNode.getNodeInfo());
 }
 
 bool operator==(const Node & l, const Node & r)
@@ -46,13 +47,13 @@ bool operator==(const Node & l, const Node & r)
     return l.m_id == r.m_id;
 }
 
-void Node::ping(const ID & queryingId, const ID & id)
-{
+//void Node::ping(const ID & queryingId, const ID & id)
+//{
 
-}
-void Node::ping(const ID & id)
+//}
+void Node::ping(const ID & id) const
 {
-
+    LOG(std::string(id) << '\n');
 }
 
 IKademliaTransportProtocol& Node::protocol()

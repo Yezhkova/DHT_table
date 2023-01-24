@@ -7,6 +7,10 @@ void Peer::randomize()
 
 void Peer::ping(const Peer & otherPeer)
 {
-    m_Node.protocol().ping(otherPeer.m_Node.getNodeId());
+//    m_Node.protocol().ping(otherPeer.m_Node.id());
 }
 
+void Peer::ping(const ID & id)
+{
+    m_Node.ping(id);
+}

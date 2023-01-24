@@ -5,6 +5,7 @@
 #include <boost/asio.hpp>
 #include <cassert>
 #include "IKademliaTransportProtocol.h"
+#include "Utils.h"
 class Swarm;
 class Node
 {
@@ -21,19 +22,20 @@ private:
 
 public:
     Node() = delete;
-    Node(Node &&) = default; // move constructor
-//    Node(std::string address, uint32_t port);
-    Node(ID id, IKademliaTransportProtocol& protocol) : m_id(id), m_protocol(protocol) { }
+    Node(Node &&) = default;                                // move constructor
+    Node(ID id, IKademliaTransportProtocol& protocol)
+        : m_id(id)
+        , m_protocol(protocol) { }
 
     void randomizeId();
     bool createEndpoint();
 
-    const ID & getNodeId() const;
+    const ID & id() const;
     boost::asio::ip::tcp::endpoint getNodeEndpoint() const;
     NodeInfo getNodeInfo() const;
 
-    void ping(const ID & id);
-    void ping(const ID & queryingId, const ID & id);
+    void ping (const ID & id) const;
+//    void ping(const ID & queryingId, const ID & id);
 
     void addNode(const Node & newNode);
 

@@ -7,6 +7,10 @@ SwarmSimulator::SwarmSimulator(const SwarmSimulator& ss)
     : m_Swarm(ss.m_Swarm)
     , m_simTask(ss.m_simTask) {}
 
+const Swarm& SwarmSimulator::getSwarm() const
+{
+    return m_Swarm;
+}
 
 void SwarmSimulator::addTask(std::function<void ()> F)
 {
@@ -18,4 +22,8 @@ void SwarmSimulator::run()
     m_ioContext.run();
 }
 
+void SwarmSimulator::stop()
+{
+    m_ioContext.stop();
+}
 

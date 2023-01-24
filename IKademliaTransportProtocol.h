@@ -5,7 +5,7 @@ class IKademliaTransportProtocol
 {
 public:
     virtual ~IKademliaTransportProtocol() = default;
-    virtual void ping(const ID & id) = 0;
+    virtual void ping(const ID & queryingId, const ID & queriedId) = 0;
     virtual void pingResponse(const ID & queryingId, const ID & queriedId) = 0;
 
     virtual void findNode(const ID & myId, const ID & queriedId) = 0;

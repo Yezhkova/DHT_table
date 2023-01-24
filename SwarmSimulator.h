@@ -22,6 +22,6 @@ public:
     void run();
     void stop();
 
-    const Swarm& getSwarm() const { return m_Swarm; }
+    const Swarm& getSwarm() const;
 };
 

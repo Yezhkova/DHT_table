@@ -13,12 +13,10 @@ public:
 
     Peer(ID id, IKademliaTransportProtocol& protocol) : m_Node(id, protocol) {};
 
-    const ID & id() const { return m_Node.getNodeId(); };
+    const ID & id() const { return m_Node.id(); };
+    const Node & node() const { return m_Node; };
     void randomize();
     void ping(const Peer & peer);
-    void ping(const ID & id)
-    {
-        m_Node.ping(id);
-    };
+    void ping(const ID & id);
 };
 
