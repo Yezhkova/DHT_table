@@ -86,7 +86,7 @@ void Node::populate(Node * bootstrapNode)
      *                                                 not empty,   take <n> random nodes, recursion.
      */
     size_t bucketIndex = m_BucketMap.calcBucketIndex(bootstrapNode->id());
-    BucketMap bootstrapBucketMap = bootstrapNode->m_BucketMap;
+    BucketMap& bootstrapBucketMap = bootstrapNode->m_BucketMap;
     std::vector<Bucket> bucketsInBootstrap = bootstrapBucketMap.nonEmptyBuckets();
     // i am NOT the first node in the network, except for bootstrapNode
     for(Bucket &b : bucketsInBootstrap) {

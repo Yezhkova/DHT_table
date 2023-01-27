@@ -27,7 +27,8 @@ std::vector<Bucket> BucketMap::nonEmptyBuckets()
 {
     std::vector<Bucket> res;
     for(auto & bucket : m_Buckets) {
-        if(!bucket.second.isEmpty()) res.push_back(bucket.second);
+        if(!bucket.second.isEmpty())
+            res.push_back(bucket.second);
     }
     return res;
 }

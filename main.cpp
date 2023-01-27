@@ -11,10 +11,31 @@ int main(void) {
     {
         Swarm swarm = simulator->getSwarm();
         auto peers = swarm.peers();
+
         for(auto & peer1 : peers)
         {
             peer1.second->bootstrap(swarm.bootstrapNode());
         }
+        for(auto & peer1 : peers)
+        {
+            peer1.second->bootstrap(swarm.bootstrapNode());
+            std::vector<Bucket> buckets = peer1.second->node().bucketMap().nonEmptyBuckets();
+            LOG(std::string(peer1.first) << ' ' << buckets.size());
+            auto Buckets = peer1.second->node().bucketMap().map();
+            LOG("buckets in map: " << Buckets.size());
+            for(auto &e : Buckets)
+            {
+                LOG("nodes in bucket: " << e.second.bucket().size());
+                for(auto & ee : e.second.bucket()){
+                    LOG('i');
+                    LOG(std::string(ee.first));
+                }
+            }
+        }
+        std::vector<Bucket> buckets = swarm.bootstrapNode()->node().bucketMap().nonEmptyBuckets();
+        LOG(std::string(swarm.bootstrapNode()->node().id()) << ' ' << buckets.size());
+
+        /*
         for(auto & peer2 : peers)
         {
             LOG(std::string(peer2.second->id()) << " stores some nodes:\n");
@@ -31,15 +52,28 @@ int main(void) {
                 }
             }
 
-            /*
 //                if(peer2 != peer1) {
 //                    swarm.ping(peer1.second->id(), peer2.second->id());
 //                }
 
 //                Peer2.second->ping(*Peer1.second);
             // simulatorRef.addTask([&] (SwarmSimulator & simulatorRef) {Peer2.ping(Peer1);}); // for TCP simulator
-            */
+
         }
+
+        BucketMap bootMap = swarm.bootstrapNode()->node().bucketMap();
+        LOG("bootMap: " << bootMap.size());
+        for(auto & e : bootMap.map())
+        {
+            LOG("depth: " << e.first);
+            auto bucket = e.second.bucket();
+            for(auto IdNode: bucket)
+            {
+                LOG(std::string(IdNode.first));
+            }
+        }
+
+        */
 
     });
     simulator->run();

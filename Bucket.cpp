@@ -17,7 +17,7 @@ bool Bucket::isFull()
 
 bool Bucket::isEmpty()
 {
-    return m_Bucket.size() == 0;
+    return m_Bucket.empty();
 }
 
 bool Bucket::addNode(const ID &id, const Node* node)
