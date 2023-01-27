@@ -1,6 +1,6 @@
 #include "Bucket.h"
 
-std::map<ID, NodeInfo>::iterator Bucket::find_Node(const ID &id)
+std::map<ID, Node*>::iterator Bucket::find_node(const ID &id)
 {
     return m_Bucket.find(id);
 }
@@ -20,11 +20,12 @@ bool Bucket::isEmpty()
     return m_Bucket.size() == 0;
 }
 
-bool Bucket::addNode(const ID &id, const NodeInfo &Node_info)
+bool Bucket::addNode(const ID &id, const Node* node)
 {
-    if(!isFull() && !containsNode(id)) // do we check here or elsewhere?
+    if(!isFull() && !containsNode(id))
     {
-        m_Bucket[id] = Node_info;
+//        m_Bucket[id] = node;
+//        m_Bucket.emplace(std::make_pair(id, node));
         return true;
     }
     return false;
@@ -32,12 +33,12 @@ bool Bucket::addNode(const ID &id, const NodeInfo &Node_info)
 
 bool Bucket::containsNode(const ID &id)
 {
-    return find_Node(id) != m_Bucket.end();
+    return find_node(id) != m_Bucket.end();
 }
 
 bool Bucket::removeNode(const ID &id)
 {
-    auto it = find_Node(id);
+    auto it = find_node(id);
     if (it != m_Bucket.end())
     {
         m_Bucket.erase(it);

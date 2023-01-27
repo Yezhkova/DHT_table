@@ -2,7 +2,7 @@
 
 #include "Peer.h"
 
-class Swarm : public IKademliaTransportProtocol, public std::enable_shared_from_this<Swarm>
+class Swarm : public IKademliaTransportProtocol    //, public std::enable_shared_from_this<Swarm>
 {
 private:
     std::map<ID, std::shared_ptr<Peer>>  m_peers;
@@ -21,6 +21,7 @@ public:
     void generateSwarm(size_t Peers, bool mode);
     void createBootstrapNode();
     bool tcp() { return m_useTcp; };
+    Peer* bootstrapNode() { return m_bootstrapNode;};
     std::map<ID, std::shared_ptr<Peer>> peers() const { return m_peers; };
 
     virtual void ping(const ID & queryingId, const ID & queriedId) override;

@@ -82,6 +82,11 @@ bool operator==(const ID & l, const ID & r)
     return l.m_idBits == r.m_idBits;
 }
 
+bool operator!=(const ID & l, const ID & r)
+{
+    return l.m_idBits != r.m_idBits;
+}
+
 bool operator<(const ID & l, const ID & r)
 {
     return l.m_idBits.to_string() < r.m_idBits.to_string();

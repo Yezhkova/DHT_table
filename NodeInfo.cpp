@@ -1,6 +1,2 @@
 #include "NodeInfo.h"
-
-NodeInfo::NodeInfo()
-{
-
-}
+#include "Bucket.h"

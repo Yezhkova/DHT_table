@@ -2,15 +2,21 @@
 
 void Peer::randomize()
 {
-    m_Node.randomizeId();
+    m_node.randomizeId();
+}
+
+void Peer::bootstrap(Peer* bootPeer)
+{
+    m_node.addNode(&bootPeer->node());
+    m_node.populate(&bootPeer->node());//.id());
 }
 
 void Peer::ping(const Peer & otherPeer)
 {
-//    m_Node.protocol().ping(otherPeer.m_Node.id());
+//    m_node.protocol().ping(otherPeer.m_node.id());
 }
 
 void Peer::ping(const ID & id)
 {
-    m_Node.ping(id);
+    m_node.ping(id);
 }

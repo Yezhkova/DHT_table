@@ -6,11 +6,32 @@ size_t BucketMap::calcBucketIndex(const ID & id)
     return DIGEST - 1 - m_id.prefixLength(id);
 }
 
-bool BucketMap::addNode(const ID &id, const NodeInfo &NodeInfo)
+bool BucketMap::addNode(const ID &id, const Node* node)
 {
-    uint16_t BucketIndex = calcBucketIndex(id);
-    return m_Buckets[BucketIndex].addNode(id, NodeInfo);
+    size_t BucketIndex = calcBucketIndex(id);
+    return m_Buckets[BucketIndex].addNode(id, node);
 }
+
+bool BucketMap::hasNode(const ID & id)
+{
+    for(auto & bucket : m_Buckets)
+    {
+        if(bucket.second.containsNode(id)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::vector<Bucket> BucketMap::nonEmptyBuckets()
+{
+    std::vector<Bucket> res;
+    for(auto & bucket : m_Buckets) {
+        if(!bucket.second.isEmpty()) res.push_back(bucket.second);
+    }
+    return res;
+}
+
 
 std::optional<Bucket> BucketMap::getNodesAtDepth(size_t depth)
 {
@@ -24,7 +45,7 @@ std::optional<Bucket> BucketMap::getNodesAtDepth(size_t depth)
     }
 }
 
-size_t BucketMap::getSize()
+size_t BucketMap::size()
 {
     return m_Buckets.size();
 }
