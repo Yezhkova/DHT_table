@@ -67,7 +67,7 @@ ID Node::pickRandomNode(Bucket& b)
 
 void Node::sendFindNode(const ID & recipientId, const ID & senderId, const ID & queriedId)
 {
-    if(recipientId)
+
 }
 
 void Node::receiveFindNode(const ID & recipientId, const ID & senderId, const ID & queriedId)

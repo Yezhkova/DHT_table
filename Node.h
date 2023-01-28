@@ -1,4 +1,5 @@
 #pragma once
+#include "Contact.h"
 #include "ID.h"
 #include "NodeInfo.h"
 #include "BucketMap.h"
@@ -12,25 +13,20 @@ class Node
 {
 private:
     bool                                m_isStarting = true;
-    std::uint16_t                       m_port;
-    std::string                         m_address;
-    boost::asio::ip::tcp::endpoint      m_endpoint;
-    bool                                m_endpointSet = false;
+    Contact                             m_contact;
     BucketMap                           m_BucketMap;
     size_t                              m_treeSize = 160;
     IKademliaTransportProtocol&         m_protocol;
 
-    ID                                  m_id;
-    NodeInfo                            m_info;
+    NodeInfo                            m_info; // last seen time
 
     std::mt19937                        m_randomGenerator;
-    const int                           m_spreadNodes = 3;
 
 public:
     Node() = delete;
     Node(Node &&) = default;                                // move constructor
     Node(ID id, IKademliaTransportProtocol& protocol)
-        : m_id(id), m_protocol(protocol)
+        : m_contact(id), m_protocol(protocol)
         , m_info(boost::chrono::system_clock::now()) { };
 
     void randomizeId();

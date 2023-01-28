@@ -21,6 +21,7 @@ set(SOURCE main.cpp
            Swarm.h                          Swarm.cpp
            ISimulationTask.h                ISimulationTask.cpp
            IKademliaTransportProtocol.h     IKademliaTransportProtocol.cpp
+           Contact.h                        Contact.cpp
 )
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)

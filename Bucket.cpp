@@ -1,6 +1,6 @@
 #include "Bucket.h"
 
-std::set<ID>::iterator Bucket::find_node(const ID &id)
+std::set<Contact>::iterator Bucket::find_node(const ID &id)
 {
     return m_Bucket.find(id);
 }
