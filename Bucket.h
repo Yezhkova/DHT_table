@@ -1,30 +1,23 @@
 #pragma once
-#include "ID.h"
-#include <map>
 
-class Node;
+#include "ID.h"
+#include <set>
 
 class Bucket
 {
 private:
-    std::map<ID, Node*>  m_Bucket;
-    size_t               m_depth = 0;
-    size_t               m_maxBucketSize = 20;
-    bool                 m_empty = true;
+    std::set<ID>    m_Bucket;             // map<ID, boost::asio::tcp::endpoint> if TCP
+    size_t          m_maxBucketSize = 20;
 
 public:
     Bucket() = default;
-    Bucket(size_t depth) : m_depth(depth) {};
-    Bucket(size_t depth, size_t size) : m_depth(depth),
-                                        m_maxBucketSize(size) {};
 
-    std::map<ID, Node*> bucket() { return m_Bucket; };
-    std::map<ID, Node*>::iterator find_node(const ID &id);
-    bool addNode(const ID &id, const Node* node);
+    std::set<ID> bucket() { return m_Bucket; };
+    std::set<ID>::iterator find_node(const ID &id);
+    bool addNode(const ID &id);
     bool containsNode(const ID &id);
     bool removeNode(const ID &id);
     bool isFull();
-    bool isEmpty();
     size_t size();
 
 };

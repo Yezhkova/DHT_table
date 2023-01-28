@@ -6,13 +6,13 @@ size_t BucketMap::calcBucketIndex(const ID & id)
     return DIGEST - 1 - m_id.prefixLength(id);
 }
 
-bool BucketMap::addNode(const ID &id, const Node* node)
+bool BucketMap::addNode(const ID &id)
 {
     size_t BucketIndex = calcBucketIndex(id);
-    return m_Buckets[BucketIndex].addNode(id, node);
+    return m_Buckets[BucketIndex].addNode(id);
 }
 
-bool BucketMap::hasNode(const ID & id)
+bool BucketMap::containsNode(const ID & id)
 {
     for(auto & bucket : m_Buckets)
     {
@@ -27,8 +27,9 @@ std::vector<Bucket> BucketMap::nonEmptyBuckets()
 {
     std::vector<Bucket> res;
     for(auto & bucket : m_Buckets) {
-        if(!bucket.second.isEmpty())
+        if(bucket.second.size() > 0) {
             res.push_back(bucket.second);
+        }
     }
     return res;
 }

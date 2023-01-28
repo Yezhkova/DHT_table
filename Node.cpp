@@ -37,11 +37,11 @@ void Node::randomizeId()
     m_id.randomize();
 }
 
-void Node::addNode(const Node* node)
+void Node::addNode(const ID & id)
 {
     assert((void("Node shouldn't add itself into its bucketMap"),
-            m_id != node->id()));
-    m_BucketMap.addNode(node->id(), node);
+            m_id != id));
+    m_BucketMap.addNode(id);
 }
 
 bool operator==(const Node & l, const Node & r)
@@ -49,52 +49,30 @@ bool operator==(const Node & l, const Node & r)
     return l.m_id == r.m_id;
 }
 
-//void Node::ping(const ID & queryingId, const ID & id)
-//{
-
-//}
-
-ID Node::ping(const ID & id) const
-{
-    assert((void("Pinging myself is pointless"), m_id != id));
-//    addNode(id);
-    return m_id;
-}
-
 IKademliaTransportProtocol& Node::protocol()
 {
     return m_protocol;
 }
 
-Node* Node::pickRandomNode(Bucket& b)
+/*
+ID Node::pickRandomNode(Bucket& b)
 {
     auto it = b.bucket().begin();
-    std::uniform_int_distribution<int> range(0, b.size());
+    std::uniform_int_distribution<int> range(0, b.size()-1);
     uint16_t randomNodeNumber = range(m_randomGenerator);
     std::advance(it, randomNodeNumber);
     return it->second;
 }
+*/
 
-void Node::populate(Node * bootstrapNode)
+void Node::sendFindNode(const ID & recipientId, const ID & senderId, const ID & queriedId)
 {
-    /*
-     * find the only one non-empty bucket
-     * there lies the bootstrap node
-     * enter her bucketMap
-     * according to bootstrap node's ID, find # of bucket where myID can be lying
-     * of course, it is not there -> if this bucket is empty,       search for a close non-empty bucket
-     *                                                 not empty,   take <n> random nodes, recursion.
-     */
-    size_t bucketIndex = m_BucketMap.calcBucketIndex(bootstrapNode->id());
-    BucketMap& bootstrapBucketMap = bootstrapNode->m_BucketMap;
-    std::vector<Bucket> bucketsInBootstrap = bootstrapBucketMap.nonEmptyBuckets();
-    // i am NOT the first node in the network, except for bootstrapNode
-    for(Bucket &b : bucketsInBootstrap) {
-        for(uint16_t i = 0; i < m_spreadNodes || i < b.size(); ++i) {
-            populate(pickRandomNode(b));
-        }
-    };
-    bootstrapNode->addNode(this);
+    if(recipientId)
+}
+
+void Node::receiveFindNode(const ID & recipientId, const ID & senderId, const ID & queriedId)
+{
+
 }
 
 

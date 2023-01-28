@@ -1,6 +1,6 @@
 #include "Bucket.h"
 
-std::map<ID, Node*>::iterator Bucket::find_node(const ID &id)
+std::set<ID>::iterator Bucket::find_node(const ID &id)
 {
     return m_Bucket.find(id);
 }
@@ -12,20 +12,14 @@ size_t Bucket::size()
 
 bool Bucket::isFull()
 {
-    return m_Bucket.size() > m_maxBucketSize;
+    return m_Bucket.size() == m_maxBucketSize;
 }
 
-bool Bucket::isEmpty()
+bool Bucket::addNode(const ID &id)
 {
-    return m_Bucket.empty();
-}
-
-bool Bucket::addNode(const ID &id, const Node* node)
-{
-    if(!isFull() && !containsNode(id))
+    if(!isFull())
     {
-//        m_Bucket[id] = node;
-//        m_Bucket.emplace(std::make_pair(id, node));
+        m_Bucket.insert(id);
         return true;
     }
     return false;

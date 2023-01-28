@@ -5,18 +5,18 @@ void Peer::randomize()
     m_node.randomizeId();
 }
 
-void Peer::bootstrap(Peer* bootPeer)
+void Peer::addNode(const ID & id)
 {
-    m_node.addNode(&bootPeer->node());
-    m_node.populate(&bootPeer->node());//.id());
+    m_node.addNode(id);
 }
 
-void Peer::ping(const Peer & otherPeer)
+void Peer::start(const ID & bootstrapId)
 {
-//    m_node.protocol().ping(otherPeer.m_node.id());
+    addNode(bootstrapId);
+    sendFindNode(bootstrapId, m_node.id(),  m_node.id());
 }
 
-void Peer::ping(const ID & id)
+void Peer::sendFindNode(const ID & recipientId, const ID & myId, const ID & queriedId)
 {
-    m_node.ping(id);
+    m_node.sendFindNode(recipientId, myId, queriedId);
 }

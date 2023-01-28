@@ -11,6 +11,7 @@ class Swarm;
 class Node
 {
 private:
+    bool                                m_isStarting = true;
     std::uint16_t                       m_port;
     std::string                         m_address;
     boost::asio::ip::tcp::endpoint      m_endpoint;
@@ -40,16 +41,19 @@ public:
     NodeInfo nodeInfo() const;
     BucketMap bucketMap() { return m_BucketMap;};
 
-    void populate(Node* bootstrapNode);
-
-    ID ping (const ID & id) const;
-//    void ping(const ID & queryingId, const ID & id);
-
-    void addNode(const Node* node);
+    void addNode(const ID & id);
 
     friend bool operator==(const Node & l, const Node & r);
     IKademliaTransportProtocol& protocol();
-    Node* pickRandomNode(Bucket& b);
+    ID pickRandomNode(Bucket& b);
 
+    void sendPing(const ID & recipientId, const ID & senderId, const ID & queriedId);
+    void sendPingResponse(const ID & queryingId, const ID & queriedId);
+    void receivePing(const ID & queryingId, const ID & queriedId);
+    void receivePingResponse(const ID & queryingId, const ID & queriedId);
 
+    void sendFindNode(const ID & recipientId, const ID & senderId, const ID & queriedId);
+    void sendFindNodeResponse(const ID & myId, const ID & queriedId);
+    void receiveFindNode(const ID & recipientId, const ID & senderId, const ID & queriedId);
+    void receiveFindNodeResponse(const ID & myId, const ID & queriedId);
 };

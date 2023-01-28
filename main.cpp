@@ -14,11 +14,12 @@ int main(void) {
 
         for(auto & peer1 : peers)
         {
-            peer1.second->bootstrap(swarm.bootstrapNode());
+            peer1.second->start(swarm.bootstrapNode()->id());
         }
+
+        /*
         for(auto & peer1 : peers)
         {
-            peer1.second->bootstrap(swarm.bootstrapNode());
             std::vector<Bucket> buckets = peer1.second->node().bucketMap().nonEmptyBuckets();
             LOG(std::string(peer1.first) << ' ' << buckets.size());
             auto Buckets = peer1.second->node().bucketMap().map();
@@ -35,7 +36,7 @@ int main(void) {
         std::vector<Bucket> buckets = swarm.bootstrapNode()->node().bucketMap().nonEmptyBuckets();
         LOG(std::string(swarm.bootstrapNode()->node().id()) << ' ' << buckets.size());
 
-        /*
+
         for(auto & peer2 : peers)
         {
             LOG(std::string(peer2.second->id()) << " stores some nodes:\n");
