@@ -17,9 +17,7 @@ private:
     BucketMap                           m_BucketMap;
     size_t                              m_treeSize = 160;
     IKademliaTransportProtocol&         m_protocol;
-
     NodeInfo                            m_info; // last seen time
-
     std::mt19937                        m_randomGenerator;
 
 public:
@@ -29,19 +27,16 @@ public:
         : m_contact(id), m_protocol(protocol)
         , m_info(boost::chrono::system_clock::now()) { };
 
+    ID id();
+    BucketMap bucketMap() { return m_BucketMap; };
+    IKademliaTransportProtocol& protocol();
+    NodeInfo nodeInfo() { return m_info; };
+
     void randomizeId();
-    bool createEndpoint();
-
-    const ID & id() const;
-    boost::asio::ip::tcp::endpoint getNodeEndpoint() const;
-    NodeInfo nodeInfo() const;
-    BucketMap bucketMap() { return m_BucketMap;};
-
-    void addNode(const ID & id);
+    void addNode(const Contact & contact);
+    ID pickRandomNode(Bucket& b);
 
     friend bool operator==(const Node & l, const Node & r);
-    IKademliaTransportProtocol& protocol();
-    ID pickRandomNode(Bucket& b);
 
     void sendPing(const ID & recipientId, const ID & senderId, const ID & queriedId);
     void sendPingResponse(const ID & queryingId, const ID & queriedId);
@@ -49,7 +44,7 @@ public:
     void receivePingResponse(const ID & queryingId, const ID & queriedId);
 
     void sendFindNode(const ID & recipientId, const ID & senderId, const ID & queriedId);
-    void sendFindNodeResponse(const ID & myId, const ID & queriedId);
-    void receiveFindNode(const ID & recipientId, const ID & senderId, const ID & queriedId);
+    void sendFindNodeResponse(const ID & recipientId, const ID & senderId, const ID & queriedId);
+    void receiveFindNode(const ID & myID, const ID & senderId, const ID & queriedId);
     void receiveFindNodeResponse(const ID & myId, const ID & queriedId);
 };

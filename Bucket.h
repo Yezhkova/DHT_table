@@ -13,10 +13,10 @@ public:
     Bucket() = default;
 
     std::set<Contact> bucket() { return m_Bucket; };
-    std::set<Contact>::iterator find_node(const ID &id);
-    bool addNode(const ID &id);
-    bool containsNode(const ID &id);
-    bool removeNode(const ID &id);
+    std::set<Contact>::iterator find_node(const Contact &contact);
+    bool addNode(const Contact &contact);
+    bool containsNode(const Contact &contact);
+    bool removeNode(const Contact &contact);
     bool isFull();
     size_t size();
 

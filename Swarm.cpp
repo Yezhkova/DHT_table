@@ -6,11 +6,11 @@ void Swarm::generateSwarm(size_t Peers, bool mode)
     {
         ID id;
         id.randomize();
-        m_peers[id] = std::make_shared<Peer>(id, *this);
+        m_peers[id] = std::make_shared<Peer>(id, *this, shared_from_this());
     }
 }
 
-void Swarm::ping(const ID & queryingId, const ID & queriedId)
+void Swarm::sendPing(const ID & recipientId, const ID & queryingId, const ID & queriedId)
 {
     if(auto it = m_peers.find(queryingId); it != m_peers.end())
     {
@@ -22,17 +22,17 @@ void Swarm::ping(const ID & queryingId, const ID & queriedId)
     }
 }
 
-void Swarm::pingResponse(const ID & queryingId, const ID & queriedId)
+void Swarm::sendPingResponse(const ID & queryingId, const ID & queriedId)
 {
 
 }
 
-void Swarm::findNode(const ID & myId, const ID & queriedId)
+void Swarm::sendFindNode(const ID & recipientId, const ID & myId, const ID & queriedId)
 {
 
 }
 
-void Swarm::findNodeResponse(const ID & myId, const ID & queriedId)
+void Swarm::sendFindNodeResponse(const ID & myId, const ID & queriedId)
 {
 
 }

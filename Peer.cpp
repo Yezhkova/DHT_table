@@ -18,5 +18,11 @@ void Peer::start(const ID & bootstrapId)
 
 void Peer::sendFindNode(const ID & recipientId, const ID & myId, const ID & queriedId)
 {
-    m_node.sendFindNode(recipientId, myId, queriedId);
+    swarm()->getPeer(recipientId)->node().receiveFindNode()
+
+}
+
+void receiveFindNode(const ID & recipientId, const ID & senderId, const ID & queriedId)
+{
+
 }

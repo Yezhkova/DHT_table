@@ -1,22 +1,22 @@
 #include "BucketMap.h"
 
-size_t BucketMap::calcBucketIndex(const ID & id)
+size_t BucketMap::calcBucketIndex(ID & id)
 {
     // if prefixLength == 160, gives -1
     return DIGEST - 1 - m_id.prefixLength(id);
 }
 
-bool BucketMap::addNode(const ID &id)
+bool BucketMap::addNode(const Contact &contact)
 {
-    size_t BucketIndex = calcBucketIndex(id);
-    return m_Buckets[BucketIndex].addNode(id);
+    size_t BucketIndex = calcBucketIndex(contact.id());
+    return m_Buckets[BucketIndex].addNode(contact);
 }
 
-bool BucketMap::containsNode(const ID & id)
+bool BucketMap::containsNode(const Contact &contact)
 {
     for(auto & bucket : m_Buckets)
     {
-        if(bucket.second.containsNode(id)) {
+        if(bucket.second.containsNode(contact)) {
             return true;
         }
     }
@@ -33,7 +33,6 @@ std::vector<Bucket> BucketMap::nonEmptyBuckets()
     }
     return res;
 }
-
 
 std::optional<Bucket> BucketMap::getNodesAtDepth(size_t depth)
 {
