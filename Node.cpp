@@ -1,19 +1,33 @@
 #include "Node.h"
-
+#include "Swarm.h"
 ID Node::id() {
     return m_contact.id();
 }
 
-void Node::randomizeId()
-{
-    m_contact.id().randomize();
+const BucketMap& Node::bucketMap() {
+    return m_BucketMap;
 }
 
-void Node::addNode(const Contact& contact)
+NodeInfo Node::nodeInfo() {
+    return m_info;
+}
+
+void Node::randomizeId()
+{
+    m_contact.randomize();
+}
+
+void Node::addNode(const ID& id)
 {
     assert((void("Node shouldn't add itself into its bucketMap"),
-            m_contact != contact));
-    m_BucketMap.addNode(contact);
+            m_contact.id() != id));
+    m_BucketMap.addNode(id);
+}
+
+void Node::updateNode(const ID& id)
+{
+    m_peer->swarm()->getPeer(id)->node().nodeInfo().
+            updateLastSeen(boost::chrono::system_clock::now());
 }
 
 bool operator==(const Node& l, const Node& r)
@@ -37,10 +51,16 @@ ID Node::pickRandomNode(Bucket& b)
 }
 */
 
-void Node::sendFindNode(const ID & recipientId, const ID & senderId, const ID & queriedId)
+std::vector<Node> Node::findClosestNodes(uint16_t k, const ID & id)
 {
+    std::vector<Node> res;
+    return res;
+}
 
 
+void Node::sendFindNode(const ID & senderId, const ID & queriedId)
+{
+    receiveFindNode(m_contact.id(), senderId, queriedId);
 }
 
 void Node::receiveFindNode(const ID & myID, const ID & senderId, const ID & queriedId)
@@ -48,10 +68,23 @@ void Node::receiveFindNode(const ID & myID, const ID & senderId, const ID & quer
     if(m_BucketMap.containsNode(queriedId))
     {
         sendFindNodeResponse(senderId, myID, queriedId);
-    } else {
-
+        addNode(senderId);
+        updateNode(queriedId);
     }
+    else
+    {
+        std::vector<Node> closestNodes = findClosestNodes(3, queriedId);
+        for(auto & node : closestNodes)
+        {
+            node.sendFindNode(senderId, queriedId);
+            node.addNode(senderId);
+        }
+    }
+}
 
+void Node::sendFindNodeResponse(const ID & recipientId, const ID & myId, const ID & queriedId)
+{
+    m_peer->swarm()->getPeer(recipientId)->receiveFindNodeResponse(myId, queriedId);
 }
 
 

@@ -14,5 +14,6 @@ public:
     NodeInfo(boost::chrono::system_clock::time_point time)
         : m_lastSeen(time) {};
 
+    void updateLastSeen(boost::chrono::system_clock::time_point time);
 };
 

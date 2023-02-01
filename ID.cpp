@@ -16,7 +16,7 @@ ID ID::createRandomId()
     return id;
 }
 
-const std::bitset<DIGEST> ID::getIdBits()
+const std::bitset<DIGEST> ID::getIdBits() const
 {
     return m_idBits;
 }
@@ -84,12 +84,28 @@ bool operator==(const ID & l, const ID & r)
 
 bool operator!=(const ID & l, const ID & r)
 {
-    return l.m_idBits != r.m_idBits;
+    return !(l.m_idBits == r.m_idBits);
 }
 
 bool operator<(const ID & l, const ID & r)
 {
     return l.m_idBits.to_string() < r.m_idBits.to_string();
 }
+
+bool operator<=(const ID & l, const ID & r)
+{
+    return l.m_idBits.to_string() <= r.m_idBits.to_string();
+}
+
+bool operator>(const ID & l, const ID & r)
+{
+    return r.m_idBits.to_string() < l.m_idBits.to_string();
+}
+
+bool operator>=(const ID & l, const ID & r)
+{
+    return r.m_idBits.to_string() <= l.m_idBits.to_string();
+}
+
 
 

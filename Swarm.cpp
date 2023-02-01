@@ -1,12 +1,36 @@
 #include "Swarm.h"
 
+Swarm::Swarm(bool mode, int PeerNumber)
+    : m_useTcp(mode)
+{
+    Peer bootstrapNode(ID(), *this, this);
+    m_bootstrapNode = & bootstrapNode;
+    generateSwarm(PeerNumber, mode);
+}
+
+bool Swarm::tcp() {
+    return m_useTcp;
+}
+
+Peer* Swarm::bootstrapNode() {
+    return m_bootstrapNode;
+}
+
+std::map<ID, std::shared_ptr<Peer>> Swarm::peers() const {
+    return m_peers;
+}
+
+std::shared_ptr<Peer> Swarm::getPeer(const ID& id) {
+    return m_peers.find(id)->second;
+}
+
 void Swarm::generateSwarm(size_t Peers, bool mode)
 {
     for(size_t i = 0; i < Peers; ++i)
     {
         ID id;
         id.randomize();
-        m_peers[id] = std::make_shared<Peer>(id, *this, shared_from_this());
+        m_peers[id] = std::make_shared<Peer>(id, *this, this);
     }
 }
 

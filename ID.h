@@ -19,7 +19,7 @@ public:
 
     ID();
 
-    const std::bitset<DIGEST> getIdBits();
+    const std::bitset<DIGEST> getIdBits() const;
     void randomize();
 
     static ID createRandomId();
@@ -28,8 +28,12 @@ public:
     std::array<std::bitset<PART>,BITS> getPartitionId() const;
 
     operator std::string() const;
-    friend bool operator==(const ID & l, const ID & r);
-    friend bool operator!=(const ID & l, const ID & r);
-    friend bool operator<(const ID & l, const ID & r);
+    friend bool operator == (const ID & l, const ID & r);
+    friend bool operator != (const ID & l, const ID & r);
+    friend bool operator <  (const ID & l, const ID & r);
+    friend bool operator <= (const ID & l, const ID & r);
+    friend bool operator >  (const ID & l, const ID & r);
+    friend bool operator >= (const ID & l, const ID & r);
+
 
 };

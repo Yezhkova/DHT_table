@@ -4,16 +4,24 @@
 #include <cstdint>
 #include <boost/asio/ip/tcp.hpp>
 
+using endpoint = boost::asio::ip::tcp::endpoint;
+
 struct Contact
 {
-    ID                              m_id;
-    boost::asio::ip::tcp::endpoint  m_endpoint; // can split into address + port
+    ID        m_id;
+    endpoint  m_endpoint; // can split into address + port
     Contact(const ID &id) : m_id(id) {};
-    ID id() { return m_id; };
-    bool operator==(const Contact & otherContact) { return m_id == otherContact.m_id; };
-    bool operator!=(const Contact & otherContact) { return m_id != otherContact.m_id; };
-    bool operator<(const Contact & otherContact) { return m_id < otherContact.m_id; };
-    bool operator>(const Contact & otherContact) { return otherContact.m_id < m_id; };
+
+    const ID& id () const;
+    const endpoint& edp() const;
+
+    void randomize();
+    bool operator == (const Contact & otherContact) const;
+    bool operator != (const Contact & otherContact) const;
+    bool operator <  (const Contact & otherContact) const;
+    bool operator <= (const Contact & otherContact) const;
+    bool operator >  (const Contact & otherContact) const;
+    bool operator >= (const Contact & otherContact) const;
 
 };
 

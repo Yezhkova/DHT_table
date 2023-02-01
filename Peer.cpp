@@ -1,4 +1,17 @@
-#include "Peer.h"
+#include "Swarm.h"
+#include "Utils.h"
+
+ID Peer::id() {
+    return m_node.id();
+}
+
+Node& Peer::node() {
+    return m_node;
+}
+
+Swarm* Peer::swarm() {
+    return m_swarm;
+}
 
 void Peer::randomize()
 {
@@ -16,13 +29,23 @@ void Peer::start(const ID & bootstrapId)
     sendFindNode(bootstrapId, m_node.id(),  m_node.id());
 }
 
-void Peer::sendFindNode(const ID & recipientId, const ID & myId, const ID & queriedId)
+void Peer::sendFindNode(const ID & recipientId,
+                        const ID & myId, const ID & queriedId)
 {
-    swarm()->getPeer(recipientId)->node().receiveFindNode()
+    m_swarm->getPeer(recipientId)->node().receiveFindNode(recipientId,
+                                                          myId, queriedId);
+}
+
+void Peer::receiveFindNode(const ID & recipientId,
+                     const ID & senderId, const ID & queriedId)
+{
 
 }
 
-void receiveFindNode(const ID & recipientId, const ID & senderId, const ID & queriedId)
+void Peer::receiveFindNodeResponse(const ID & senderId, const ID & queriedId)
 {
-
+    LOG("received node " << std::string(queriedId) <<
+        " from node "    << std::string(senderId));
+    m_node.updateNode(senderId);
 }
+
