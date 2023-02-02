@@ -7,6 +7,7 @@
 #include "NodeInfo.h"
 #include <map>
 #include <memory>
+#include <random>
 
 class Peer;
 
@@ -14,7 +15,7 @@ class Swarm : public IKademliaTransportProtocol, public std::enable_shared_from_
 {
 private:
     std::map<ID, std::shared_ptr<Peer>>  m_peers;
-    Peer*                                m_bootstrapNode = nullptr;
+    std::shared_ptr<Peer>                m_bootstrapNode = nullptr;
     bool                                 m_useTcp;
 
 public:
@@ -22,7 +23,7 @@ public:
     void generateSwarm(size_t Peers, bool mode);
     void createBootstrapNode();
     bool tcp();
-    Peer* bootstrapNode();
+    std::shared_ptr<Peer> bootstrapNode();
     std::map<ID, std::shared_ptr<Peer>> peers() const;
     std::shared_ptr<Peer> getPeer(const ID& id);
 
@@ -44,7 +45,7 @@ private:
     static size_t                       m_treeSize;
     IKademliaTransportProtocol&         m_protocol;
     NodeInfo                            m_info; // last seen time
-    static std::mt19937                 m_randomGenerator;
+//    static std::mt19937                 m_randomGenerator;
 
     void fill(uint16_t bucketIndex, std::vector<ID>& ids, uint16_t k);
 
@@ -62,12 +63,13 @@ public:
     const BucketMap& bucketMap();
     IKademliaTransportProtocol& protocol();
     NodeInfo nodeInfo();
+    Peer* peer();
 
     void randomizeId();
     void addNode(const ID& id);
     void updateNode(const ID& id);
     const ID& pickRandomNode(const Bucket& b) const;
-    std::vector<ID>& findClosestNodes(uint16_t k, const ID& id);
+    std::vector<ID> findClosestNodes(uint16_t k, const ID& id);
 
     friend bool operator==(const Node & l, const Node & r);
 

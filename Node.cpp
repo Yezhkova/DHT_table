@@ -14,6 +14,11 @@ NodeInfo Node::nodeInfo() {
     return m_info;
 }
 
+Peer* Node::peer()
+{
+    return m_peer;
+}
+
 void Node::randomizeId()
 {
     m_contact.randomize();
@@ -47,7 +52,8 @@ const ID& Node::pickRandomNode(const Bucket& b) const
 {
     auto it = b.bucket().begin();
     std::uniform_int_distribution<int> range(0, b.size()-1);
-    uint16_t randomNodeNumber = range(m_randomGenerator);
+    std::mt19937 engine;
+    int randomNodeNumber = range(engine);
     std::advance(it, randomNodeNumber);
     return it->id();
 }
@@ -63,7 +69,7 @@ void Node::fill(uint16_t bucketIndex, std::vector<ID>& ids, uint16_t k)
     }
 }
 
-std::vector<ID>& Node::findClosestNodes(uint16_t k, const ID & id)
+std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
 {
     std::vector<ID> res;
     uint16_t bucketIndex = m_BucketMap.calcBucketIndex(id);
@@ -108,10 +114,12 @@ void Node::receiveFindNode(const ID & myID, const ID & senderId, const ID & quer
     else
     {
         std::vector<ID> closestNodes = findClosestNodes(3, queriedId);
-        for(auto & node : closestNodes)
+        for(auto& id : closestNodes)
         {
-            node.sendFindNode(senderId, queriedId);
-            node.addNode(senderId);
+            m_peer->swarm()->getPeer(id)->node()
+                    .sendFindNode(senderId, queriedId);
+            m_peer->swarm()->getPeer(id)->node()
+                    .addNode(senderId);
         }
     }
 }

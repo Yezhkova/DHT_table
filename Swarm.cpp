@@ -3,8 +3,7 @@
 Swarm::Swarm(bool mode, int PeerNumber)
     : m_useTcp(mode)
 {
-    Peer bootstrapNode(ID(), *this, this);
-    m_bootstrapNode = & bootstrapNode;
+    m_bootstrapNode = std::make_shared<Peer>(ID(), *this, this);
     generateSwarm(PeerNumber, mode);
 }
 
@@ -12,7 +11,7 @@ bool Swarm::tcp() {
     return m_useTcp;
 }
 
-Peer* Swarm::bootstrapNode() {
+std::shared_ptr<Peer> Swarm::bootstrapNode() {
     return m_bootstrapNode;
 }
 

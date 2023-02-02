@@ -15,6 +15,7 @@ int main(void) {
         for(auto & peer1 : peers)
         {
             LOG(std::string(peer1.second->id()));
+            auto ma = peer1.second->node().bucketMap().map();
             peer1.second->start(swarm.bootstrapNode()->id());
         }
 
