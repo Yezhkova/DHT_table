@@ -52,7 +52,7 @@ private:
 
 public:
     Node() = delete;
-    Node(Node &&) = default;                                // move constructor
+//    Node(Node &&) = default;                                // move constructor
     Node(ID id, IKademliaTransportProtocol& protocol, std::shared_ptr<Peer> peer)
         : m_contact(id)
         , m_protocol(protocol)
@@ -93,11 +93,11 @@ private:
 
 public:
     Peer() = delete;
-    Peer(Peer && ) = default;
+//    Peer(Peer && ) = default;
     Peer(ID id,
          IKademliaTransportProtocol& protocol,
          std::shared_ptr<Swarm> swarm)
-        : m_node(id, protocol, shared_from_this())
+        : m_node(id, protocol, std::make_shared<Peer>(*this))
         , m_swarm(swarm) {};
 
     ID id();

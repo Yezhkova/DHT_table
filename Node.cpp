@@ -84,7 +84,6 @@ std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
             fill(nextBucket, res, k);
             fill(prevBucket, res, k);
         }
-
     }
     else
     {
