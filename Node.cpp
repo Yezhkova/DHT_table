@@ -1,6 +1,8 @@
 #include "Swarm.h"
+#include "Utils.h"
 
 size_t Node::m_treeSize = 160;
+std::mt19937 Node::m_randomGenerator;
 
 ID Node::id() {
     return m_contact.id();
@@ -33,8 +35,15 @@ void Node::addNode(const ID& id)
 
 void Node::updateNode(const ID& id)
 {
-    m_peer.lock()->swarm().lock()->getPeer(id)->node().nodeInfo().
-            updateLastSeen(boost::chrono::system_clock::now());
+    if (std::shared_ptr<Peer> sptPeer = m_peer.lock()) {
+        if(std::shared_ptr<Swarm> sptSwarm = sptPeer->swarm().lock())
+        {
+            sptSwarm->getPeer(id)->node().nodeInfo().
+                    updateLastSeen(boost::chrono::system_clock::now());
+        }
+        else LOG("updateNode error: cannot lock Swarm weak_ptr");
+    }
+    else LOG("updateNode error: cannot lock Peer weak_ptr");
 }
 
 bool operator==(const Node& l, const Node& r)
@@ -52,8 +61,8 @@ const ID& Node::pickRandomNode(const Bucket& b) const
 {
     auto it = b.bucket().begin();
     std::uniform_int_distribution<int> range(0, b.size()-1);
-    std::mt19937 engine;
-    int randomNodeNumber = range(engine);
+//    std::mt19937 m_randomGenerator;
+    int randomNodeNumber = range(m_randomGenerator);
     std::advance(it, randomNodeNumber);
     return it->id();
 }
@@ -116,10 +125,17 @@ void Node::receiveFindNode(const ID & myID,
         std::vector<ID> closestNodes = findClosestNodes(3, queriedId);
         for(auto& id : closestNodes)
         {
-            m_peer.lock()->swarm().lock()->getPeer(id)->node()
-                    .sendFindNode(senderId, queriedId);
-            m_peer.lock()->swarm().lock()->getPeer(id)->node()
-                    .addNode(senderId);
+            if (std::shared_ptr<Peer> sptPeer = m_peer.lock()) {
+                if(std::shared_ptr<Swarm> sptSwarm = sptPeer->swarm().lock())
+                {
+                    sptSwarm->getPeer(id)->node()
+                            .sendFindNode(senderId, queriedId);
+                    sptSwarm->getPeer(id)->node()
+                            .addNode(senderId);
+                }
+                else LOG("receiveFindNode error: cannot lock Swarm weak_ptr");
+            }
+            else LOG("receiveFindNode error: cannot lock Peer weak_ptr");
         }
     }
 }
@@ -127,9 +143,15 @@ void Node::receiveFindNode(const ID & myID,
 void Node::sendFindNodeResponse(const ID & recipientId,
                                 const ID & myId, const ID & queriedId)
 {
-    m_peer.lock()->swarm().lock()->
-            getPeer(recipientId)->
-            receiveFindNodeResponse(myId, queriedId);
+    if (std::shared_ptr<Peer> sptPeer = m_peer.lock()) {
+        if(std::shared_ptr<Swarm> sptSwarm = sptPeer->swarm().lock())
+        {
+            sptSwarm->getPeer(recipientId)->
+                    receiveFindNodeResponse(myId, queriedId);
+        }
+        else LOG("sendFindNodeResponse error: cannot lock Swarm weak_ptr");
+    }
+    else LOG("sendFindNodeResponse error: cannot lock Peer weak_ptr");
 }
 
 

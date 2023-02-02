@@ -36,6 +36,9 @@ void Peer::sendFindNode(const ID & recipientId,
         spt->getPeer(recipientId)->node()
             .receiveFindNode(recipientId,myId, queriedId);
     }
+    else {
+        LOG("sendFindNode error: cannot lock weak ptr");
+    }
 }
 
 void Peer::receiveFindNode(const ID & recipientId,

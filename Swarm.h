@@ -45,7 +45,7 @@ private:
     static size_t                     m_treeSize;
     IKademliaTransportProtocol&       m_protocol;
     NodeInfo                          m_info; // last seen time
-//    static std::mt19937             m_randomGenerator;
+    static std::mt19937               m_randomGenerator;
 
     void fill(uint16_t bucketIndex, std::vector<ID>& ids, uint16_t k);
 
