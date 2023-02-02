@@ -38,14 +38,14 @@ public:
 class Node
 {
 private:
-    bool                                m_isStarting = true;
-    Contact                             m_contact;
-    std::shared_ptr<Peer>               m_peer = nullptr;
-    BucketMap                           m_BucketMap;
-    static size_t                       m_treeSize;
-    IKademliaTransportProtocol&         m_protocol;
-    NodeInfo                            m_info; // last seen time
-//    static std::mt19937                 m_randomGenerator;
+    bool                              m_isStarting = true;
+    Contact                           m_contact;
+    std::weak_ptr<Peer>               m_peer;
+    BucketMap                         m_BucketMap;
+    static size_t                     m_treeSize;
+    IKademliaTransportProtocol&       m_protocol;
+    NodeInfo                          m_info; // last seen time
+//    static std::mt19937             m_randomGenerator;
 
     void fill(uint16_t bucketIndex, std::vector<ID>& ids, uint16_t k);
 
@@ -63,7 +63,7 @@ public:
     const BucketMap& bucketMap();
     IKademliaTransportProtocol& protocol();
     NodeInfo nodeInfo();
-    std::shared_ptr<Peer> peer();
+    std::weak_ptr<Peer> peer();
 
     void randomizeId();
     void addNode(const ID& id);
@@ -88,8 +88,8 @@ public:
 class Peer: public std::enable_shared_from_this<Peer>
 {
 private:
-    Node                    m_node;
-    std::shared_ptr<Swarm>  m_swarm = nullptr;
+    Node                  m_node;
+    std::weak_ptr<Swarm>  m_swarm;
 
 public:
     Peer() = delete;
@@ -102,7 +102,7 @@ public:
 
     ID id();
     Node & node();
-    std::shared_ptr<Swarm> swarm();
+    std::weak_ptr<Swarm> swarm();
     void randomize();
 
     void start(const ID & bootstrapId);

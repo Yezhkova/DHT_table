@@ -9,7 +9,7 @@ Node& Peer::node() {
     return m_node;
 }
 
-std::shared_ptr<Swarm> Peer::swarm() {
+std::weak_ptr<Swarm> Peer::swarm() {
     return m_swarm;
 }
 
@@ -32,8 +32,10 @@ void Peer::start(const ID & bootstrapId)
 void Peer::sendFindNode(const ID & recipientId,
                         const ID & myId, const ID & queriedId)
 {
-    m_swarm->getPeer(recipientId)->node().receiveFindNode(recipientId,
-                                                          myId, queriedId);
+    if (std::shared_ptr<Swarm> spt = m_swarm.lock()) {
+        spt->getPeer(recipientId)->node()
+            .receiveFindNode(recipientId,myId, queriedId);
+    }
 }
 
 void Peer::receiveFindNode(const ID & recipientId,

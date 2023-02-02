@@ -14,7 +14,7 @@ NodeInfo Node::nodeInfo() {
     return m_info;
 }
 
-std::shared_ptr<Peer> Node::peer()
+std::weak_ptr<Peer> Node::peer()
 {
     return m_peer;
 }
@@ -33,7 +33,7 @@ void Node::addNode(const ID& id)
 
 void Node::updateNode(const ID& id)
 {
-    m_peer->swarm()->getPeer(id)->node().nodeInfo().
+    m_peer.lock()->swarm().lock()->getPeer(id)->node().nodeInfo().
             updateLastSeen(boost::chrono::system_clock::now());
 }
 
@@ -103,7 +103,8 @@ void Node::sendFindNode(const ID & senderId, const ID & queriedId)
     receiveFindNode(m_contact.id(), senderId, queriedId);
 }
 
-void Node::receiveFindNode(const ID & myID, const ID & senderId, const ID & queriedId)
+void Node::receiveFindNode(const ID & myID,
+                           const ID & senderId, const ID & queriedId)
 {
     if(m_BucketMap.containsNode(queriedId))
     {
@@ -116,17 +117,20 @@ void Node::receiveFindNode(const ID & myID, const ID & senderId, const ID & quer
         std::vector<ID> closestNodes = findClosestNodes(3, queriedId);
         for(auto& id : closestNodes)
         {
-            m_peer->swarm()->getPeer(id)->node()
+            m_peer.lock()->swarm().lock()->getPeer(id)->node()
                     .sendFindNode(senderId, queriedId);
-            m_peer->swarm()->getPeer(id)->node()
+            m_peer.lock()->swarm().lock()->getPeer(id)->node()
                     .addNode(senderId);
         }
     }
 }
 
-void Node::sendFindNodeResponse(const ID & recipientId, const ID & myId, const ID & queriedId)
+void Node::sendFindNodeResponse(const ID & recipientId,
+                                const ID & myId, const ID & queriedId)
 {
-    m_peer->swarm()->getPeer(recipientId)->receiveFindNodeResponse(myId, queriedId);
+    m_peer.lock()->swarm().lock()->
+            getPeer(recipientId)->
+            receiveFindNodeResponse(myId, queriedId);
 }
 
 
