@@ -14,7 +14,7 @@ NodeInfo Node::nodeInfo() {
     return m_info;
 }
 
-Peer* Node::peer()
+std::shared_ptr<Peer> Node::peer()
 {
     return m_peer;
 }

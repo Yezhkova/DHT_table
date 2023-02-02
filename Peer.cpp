@@ -9,7 +9,7 @@ Node& Peer::node() {
     return m_node;
 }
 
-Swarm* Peer::swarm() {
+std::shared_ptr<Swarm> Peer::swarm() {
     return m_swarm;
 }
 

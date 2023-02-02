@@ -40,7 +40,7 @@ class Node
 private:
     bool                                m_isStarting = true;
     Contact                             m_contact;
-    Peer*                               m_peer = nullptr;
+    std::shared_ptr<Peer>               m_peer = nullptr;
     BucketMap                           m_BucketMap;
     static size_t                       m_treeSize;
     IKademliaTransportProtocol&         m_protocol;
@@ -53,17 +53,17 @@ private:
 public:
     Node() = delete;
     Node(Node &&) = default;                                // move constructor
-    Node(ID id, IKademliaTransportProtocol& protocol, Peer* peer)
+    Node(ID id, IKademliaTransportProtocol& protocol, std::shared_ptr<Peer> peer)
         : m_contact(id)
         , m_protocol(protocol)
-        , m_info(boost::chrono::system_clock::now())
-        , m_peer(peer) {};
+        , m_peer(peer)
+        , m_info(boost::chrono::system_clock::now()) {};
 
     ID id();
     const BucketMap& bucketMap();
     IKademliaTransportProtocol& protocol();
     NodeInfo nodeInfo();
-    Peer* peer();
+    std::shared_ptr<Peer> peer();
 
     void randomizeId();
     void addNode(const ID& id);
@@ -85,24 +85,24 @@ public:
 
 };
 
-class Peer
+class Peer: public std::enable_shared_from_this<Peer>
 {
 private:
-    Node    m_node;
-    Swarm*  m_swarm = nullptr;
+    Node                    m_node;
+    std::shared_ptr<Swarm>  m_swarm = nullptr;
 
 public:
     Peer() = delete;
     Peer(Peer && ) = default;
     Peer(ID id,
          IKademliaTransportProtocol& protocol,
-         Swarm* swarm)
-        : m_node(id, protocol, this)
+         std::shared_ptr<Swarm> swarm)
+        : m_node(id, protocol, shared_from_this())
         , m_swarm(swarm) {};
 
     ID id();
     Node & node();
-    Swarm* swarm();
+    std::shared_ptr<Swarm> swarm();
     void randomize();
 
     void start(const ID & bootstrapId);
