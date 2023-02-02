@@ -2,7 +2,7 @@
 
 size_t Bucket::m_maxBucketSize = 20;
 
-const std::set<Contact>& Bucket::bucket() {
+const std::set<Contact>& Bucket::bucket() const {
     return m_Bucket;
 };
 
@@ -11,14 +11,19 @@ auto Bucket::find_node(const ID& id)
     return m_Bucket.find(id);
 }
 
-size_t Bucket::size()
+size_t Bucket::size() const
 {
     return m_Bucket.size();
 }
 
-bool Bucket::isFull()
+bool Bucket::isFull() const
 {
     return m_Bucket.size() == m_maxBucketSize;
+}
+
+bool Bucket::isEmpty() const
+{
+    return m_Bucket.size() == 0;
 }
 
 bool Bucket::addNode(const Contact &contact)

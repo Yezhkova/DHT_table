@@ -1,5 +1,7 @@
-#include "Node.h"
 #include "Swarm.h"
+
+size_t Node::m_treeSize = 160;
+
 ID Node::id() {
     return m_contact.id();
 }
@@ -40,20 +42,52 @@ IKademliaTransportProtocol& Node::protocol()
     return m_protocol;
 }
 
-/*
-ID Node::pickRandomNode(Bucket& b)
+
+const ID& Node::pickRandomNode(const Bucket& b) const
 {
     auto it = b.bucket().begin();
     std::uniform_int_distribution<int> range(0, b.size()-1);
     uint16_t randomNodeNumber = range(m_randomGenerator);
     std::advance(it, randomNodeNumber);
-    return it->second;
+    return it->id();
 }
-*/
 
-std::vector<Node> Node::findClosestNodes(uint16_t k, const ID & id)
+void Node::fill(uint16_t bucketIndex, std::vector<ID>& ids, uint16_t k)
 {
-    std::vector<Node> res;
+    for(auto& contact: m_BucketMap.getNodesAtDepth(bucketIndex).bucket())
+    {
+        if(ids.size() < k)
+        {
+            ids.push_back(contact.id());
+        }
+    }
+}
+
+std::vector<ID>& Node::findClosestNodes(uint16_t k, const ID & id)
+{
+    std::vector<ID> res;
+    uint16_t bucketIndex = m_BucketMap.calcBucketIndex(id);
+    uint16_t actualBucketSize = m_BucketMap.getNodesAtDepth(bucketIndex).size();
+    if(actualBucketSize < k)
+    {
+        int nextBucket = bucketIndex, prevBucket = bucketIndex;
+        for(size_t i = 1; res.size() < k && nextBucket < m_treeSize && prevBucket > -1; ++i)
+        {
+            nextBucket = bucketIndex + i;
+            prevBucket = bucketIndex - i;
+            fill(nextBucket, res, k);
+            fill(prevBucket, res, k);
+        }
+
+    }
+    else
+    {
+        for(size_t i = 0; i < k; ++i)
+        {
+            res.push_back(pickRandomNode(m_BucketMap
+                                         .getNodesAtDepth(bucketIndex)));
+        }
+    }
     return res;
 }
 
@@ -73,7 +107,7 @@ void Node::receiveFindNode(const ID & myID, const ID & senderId, const ID & quer
     }
     else
     {
-        std::vector<Node> closestNodes = findClosestNodes(3, queriedId);
+        std::vector<ID> closestNodes = findClosestNodes(3, queriedId);
         for(auto & node : closestNodes)
         {
             node.sendFindNode(senderId, queriedId);

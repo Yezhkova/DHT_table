@@ -21,8 +21,8 @@ public:
     bool containsNode(const Contact& contact);
     bool containsNode(const ID& id);
 
-    const std::map<BucketIndex, Bucket>& map();
-    std::optional<Bucket> getNodesAtDepth(size_t depth);
+    const std::map<BucketIndex, Bucket>& map() const;
+    const Bucket& getNodesAtDepth(size_t depth) const;
     size_t size();
 
     std::vector<Bucket> nonEmptyBuckets();

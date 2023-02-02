@@ -41,10 +41,13 @@ private:
     Contact                             m_contact;
     Peer*                               m_peer = nullptr;
     BucketMap                           m_BucketMap;
-    size_t                              m_treeSize = 160;
+    static size_t                       m_treeSize;
     IKademliaTransportProtocol&         m_protocol;
     NodeInfo                            m_info; // last seen time
-    std::mt19937                        m_randomGenerator;
+    static std::mt19937                 m_randomGenerator;
+
+    void fill(uint16_t bucketIndex, std::vector<ID>& ids, uint16_t k);
+
 
 public:
     Node() = delete;
@@ -63,8 +66,8 @@ public:
     void randomizeId();
     void addNode(const ID& id);
     void updateNode(const ID& id);
-    ID pickRandomNode(Bucket& b);
-    std::vector<Node> findClosestNodes(uint16_t k, const ID & id);
+    const ID& pickRandomNode(const Bucket& b) const;
+    std::vector<ID>& findClosestNodes(uint16_t k, const ID& id);
 
     friend bool operator==(const Node & l, const Node & r);
 
@@ -77,6 +80,7 @@ public:
     void sendFindNodeResponse(const ID & recipientId, const ID & senderId, const ID & queriedId);
     void receiveFindNode(const ID & myID, const ID & senderId, const ID & queriedId);
     void receiveFindNodeResponse(const ID & myId, const ID & queriedId);
+
 };
 
 class Peer

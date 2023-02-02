@@ -12,20 +12,21 @@ private:
 public:
     Bucket() = default;
 
-    const std::set<Contact>& bucket();
+    const std::set<Contact>& bucket() const;
 
     auto find_node(const ID& id);
 
-    bool addNode(const Contact &contact);
+    bool addNode(const Contact& contact);
     bool addNode(const ID& id);
 
-    bool containsNode(const Contact &contact);
+    bool containsNode(const Contact& contact);
     bool containsNode(const ID& id);
 
-    bool removeNode(const Contact &contact);
+    bool removeNode(const Contact& contact);
     bool removeNode(const ID& id);
 
-    bool isFull();
-    size_t size();
+    bool isFull() const;
+    bool isEmpty() const;
+    size_t size() const;
 
 };

@@ -1,6 +1,6 @@
 #include "BucketMap.h"
 
-const std::map<BucketIndex, Bucket>& BucketMap::map() {
+const std::map<BucketIndex, Bucket>& BucketMap::map() const {
     return m_Buckets;
 };
 
@@ -55,16 +55,9 @@ std::vector<Bucket> BucketMap::nonEmptyBuckets()
     return res;
 }
 
-std::optional<Bucket> BucketMap::getNodesAtDepth(size_t depth)
+const Bucket& BucketMap::getNodesAtDepth(size_t depth) const
 {
-    try
-    {
-        return m_Buckets.at(depth);
-    }
-    catch (std::out_of_range &e)
-    {
-        return {};
-    }
+    return m_Buckets.at(depth);
 }
 
 size_t BucketMap::size()
