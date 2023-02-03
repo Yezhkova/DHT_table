@@ -13,10 +13,6 @@ Node& Peer::node() {
     return m_node;
 }
 
-std::weak_ptr<Swarm> Peer::swarm() {
-    return m_swarm;
-}
-
 void Peer::randomize()
 {
     m_node.randomizeId();

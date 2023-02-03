@@ -8,14 +8,13 @@
 class SwarmSimulator //: public std::enable_shared_from_this<SwarmSimulator>
 {
 private:
-    Swarm                     m_Swarm;
-    ISimulationTask           m_simTask;
+//    ISimulationTask           m_simTask;
     boost::asio::io_context   m_ioContext;
 
 public:
 
-    SwarmSimulator(bool useTcpMode, int initialPeerNumber);
-    SwarmSimulator(const SwarmSimulator& ss); // copy constructor for shared_ptr < SwarmSimulator >
+    SwarmSimulator() = default;
+    void init(bool useTcpMode, int initialPeerNumber);
 
     void addTask(std::function<void ()> F);
 

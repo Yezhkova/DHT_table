@@ -1,15 +1,8 @@
 #include "SwarmSimulator.h"
 
-SwarmSimulator::SwarmSimulator(bool useTcpMode, int initialPeerNumber)
-    : m_Swarm(useTcpMode, initialPeerNumber) {}
-
-SwarmSimulator::SwarmSimulator(const SwarmSimulator& ss)
-    : m_Swarm(ss.m_Swarm)
-    , m_simTask(ss.m_simTask) {}
-
-const Swarm& SwarmSimulator::getSwarm() const
+void SwarmSimulator::init(bool useTcpMode, int initialPeerNumber)
 {
-    return m_Swarm;
+    Swarm::getInstace().init(useTcpMode, initialPeerNumber);
 }
 
 void SwarmSimulator::addTask(std::function<void ()> F)

@@ -15,12 +15,16 @@ class Swarm : public IKademliaTransportProtocol, public std::enable_shared_from_
 {
 private:
     std::map<ID, std::shared_ptr<Peer>>  m_peers;
-    std::shared_ptr<Peer>                m_bootstrapNode = nullptr;
-    bool                                 m_useTcp;
+    std::shared_ptr<Peer>                m_bootstrapNode;
+    bool                                 m_useTcp = false;
+
+    Swarm() {};
 
 public:
-    Swarm(const Swarm&) = default;
-    Swarm(bool mode, int PeerNumber);
+
+    static Swarm& getInstace(); //
+
+    void init(bool mode, int PeerNumber);
     void generateSwarm(size_t Peers, bool mode);
     void createBootstrapNode();
     bool tcp();
@@ -41,7 +45,7 @@ class Node
 private:
     bool                              m_isStarting = true;
     Contact                           m_contact;
-    std::weak_ptr<Peer>               m_peer;
+    Peer&                             m_peer;
     BucketMap                         m_BucketMap;
     static size_t                     m_treeSize;
     IKademliaTransportProtocol&       m_protocol;
@@ -52,13 +56,11 @@ private:
 
 
 public:
-    Node() = delete;
-    Node(const Node&) = default;
-//    Node(Node &&) = default;                                // move constructor
-    Node(ID id, IKademliaTransportProtocol& protocol, const std::shared_ptr<Peer>& peer)
+//    Node() = delete;
+    Node(ID id, IKademliaTransportProtocol& protocol, Peer& peer)
         : m_contact(id)
         , m_protocol(protocol)
-        , m_peer(std::move(peer))
+        , m_peer(peer)
         , m_info(boost::chrono::system_clock::now()) {};
 
     ID id();
@@ -90,7 +92,6 @@ public:
 class Peer: public std::enable_shared_from_this<Peer>
 {
 private:
-    std::weak_ptr<Swarm>  m_swarm;
     Node                  m_node;
 
 public:
@@ -99,13 +100,11 @@ public:
     Peer(Peer && ) = default;
     Peer(ID id,
          IKademliaTransportProtocol& protocol,
-         std::weak_ptr<Swarm> swarm)
-        : m_swarm(std::move(swarm))
-        , m_node(id, protocol, std::make_shared<Peer>(*this)) {};
+         bool useTcp)
+        : m_node(id, protocol, *this) {};
 
     ID id();
     Node & node();
-    std::weak_ptr<Swarm> swarm();
     void randomize();
 
     void start(const ID & bootstrapId);

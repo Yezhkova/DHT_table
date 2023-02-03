@@ -1,9 +1,17 @@
 #include "Swarm.h"
 #include "Utils.h"
 
-Swarm::Swarm(bool mode, int PeerNumber)
-    : m_useTcp(mode)
+Swarm& Swarm::getInstace()
 {
+    static Swarm swarm;
+    return swarm;
+}
+
+void Swarm::init(bool mode, int PeerNumber)
+{
+    m_peers.clear();
+    m_bootstrapNode.reset();
+
     m_bootstrapNode = std::make_shared<Peer>(ID(), *this, std::make_shared<Swarm>(*this));
     LOG("bootstrap node generated");
     generateSwarm(PeerNumber, mode);
