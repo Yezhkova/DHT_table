@@ -19,8 +19,7 @@ private:
     bool                                 m_useTcp;
 
 public:
-    Swarm(const Swarm &) = default;
-//    Swarm(Swarm &&) = default;
+    Swarm(const Swarm&) = default;
     Swarm(bool mode, int PeerNumber);
     void generateSwarm(size_t Peers, bool mode);
     void createBootstrapNode();
@@ -54,6 +53,7 @@ private:
 
 public:
     Node() = delete;
+    Node(const Node&) = default;
 //    Node(Node &&) = default;                                // move constructor
     Node(ID id, IKademliaTransportProtocol& protocol, const std::shared_ptr<Peer>& peer)
         : m_contact(id)

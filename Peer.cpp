@@ -1,6 +1,10 @@
 #include "Swarm.h"
 #include "Utils.h"
 
+/*Peer::Peer(const Peer& p)
+    : m_swarm(std::move(p.m_swarm))
+    , m_node(std::move(p.m_node)) { }*/
+
 ID Peer::id() {
     return m_node.id();
 }

@@ -9,6 +9,11 @@ Swarm::Swarm(bool mode, int PeerNumber)
     generateSwarm(PeerNumber, mode);
 }
 
+/*Swarm::Swarm(const Swarm& s)
+    : m_peers(std::move(s.m_peers))
+    , m_bootstrapNode(std::move(s.m_bootstrapNode))
+    , m_useTcp(std::move(s.m_useTcp)) { }*/
+
 bool Swarm::tcp() {
     return m_useTcp;
 }
