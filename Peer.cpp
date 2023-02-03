@@ -37,7 +37,7 @@ void Peer::sendFindNode(const ID & recipientId,
             .receiveFindNode(recipientId,myId, queriedId);
     }
     else {
-        LOG("sendFindNode error: cannot lock weak ptr");
+        LOG("sendFindNode error: cannot lock Swarm weak_ptr");
     }
 }
 

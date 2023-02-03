@@ -40,7 +40,7 @@ class Node
 private:
     bool                              m_isStarting = true;
     Contact                           m_contact;
-    std::weak_ptr<Peer>               m_peer;
+    std::shared_ptr<Peer>             m_peer;
     BucketMap                         m_BucketMap;
     static size_t                     m_treeSize;
     IKademliaTransportProtocol&       m_protocol;
@@ -88,17 +88,17 @@ public:
 class Peer: public std::enable_shared_from_this<Peer>
 {
 private:
-    Node                  m_node;
     std::weak_ptr<Swarm>  m_swarm;
+    Node                  m_node;
 
 public:
     Peer() = delete;
-//    Peer(Peer && ) = default;
+    Peer(Peer && ) = default;
     Peer(ID id,
          IKademliaTransportProtocol& protocol,
-         std::shared_ptr<Swarm> swarm)
-        : m_node(id, protocol, std::make_shared<Peer>(*this))
-        , m_swarm(swarm) {};
+         std::weak_ptr<Swarm> swarm)
+        : m_swarm(std::move(swarm))
+        , m_node(id, protocol, std::shared_ptr<Peer>(this)) {};
 
     ID id();
     Node & node();

@@ -1,9 +1,11 @@
 #include "Swarm.h"
+#include "Utils.h"
 
 Swarm::Swarm(bool mode, int PeerNumber)
     : m_useTcp(mode)
 {
-    m_bootstrapNode = std::make_shared<Peer>(ID(), *this, std::make_shared<Swarm>(*this));
+    m_bootstrapNode = std::make_shared<Peer>(ID(), *this, std::shared_ptr<Swarm>(this));
+    LOG("bootstrap node generated");
     generateSwarm(PeerNumber, mode);
 }
 
@@ -29,7 +31,7 @@ void Swarm::generateSwarm(size_t Peers, bool mode)
     {
         ID id;
         id.randomize();
-        m_peers[id] = std::make_shared<Peer>(id, *this, std::make_shared<Swarm>(*this));
+        m_peers[id] = std::make_shared<Peer>(id, *this, shared_from_this());//std::shared_ptr<Swarm>(this));
     }
 }
 
