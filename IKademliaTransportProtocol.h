@@ -15,3 +15,4 @@ public:
 // TODO:   virtual void store(const ID & id) = 0;
 // TODO:   virtual void findValue(const ID & myId, const ID & queriedId) = 0;
 };
+

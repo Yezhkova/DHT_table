@@ -35,12 +35,12 @@ void Node::addNode(const ID& id)
 
 void Node::updateNode(const ID& id)
 {
-        if(std::shared_ptr<Swarm> sptSwarm = m_peer->swarm().lock())
+    if(std::shared_ptr<Peer> sptPeer = m_peer.lock())
         {
-            sptSwarm->getPeer(id)->node().nodeInfo().
+            sptPeer->swarm().lock()->getPeer(id)->node().nodeInfo().
                     updateLastSeen(boost::chrono::system_clock::now());
         }
-        else LOG("updateNode error: cannot lock Swarm weak_ptr");
+        else LOG("updateNode error: cannot lock Peer weak_ptr");
 }
 
 bool operator==(const Node& l, const Node& r)
@@ -122,11 +122,11 @@ void Node::receiveFindNode(const ID & myID,
         std::vector<ID> closestNodes = findClosestNodes(3, queriedId);
         for(auto& id : closestNodes)
         {
-                if(std::shared_ptr<Swarm> sptSwarm = m_peer->swarm().lock())
+                if(std::shared_ptr<Peer> sptPeer = m_peer.lock())
                 {
-                    sptSwarm->getPeer(id)->node()
+                    sptPeer->swarm().lock()->getPeer(id)->node()
                             .sendFindNode(senderId, queriedId);
-                    sptSwarm->getPeer(id)->node()
+                    sptPeer->swarm().lock()->getPeer(id)->node()
                             .addNode(senderId);
                 }
                 else LOG("receiveFindNode error: cannot lock Swarm weak_ptr");
@@ -137,9 +137,9 @@ void Node::receiveFindNode(const ID & myID,
 void Node::sendFindNodeResponse(const ID & recipientId,
                                 const ID & myId, const ID & queriedId)
 {
-        if(std::shared_ptr<Swarm> sptSwarm = m_peer->swarm().lock())
+    if(std::shared_ptr<Peer> sptPeer = m_peer.lock())
         {
-            sptSwarm->getPeer(recipientId)->
+            sptPeer->swarm().lock()->getPeer(recipientId)->
                     receiveFindNodeResponse(myId, queriedId);
         }
         else LOG("sendFindNodeResponse error: cannot lock Swarm weak_ptr");

@@ -32,8 +32,8 @@ void Peer::start(const ID & bootstrapId)
 void Peer::sendFindNode(const ID & recipientId,
                         const ID & myId, const ID & queriedId)
 {
-    if (std::shared_ptr<Swarm> spt = m_swarm.lock()) {
-        spt->getPeer(recipientId)->node()
+    if (std::shared_ptr<Swarm> sptSwarm = m_swarm.lock()) {
+        sptSwarm->getPeer(recipientId)->node()
             .receiveFindNode(recipientId,myId, queriedId);
     }
     else {

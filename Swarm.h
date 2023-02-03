@@ -19,6 +19,8 @@ private:
     bool                                 m_useTcp;
 
 public:
+    Swarm(const Swarm &) = default;
+//    Swarm(Swarm &&) = default;
     Swarm(bool mode, int PeerNumber);
     void generateSwarm(size_t Peers, bool mode);
     void createBootstrapNode();
@@ -40,7 +42,7 @@ class Node
 private:
     bool                              m_isStarting = true;
     Contact                           m_contact;
-    std::shared_ptr<Peer>             m_peer;
+    std::weak_ptr<Peer>               m_peer;
     BucketMap                         m_BucketMap;
     static size_t                     m_treeSize;
     IKademliaTransportProtocol&       m_protocol;
@@ -53,10 +55,10 @@ private:
 public:
     Node() = delete;
 //    Node(Node &&) = default;                                // move constructor
-    Node(ID id, IKademliaTransportProtocol& protocol, std::shared_ptr<Peer> peer)
+    Node(ID id, IKademliaTransportProtocol& protocol, const std::shared_ptr<Peer>& peer)
         : m_contact(id)
         , m_protocol(protocol)
-        , m_peer(peer)
+        , m_peer(std::move(peer))
         , m_info(boost::chrono::system_clock::now()) {};
 
     ID id();
@@ -93,12 +95,13 @@ private:
 
 public:
     Peer() = delete;
+    Peer(const Peer&) = default;
     Peer(Peer && ) = default;
     Peer(ID id,
          IKademliaTransportProtocol& protocol,
          std::weak_ptr<Swarm> swarm)
         : m_swarm(std::move(swarm))
-        , m_node(id, protocol, std::shared_ptr<Peer>(this)) {};
+        , m_node(id, protocol, std::make_shared<Peer>(*this)) {};
 
     ID id();
     Node & node();
