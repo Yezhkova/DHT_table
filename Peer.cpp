@@ -32,13 +32,8 @@ void Peer::start(const ID & bootstrapId)
 void Peer::sendFindNode(const ID & recipientId,
                         const ID & myId, const ID & queriedId)
 {
-    if (std::shared_ptr<Swarm> sptSwarm = m_swarm.lock()) {
-        sptSwarm->getPeer(recipientId)->node()
+    Swarm::getInstace().getPeer(recipientId)->node()
             .receiveFindNode(recipientId,myId, queriedId);
-    }
-    else {
-        LOG("sendFindNode error: cannot lock Swarm weak_ptr");
-    }
 }
 
 void Peer::receiveFindNode(const ID & recipientId,

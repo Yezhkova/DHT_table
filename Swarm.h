@@ -11,7 +11,7 @@
 
 class Peer;
 
-class Swarm : public IKademliaTransportProtocol, public std::enable_shared_from_this<Swarm>
+class Swarm : public IKademliaTransportProtocol
 {
 private:
     std::map<ID, std::shared_ptr<Peer>>  m_peers;
@@ -22,7 +22,7 @@ private:
 
 public:
 
-    static Swarm& getInstace(); //
+    static Swarm& getInstace();
 
     void init(bool mode, int PeerNumber);
     void generateSwarm(size_t Peers, bool mode);
@@ -40,6 +40,8 @@ public:
 
 };
 
+
+using system_clock = boost::chrono::system_clock;
 class Node
 {
 private:
@@ -67,7 +69,7 @@ public:
     const BucketMap& bucketMap();
     IKademliaTransportProtocol& protocol();
     NodeInfo nodeInfo();
-    std::weak_ptr<Peer> peer();
+    Peer& peer();
 
     void randomizeId();
     void addNode(const ID& id);
@@ -89,7 +91,7 @@ public:
 
 };
 
-class Peer: public std::enable_shared_from_this<Peer>
+class Peer
 {
 private:
     Node                  m_node;

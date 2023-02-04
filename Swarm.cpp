@@ -12,15 +12,10 @@ void Swarm::init(bool mode, int PeerNumber)
     m_peers.clear();
     m_bootstrapNode.reset();
 
-    m_bootstrapNode = std::make_shared<Peer>(ID(), *this, std::make_shared<Swarm>(*this));
+    m_bootstrapNode = std::make_shared<Peer>(ID(), *this, mode);
     LOG("bootstrap node generated");
     generateSwarm(PeerNumber, mode);
 }
-
-/*Swarm::Swarm(const Swarm& s)
-    : m_peers(std::move(s.m_peers))
-    , m_bootstrapNode(std::move(s.m_bootstrapNode))
-    , m_useTcp(std::move(s.m_useTcp)) { }*/
 
 bool Swarm::tcp() {
     return m_useTcp;
@@ -44,7 +39,7 @@ void Swarm::generateSwarm(size_t Peers, bool mode)
     {
         ID id;
         id.randomize();
-        m_peers[id] = std::make_shared<Peer>(id, *this, std::make_shared<Swarm>(*this));
+        m_peers[id] = std::make_shared<Peer>(id, *this, mode);
     }
 }
 
