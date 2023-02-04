@@ -2,6 +2,7 @@
 
 #include "ISimulationTask.h"
 #include "Swarm.h"
+#include <boost/asio/io_context.hpp>
 #include <queue>
 #include <utility>
 

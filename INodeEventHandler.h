@@ -1,11 +1,11 @@
 #pragma once
 
 
-class INodeStatistics
+class INodeEventHandler
 {
 public:
-    INodeStatistics();
-    virtual ~INodeStatistics() = default;
+    INodeEventHandler();
+    virtual ~INodeEventHandler() = default;
     virtual void onFindNodeResponse(bool find, int packetNumber) = 0;
     virtual void onPacketReceived() = 0; // used for packet counting
     virtual void onPacketSent() = 0;

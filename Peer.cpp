@@ -1,9 +1,6 @@
-#include "Swarm.h"
+#include "Peer.h"
 #include "Utils.h"
-
-/*Peer::Peer(const Peer& p)
-    : m_swarm(std::move(p.m_swarm))
-    , m_node(std::move(p.m_node)) { }*/
+#include "Swarm.h"
 
 ID Peer::id() {
     return m_node.id();
@@ -47,5 +44,18 @@ void Peer::receiveFindNodeResponse(const ID & senderId, const ID & queriedId)
     LOG("received node " << std::string(queriedId) <<
         " from node "    << std::string(senderId));
     m_node.updateNode(senderId);
+}
+
+void Peer::onFindNodeResponse(bool find, int packetNumber)
+{
+
+}
+void Peer::onPacketReceived()
+{
+
+}
+void Peer::onPacketSent()
+{
+
 }
 

@@ -1,5 +1,6 @@
-#include "Swarm.h"
+#include "Node.h"
 #include "Utils.h"
+#include "Swarm.h"
 
 size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;
@@ -16,9 +17,9 @@ NodeInfo Node::nodeInfo() {
     return m_info;
 }
 
-Peer& Node::peer()
+INodeEventHandler& Node::eventHandler()
 {
-    return m_peer;
+    return m_eventHandler;
 }
 
 void Node::randomizeId()
