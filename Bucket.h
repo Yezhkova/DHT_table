@@ -28,5 +28,6 @@ public:
     bool isFull() const;
     bool isEmpty() const;
     size_t size() const;
+    friend std::ostream& operator<<(std::ostream& out, const Bucket& b);
 
 };

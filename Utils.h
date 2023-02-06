@@ -5,12 +5,12 @@
 #include <iostream>
 #include <mutex>
 
-inline std::mutex gLogMutex;
+inline std::recursive_mutex gLogMutex;
 
 // LOG
 #ifndef QDBG
     #define LOG(expr) { \
-            const std::lock_guard<std::mutex> autolock( gLogMutex ); \
+            const std::lock_guard<std::recursive_mutex> autolock( gLogMutex ); \
             std::cout << expr << std::endl << std::flush; \
         }
 #else

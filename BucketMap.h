@@ -2,18 +2,18 @@
 
 #include "Bucket.h"
 #include <map>
-#include <optional>
 
+class Node;
 using BucketIndex = size_t;
 class BucketMap
 {
 private:
-    ID                              m_id;
+    Node&                           m_node;
     std::map<BucketIndex, Bucket>   m_Buckets;
 
 public:
-    BucketMap() = default;
-    BucketMap(const ID & id) : m_id(id) {};
+    BucketMap() = delete;
+    BucketMap(Node& node) : m_node(node) {};
 
     bool addNode(const Contact& contact);
     bool addNode(const ID& id);
@@ -28,5 +28,6 @@ public:
     std::vector<Bucket> nonEmptyBuckets();
 
     size_t calcBucketIndex(const ID& id);
+    friend std::ostream& operator<< (std::ostream& out, const BucketMap& b);
 
 };

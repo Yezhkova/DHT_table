@@ -23,14 +23,22 @@ void Peer::addNode(const ID & id)
 void Peer::start(const ID & bootstrapId)
 {
     addNode(bootstrapId);
+    std::cout << m_node.bucketMap();
+//    LOG(m_node.bucketMap());
     sendFindNode(bootstrapId, m_node.id(),  m_node.id());
 }
 
 void Peer::sendFindNode(const ID & recipientId,
                         const ID & myId, const ID & queriedId)
 {
-    Swarm::getInstace().getPeer(recipientId)->node()
-            .receiveFindNode(recipientId,myId, queriedId);
+    auto peer = Swarm::getInstace().getPeer(recipientId);
+    if(peer != nullptr)
+    {
+        peer->node().receiveFindNode(recipientId, myId, queriedId);
+    }
+    else{
+        LOG("sendFindNode Warning: the recipient peer does not exist");
+    }
 }
 
 void Peer::receiveFindNode(const ID & recipientId,
@@ -41,8 +49,8 @@ void Peer::receiveFindNode(const ID & recipientId,
 
 void Peer::receiveFindNodeResponse(const ID & senderId, const ID & queriedId)
 {
-    LOG("received node " << std::string(queriedId) <<
-        " from node "    << std::string(senderId));
+    LOG("received node " << queriedId <<
+        " from node "    << senderId);
     m_node.updateNode(senderId);
 }
 

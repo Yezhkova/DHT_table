@@ -28,17 +28,18 @@ private:
 
 
 public:
-//    Node() = delete;
     Node(ID id, IKademliaTransportProtocol& protocol, INodeEventHandler& peer)
         : m_contact(id)
-        , m_protocol(protocol)
         , m_eventHandler(peer)
+        , m_BucketMap(*this)
+        , m_protocol(protocol)
         , m_info(boost::chrono::system_clock::now()) {};
 
-    ID id();
-    const BucketMap& bucketMap();
+    const ID& id() const;
+    const BucketMap& bucketMap() const;
+    const Contact& contact() const;
     IKademliaTransportProtocol& protocol();
-    NodeInfo nodeInfo();
+    NodeInfo& nodeInfo();
     INodeEventHandler& eventHandler();
 
     void randomizeId();

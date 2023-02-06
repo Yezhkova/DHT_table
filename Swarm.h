@@ -24,9 +24,9 @@ public:
     void generateSwarm(size_t Peers, bool mode);
     void createBootstrapNode();
     bool tcp();
-    std::shared_ptr<Peer> bootstrapNode();
+    std::shared_ptr<Peer>& bootstrapNode();
     std::map<ID, std::shared_ptr<Peer>> peers() const;
-    std::shared_ptr<Peer> getPeer(const ID& id);
+    std::shared_ptr<Peer>& getPeer(const ID& id);
 
     virtual void sendPing(const ID & recipientId, const ID & queryingId, const ID & queriedId) override;
     virtual void sendPingResponse(const ID & queryingId, const ID & queriedId) override;

@@ -20,7 +20,7 @@ public:
         : m_node(id, protocol, *this) {};
 
     ID id();
-    Node & node();
+    Node& node();
     void randomize();
 
     void start(const ID & bootstrapId);

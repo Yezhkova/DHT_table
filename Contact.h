@@ -22,6 +22,7 @@ struct Contact
     bool operator <= (const Contact & otherContact) const;
     bool operator >  (const Contact & otherContact) const;
     bool operator >= (const Contact & otherContact) const;
+    friend std::ostream& operator<<(std::ostream& out, const Contact& c);
 
 };
 

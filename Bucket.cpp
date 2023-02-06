@@ -78,4 +78,15 @@ bool Bucket::removeNode(const ID& id)
     return false;
 }
 
+std::ostream& operator<<(std::ostream& out, const Bucket& b)
+{
+    for(auto& e: b.bucket())
+    {
+        out << e << ' ';
+    }
+    out << '\n';
+    return out;
+}
+
+
 

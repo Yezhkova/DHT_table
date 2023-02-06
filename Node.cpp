@@ -5,15 +5,19 @@
 size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;
 
-ID Node::id() {
+const ID& Node::id() const{
     return m_contact.id();
 }
 
-const BucketMap& Node::bucketMap() {
+const BucketMap& Node::bucketMap() const{
     return m_BucketMap;
 }
 
-NodeInfo Node::nodeInfo() {
+const Contact& Node::contact() const {
+    return m_contact;
+}
+
+NodeInfo& Node::nodeInfo() {
     return m_info;
 }
 
@@ -50,7 +54,6 @@ IKademliaTransportProtocol& Node::protocol()
 {
     return m_protocol;
 }
-
 
 const ID& Node::pickRandomNode(const Bucket& b) const
 {
@@ -109,6 +112,7 @@ void Node::sendFindNode(const ID & senderId, const ID & queriedId)
 void Node::receiveFindNode(const ID & myID,
                            const ID & senderId, const ID & queriedId)
 {
+    LOG(myID << " receives FindNode.");
     if(m_BucketMap.containsNode(queriedId))
     {
         sendFindNodeResponse(senderId, myID, queriedId);

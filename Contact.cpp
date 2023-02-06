@@ -42,3 +42,9 @@ bool Contact::operator >= (const Contact & otherContact) const
     return std::tie(otherContact.id(), otherContact.edp()) <= std::tie(m_id, m_endpoint);
 }
 
+std::ostream& operator<<(std::ostream& out, const Contact& c)
+{
+    out << c.id();
+    return out;
+}
+

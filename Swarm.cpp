@@ -13,6 +13,8 @@ void Swarm::init(bool mode, int PeerNumber)
     m_bootstrapNode.reset();
 
     m_bootstrapNode = std::make_shared<Peer>(ID(), *this, mode);
+    m_peers[m_bootstrapNode->id()] = m_bootstrapNode;
+    LOG(m_bootstrapNode->id());
     LOG("bootstrap node generated");
     generateSwarm(PeerNumber, mode);
 }
@@ -21,7 +23,7 @@ bool Swarm::tcp() {
     return m_useTcp;
 }
 
-std::shared_ptr<Peer> Swarm::bootstrapNode() {
+std::shared_ptr<Peer>& Swarm::bootstrapNode() {
     return m_bootstrapNode;
 }
 
@@ -29,7 +31,7 @@ std::map<ID, std::shared_ptr<Peer>> Swarm::peers() const {
     return m_peers;
 }
 
-std::shared_ptr<Peer> Swarm::getPeer(const ID& id) {
+std::shared_ptr<Peer>& Swarm::getPeer(const ID& id) {
     return m_peers.find(id)->second;
 }
 
