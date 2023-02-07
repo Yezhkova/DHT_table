@@ -31,11 +31,11 @@ void Node::randomizeId()
     m_contact.randomize();
 }
 
-void Node::addNode(const ID& id)
+bool Node::addNode(const ID& id)
 {
     assert((void("Node shouldn't add itself into its bucketMap"),
             m_contact.id() != id));
-    m_BucketMap.addNode(id);
+    return m_BucketMap.addNode(id);
 }
 
 void Node::updateNode(const ID& id)
@@ -116,7 +116,7 @@ void Node::receiveFindNode(const ID & myID,
     if(m_BucketMap.containsNode(queriedId))
     {
         sendFindNodeResponse(senderId, myID, queriedId);
-        addNode(senderId);
+//        addNode(senderId);
         updateNode(queriedId);
     }
     else
@@ -130,7 +130,10 @@ void Node::receiveFindNode(const ID & myID,
             Swarm::getInstace().getPeer(id)->node()
                     .addNode(senderId);
         }
+
     }
+    bool add = addNode(senderId);
+    LOG(id() << " just added " << senderId << (add ? "yes" : "no"));
 }
 
 void Node::sendFindNodeResponse(const ID & recipientId,

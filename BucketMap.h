@@ -23,7 +23,7 @@ public:
 
     const std::map<BucketIndex, Bucket>& map() const;
     const Bucket& getNodesAtDepth(size_t depth) const;
-    size_t size();
+    const size_t size() const;
 
     std::vector<Bucket> nonEmptyBuckets();
 

@@ -1,5 +1,4 @@
 #include "Swarm.h"
-#include "Utils.h"
 
 Swarm& Swarm::getInstace()
 {
@@ -14,9 +13,7 @@ void Swarm::init(bool mode, int PeerNumber)
 
     m_bootstrapNode = std::make_shared<Peer>(ID(), *this, mode);
     m_peers[m_bootstrapNode->id()] = m_bootstrapNode;
-    LOG(m_bootstrapNode->id());
-    LOG("bootstrap node generated");
-    generateSwarm(PeerNumber, mode);
+    generateSwarm(mode, PeerNumber);
 }
 
 bool Swarm::tcp() {
@@ -27,20 +24,19 @@ std::shared_ptr<Peer>& Swarm::bootstrapNode() {
     return m_bootstrapNode;
 }
 
-std::map<ID, std::shared_ptr<Peer>> Swarm::peers() const {
+const std::map<ID, std::shared_ptr<Peer>>& Swarm::peers() const {
     return m_peers;
 }
 
-std::shared_ptr<Peer>& Swarm::getPeer(const ID& id) {
+std::shared_ptr<Peer> Swarm::getPeer(const ID& id) {
     return m_peers.find(id)->second;
 }
 
-void Swarm::generateSwarm(size_t Peers, bool mode)
+void Swarm::generateSwarm(bool mode, size_t Peers)
 {
     for(size_t i = 0; i < Peers; ++i)
     {
-        ID id;
-        id.randomize();
+        ID id = createRandomId();
         m_peers[id] = std::make_shared<Peer>(id, *this, mode);
     }
 }

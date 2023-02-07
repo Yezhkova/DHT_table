@@ -7,21 +7,24 @@
 
 int main(void) {
 
-    SwarmSimulator simulator;
-    simulator.init(SIM, 2);
-    Swarm swarm = Swarm::getInstace();
-    for(auto& e: swarm.peers())
-    {
-        LOG(e.first << ' ' << &e.second << '\n');
-    }
-    LOG("all about now");
-    auto bootPeer = swarm.bootstrapNode();
-    LOG(bootPeer->node().id());
-    LOG(Swarm::getInstace().getPeer(ID())->node().bucketMap());
-    if(Swarm::getInstace().getPeer(ID())->node().bucketMap().map().size() > 0) LOG(" v ");
+//    SwarmSimulator simulator;
+//    simulator.init(SIM, 3);
+//    Swarm swarm = Swarm::getInstace();
+//    LOG("must be 4: " << swarm.peers().size());
+//    for(auto& e: swarm.peers())
+//    {
+//        LOG(e.first << ' ' << &e.second << '\n');
+//    }
+//    auto bootPeer = swarm.bootstrapNode();
+//    LOG(bootPeer->node().id());
+//    if(Swarm::getInstace().getPeer(ID()) != nullptr) {
+//        LOG(" v ");
+//    } else {
+//        LOG(" f ");
+//    }
 
 
-    /*
+
     SwarmSimulator simulator;
     simulator.init(SIM, 5);
     simulator.addTask([&simulator]
@@ -31,10 +34,10 @@ int main(void) {
 
         for(auto & peer1 : peers)
         {
-            LOG(std::string(peer1.second->id()));
+            LOG(peer1.second->id());
             peer1.second->start(swarm.bootstrapNode()->id());
         }
-        */
+
 
         /*
         for(auto & peer1 : peers)
@@ -95,10 +98,9 @@ int main(void) {
 
         */
 
-    /*
+
     });
     simulator.run();
-    */
     LOG("simulation done");
     return 0;
 }

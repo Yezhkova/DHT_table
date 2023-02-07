@@ -43,7 +43,7 @@ public:
     INodeEventHandler& eventHandler();
 
     void randomizeId();
-    void addNode(const ID& id);
+    bool addNode(const ID& id);
     void updateNode(const ID& id);
     const ID& pickRandomNode(const Bucket& b) const;
     std::vector<ID> findClosestNodes(uint16_t k, const ID& id);

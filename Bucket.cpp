@@ -30,7 +30,11 @@ bool Bucket::addNode(const Contact &contact)
 {
     if(!isFull())
     {
-        m_Bucket.insert(contact);
+        if(auto it = m_Bucket.find(contact); it != m_Bucket.end()) {
+            // update lastSeen time
+        } else {
+            m_Bucket.insert(contact);
+        }
         return true;
     }
     return false;

@@ -22,7 +22,6 @@ bool BucketMap::addNode(const ID& id)
 {
     size_t BucketIndex = calcBucketIndex(id);
     bool res = m_Buckets[BucketIndex].addNode(Contact(id));
-    LOG(m_Buckets.size());
     return res;
 }
 
@@ -40,10 +39,8 @@ bool BucketMap::containsNode(const Contact &contact)
 bool BucketMap::containsNode(const ID& id)
 {
     LOG("-->containsNode. ");
-    LOG(m_Buckets.size());
     for(auto& bucket : m_Buckets)
     {
-        LOG("111");
         if(bucket.second.containsNode(id)) {
             return true;
         }
@@ -67,14 +64,14 @@ const Bucket& BucketMap::getNodesAtDepth(size_t depth) const
     return m_Buckets.at(depth);
 }
 
-size_t BucketMap::size()
+const size_t BucketMap::size() const
 {
     return m_Buckets.size();
 }
 
 std::ostream& operator<< (std::ostream& out, const BucketMap& b)
 {
-    LOG("size: " << b.m_Buckets.size());
+    LOG(b.m_node.id() << " bucket map size: " << b.m_Buckets.size());
     for(auto& e: b.m_Buckets) {
         out << "Bucket depth " << e.first << ":\n";
         for(auto& e2: e.second.bucket()){

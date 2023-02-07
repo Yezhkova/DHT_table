@@ -1,5 +1,6 @@
 
 #include "ID.h"
+#include "Utils.h"
 
 std::mt19937 ID::random_generator_;
 
@@ -9,20 +10,13 @@ const std::array<uint8_t, DIGEST_BYTES>& ID::id() const {
     return m_id;
 }
 
-void ID::randomize()
+ID ID::randomize()
 {
     std::uniform_int_distribution<> range(0, UINT8_MAX);
-    for(uint16_t i = 0; i < DIGEST_BYTES; ++i)
-    {
-        m_id[i] = range(random_generator_);
+    for(auto it = m_id.begin(); it != m_id.end(); ++it) {
+        *it = range(random_generator_);
     }
-}
-
-ID ID::createRandomId()
-{
-    ID id;
-    id.randomize();
-    return id;
+    return *this;
 }
 
 const std::array<uint16_t, DIGEST_BYTES> ID::distance(const ID & anotherId)
@@ -38,39 +32,40 @@ uint16_t ID::prefixLength(const ID & anotherId) const
 {
     uint16_t len = 0;
     uint16_t j = 0;
-    for(; m_id[j] == anotherId.m_id[j]; ++j)
+    for(; m_id[j] == anotherId.m_id[j] && j < DIGEST_BYTES; ++j)
     {
         len += 8;
     }
-    for(int i = 7; !(((m_id[j] >> i)&1) ^ ((anotherId.m_id[j] >> i)&1)); --i)
-    {
-        ++len;
+    if(j < DIGEST_BYTES) {
+        for(int i = 7; !(((m_id[j] >> i)&1) ^ ((anotherId.m_id[j] >> i)&1)) && i >= 0; --i)
+        {
+            ++len;
+        }
     }
     return len;
-}
-
-bool operator == (const ID & l, const ID & r) {
-    return l.m_id == r.m_id;
-}
-
-bool operator != (const ID & l, const ID & r) {
-    return l.m_id != r.m_id;
 }
 
 bool operator <  (const ID & l, const ID & r) {
     return l.m_id < r.m_id;
 }
 
-bool operator <= (const ID & l, const ID & r) {
-    return l.m_id <= r.m_id;
+bool operator ==  (const ID & l, const ID & r) {
+    return l.m_id == r.m_id;
+}
+
+bool operator !=  (const ID & l, const ID & r) {
+    return !(l == r);
 }
 
 std::ostream& operator<<(std::ostream& out, const ID& id) {
-
-    for(auto& byte: id.m_id) {
-        out << uint16_t(byte);
+    for(auto it = id.m_id.begin(); it != id.m_id.end(); ++it) {
+        out <<  uint16_t(*it);
     }
     return out;
+}
+
+ID createRandomId() {
+    return ID().randomize();
 }
 
 /*

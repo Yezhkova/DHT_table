@@ -17,14 +17,15 @@ void Peer::randomize()
 
 void Peer::addNode(const ID & id)
 {
-    m_node.addNode(id);
+    if(m_node.id() != id) {
+        m_node.addNode(id);
+    }
 }
 
 void Peer::start(const ID & bootstrapId)
 {
     addNode(bootstrapId);
-    std::cout << m_node.bucketMap();
-//    LOG(m_node.bucketMap());
+    LOG(m_node.bucketMap());
     sendFindNode(bootstrapId, m_node.id(),  m_node.id());
 }
 
