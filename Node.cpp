@@ -34,16 +34,12 @@ void Node::randomizeId()
 
 bool Node::addNode(const ID& id)
 {
-    assert((void("Node shouldn't add itself into its bucketMap"),
-            m_contact.id() != id));
     return m_BucketMap.addNode(id);
 }
 
-void Node::updateNode(const ID& id)
+void Node::updateLastSeen()
 {
-    Swarm::getInstace().getPeer(id)
-            ->node().nodeInfo().
-            updateLastSeen(system_clock::now());
+    nodeInfo().updateLastSeen(system_clock::now());
 }
 
 bool operator==(const Node& l, const Node& r)
@@ -77,6 +73,7 @@ void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids)
 
 std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
 {
+    updateLastSeen();
     LOG("-->findClosestNodes...");
     std::vector<ID> res;
     uint16_t bucketIndex = m_BucketMap.calcBucketIndex(id);
@@ -84,8 +81,8 @@ std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
     fill(closestBucket, res);
     if(res.size() < k) {
         int nextBucketIndex = bucketIndex, prevBucketIndex = bucketIndex;
-        for(size_t i = 1;
-            res.size() < k && nextBucketIndex < m_treeSize && prevBucketIndex >= 0;
+        size_t i = 1;
+        for(; res.size() < k && nextBucketIndex < m_treeSize && prevBucketIndex >= 0;
             ++i)
         {
             nextBucketIndex = bucketIndex + i;
@@ -95,41 +92,46 @@ std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
             auto prevBucket = m_BucketMap.getNodesAtDepth(prevBucketIndex);
             fill(prevBucket, res);
         }
-        for(size_t i = 1; res.size() < k && nextBucketIndex < m_treeSize; ++i)
+        for(size_t j = i; res.size() < k && nextBucketIndex < m_treeSize; ++j)
         {
-            nextBucketIndex = bucketIndex + i;
+            nextBucketIndex = bucketIndex + j;
             auto nextBucket = m_BucketMap.getNodesAtDepth(nextBucketIndex);
             fill(nextBucket, res);
         }
-        for(size_t i = 1; res.size() < k && prevBucketIndex >= 0; ++i)
+        for(size_t j = i; res.size() < k && prevBucketIndex >= 0; ++j)
         {
-            prevBucketIndex = bucketIndex - i;
+            prevBucketIndex = bucketIndex - j;
             auto prevBucket = m_BucketMap.getNodesAtDepth(prevBucketIndex);
             fill(prevBucket, res);
         }
     }
     LOG("found " << res.size() << " closest nodes.");
+    for(auto& e : res){LOG(e);};
     return res;
 }
 
 
 void Node::sendFindNode(const ID & senderId, const ID & queriedId)
 {
-    receiveFindNode(m_contact.id(), senderId, queriedId);
+    updateLastSeen();
+    receiveFindNode(id(), senderId, queriedId);
 }
 
 void Node::receiveFindNode(const ID & myID,
                            const ID & senderId, const ID & queriedId)
 {
+    updateLastSeen();
     LOG(myID << " receives FindNode.");
     if(m_BucketMap.containsNode(queriedId))
     {
         sendFindNodeResponse(senderId, myID, queriedId);
-//        addNode(senderId);
-        updateNode(queriedId);
+        bool add = addNode(senderId);
+        LOG(id() << " just added " << senderId << (add ? " yes" : " no"));
     }
     else
     {
+        bool add = addNode(senderId);
+        LOG(id() << " just added " << senderId << (add ? " yes" : " no"));
         std::vector<ID> closestNodes = findClosestNodes(3, queriedId);
         for(auto& id : closestNodes)
         {
@@ -141,15 +143,23 @@ void Node::receiveFindNode(const ID & myID,
         }
 
     }
-    bool add = addNode(senderId);
-    LOG(id() << " just added " << senderId << (add ? "yes" : "no"));
 }
 
 void Node::sendFindNodeResponse(const ID & recipientId,
                                 const ID & myId, const ID & queriedId)
 {
+    updateLastSeen();
     Swarm::getInstace().getPeer(recipientId)->
             receiveFindNodeResponse(myId, queriedId);
+}
+
+void Node::sendPing(const ID & queryingId) {
+    updateLastSeen();
+    sendPingResponse(queryingId);
+}
+
+void Node::sendPingResponse(const ID & queryingId) {
+    Swarm::getInstace().getPeer(queryingId)->receivePingResponse(id());
 }
 
 

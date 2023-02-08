@@ -44,14 +44,14 @@ public:
 
     void randomizeId();
     bool addNode(const ID& id);
-    void updateNode(const ID& id);
+    void updateLastSeen();
     const ID& pickRandomNode(const Bucket& b) const;
     std::vector<ID> findClosestNodes(uint16_t k, const ID& id);
 
     friend bool operator==(const Node & l, const Node & r);
 
-    void sendPing(const ID & recipientId, const ID & senderId, const ID & queriedId);
-    void sendPingResponse(const ID & queryingId, const ID & queriedId);
+    void sendPing(const ID & queryingId);
+    void sendPingResponse(const ID & queryingId);
     void receivePing(const ID & queryingId, const ID & queriedId);
     void receivePingResponse(const ID & queryingId, const ID & queriedId);
 

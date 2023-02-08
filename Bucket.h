@@ -1,22 +1,23 @@
 #pragma once
 
 #include "Contact.h"
-#include <set>
+#include <list>
 
 class Bucket
 {
 private:
-    std::set<Contact>   m_Bucket;             // map<ID, boost::asio::tcp::endpoint> if TCP
+    std::list<Contact>  m_Bucket;             // map<ID, boost::asio::tcp::endpoint> if TCP
     static size_t       m_maxBucketSize;
-
+    //TODO: need a reference to my BucketMap to get to my Node
+    // (for updateNode: pinging front peers in list)
 public:
     Bucket() = default;
 
-    const std::set<Contact>& bucket() const;
+    const std::list<Contact>& bucket() const;
 
-    auto find_node(const ID& id);
+    std::list<Contact>::iterator find_node(const ID& id);
 
-    bool addNode(const Contact& contact);
+    bool updateNode(const Contact &contact);
     bool addNode(const ID& id);
 
     bool containsNode(const Contact& contact);

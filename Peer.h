@@ -27,11 +27,11 @@ public:
 
     void addNode(const ID & id);
 
-    void sendPing(const ID & recipientId, const ID & queryingId, const ID & queriedId);
+    void sendPing(const ID & queriedId);
     void sendPingResponse(const ID & queryingId, const ID & queriedId);
 
     void receivePing(const ID & queryingId, const ID & queriedId);
-    void receivePingResponse(const ID & queryingId, const ID & queriedId);
+    bool receivePingResponse(const ID & queriedId);
 
     void sendFindNode(const ID & recipientId, const ID & myId, const ID & queriedId);
     void sendFindNodeResponse(const ID & myId, const ID & queriedId);

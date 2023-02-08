@@ -22,12 +22,16 @@ void Peer::addNode(const ID & id)
     }
 }
 
-void Peer::start(const ID & bootstrapId)
+void Peer::start(const ID& bootstrapId)
 {
     addNode(bootstrapId);
-    LOG(m_node.bucketMap());
     sendFindNode(bootstrapId, m_node.id(),  m_node.id());
 }
+
+void Peer::sendPing(const ID& queriedId) {
+    Swarm::getInstace().getPeer(queriedId)->node().sendPing(m_node.id());
+}
+
 
 void Peer::sendFindNode(const ID & recipientId,
                         const ID & myId, const ID & queriedId)
@@ -48,12 +52,17 @@ void Peer::receiveFindNode(const ID & recipientId,
 
 }
 
-void Peer::receiveFindNodeResponse(const ID & senderId, const ID & queriedId)
+void Peer::receiveFindNodeResponse(const ID& senderId, const ID& queriedId)
 {
     LOG("received node " << queriedId <<
         " from node "    << senderId);
-    m_node.updateNode(senderId);
 }
+
+bool Peer::receivePingResponse(const ID& queriedId) {
+    LOG(queriedId << " is alive!");
+    return true;
+}
+
 
 void Peer::onFindNodeResponse(bool find, int packetNumber)
 {
