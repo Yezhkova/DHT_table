@@ -1,6 +1,7 @@
 #include "Node.h"
 #include "Utils.h"
 #include "Swarm.h"
+#include <optional>
 
 size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;
@@ -65,12 +66,10 @@ const ID& Node::pickRandomNode(const Bucket& b) const
     return it->id();
 }
 
-void Node::fill(uint16_t bucketIndex, std::vector<ID>& ids, uint16_t k)
+void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids)
 {
-    for(auto& contact: m_BucketMap.getNodesAtDepth(bucketIndex).bucket())
-    {
-        if(ids.size() < k)
-        {
+    if(bucket.has_value()) {
+        for(auto& contact: bucket.value().bucket()) {
             ids.push_back(contact.id());
         }
     }
@@ -78,28 +77,38 @@ void Node::fill(uint16_t bucketIndex, std::vector<ID>& ids, uint16_t k)
 
 std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
 {
+    LOG("-->findClosestNodes...");
     std::vector<ID> res;
     uint16_t bucketIndex = m_BucketMap.calcBucketIndex(id);
-    uint16_t actualBucketSize = m_BucketMap.getNodesAtDepth(bucketIndex).size();
-    if(actualBucketSize < k)
-    {
-        int nextBucket = bucketIndex, prevBucket = bucketIndex;
-        for(size_t i = 1; res.size() < k && nextBucket < m_treeSize && prevBucket > -1; ++i)
+    auto closestBucket = m_BucketMap.getNodesAtDepth(bucketIndex);
+    fill(closestBucket, res);
+    if(res.size() < k) {
+        int nextBucketIndex = bucketIndex, prevBucketIndex = bucketIndex;
+        for(size_t i = 1;
+            res.size() < k && nextBucketIndex < m_treeSize && prevBucketIndex >= 0;
+            ++i)
         {
-            nextBucket = bucketIndex + i;
-            prevBucket = bucketIndex - i;
-            fill(nextBucket, res, k);
-            fill(prevBucket, res, k);
+            nextBucketIndex = bucketIndex + i;
+            prevBucketIndex = bucketIndex - i;
+            auto nextBucket = m_BucketMap.getNodesAtDepth(nextBucketIndex);
+            fill(nextBucket, res);
+            auto prevBucket = m_BucketMap.getNodesAtDepth(prevBucketIndex);
+            fill(prevBucket, res);
+        }
+        for(size_t i = 1; res.size() < k && nextBucketIndex < m_treeSize; ++i)
+        {
+            nextBucketIndex = bucketIndex + i;
+            auto nextBucket = m_BucketMap.getNodesAtDepth(nextBucketIndex);
+            fill(nextBucket, res);
+        }
+        for(size_t i = 1; res.size() < k && prevBucketIndex >= 0; ++i)
+        {
+            prevBucketIndex = bucketIndex - i;
+            auto prevBucket = m_BucketMap.getNodesAtDepth(prevBucketIndex);
+            fill(prevBucket, res);
         }
     }
-    else
-    {
-        for(size_t i = 0; i < k; ++i)
-        {
-            res.push_back(pickRandomNode(m_BucketMap
-                                         .getNodesAtDepth(bucketIndex)));
-        }
-    }
+    LOG("found " << res.size() << " closest nodes.");
     return res;
 }
 

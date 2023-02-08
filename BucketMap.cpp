@@ -6,10 +6,8 @@ const std::map<BucketIndex, Bucket>& BucketMap::map() const {
     return m_Buckets;
 };
 
-size_t BucketMap::calcBucketIndex(const ID& id)
-{
-    // if prefixLength == 160, gives -1
-    return DIGEST - 1 - m_node.id().prefixLength(id);
+int16_t BucketMap::calcBucketIndex(const ID& id) {
+    return m_node.id() == id ? -1 : DIGEST - 1 - m_node.id().prefixLength(id);
 }
 
 bool BucketMap::addNode(const Contact& contact)
@@ -59,9 +57,13 @@ std::vector<Bucket> BucketMap::nonEmptyBuckets()
     return res;
 }
 
-const Bucket& BucketMap::getNodesAtDepth(size_t depth) const
+std::optional<Bucket> BucketMap::getNodesAtDepth(size_t depth) const
 {
-    return m_Buckets.at(depth);
+    try {
+       return m_Buckets.at(depth);
+    } catch (std::out_of_range) {
+        return {};
+    }
 }
 
 const size_t BucketMap::size() const

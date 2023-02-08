@@ -34,8 +34,9 @@ int main(void) {
 
         for(auto & peer1 : peers)
         {
-            LOG(peer1.second->id());
-            peer1.second->start(swarm.bootstrapNode()->id());
+            if( peer1.second->id() != swarm.bootstrapNode()->id()){
+                peer1.second->start(swarm.bootstrapNode()->id());
+            }
         }
 
 

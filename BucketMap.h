@@ -2,6 +2,7 @@
 
 #include "Bucket.h"
 #include <map>
+#include <optional>
 
 class Node;
 using BucketIndex = size_t;
@@ -22,12 +23,12 @@ public:
     bool containsNode(const ID& id);
 
     const std::map<BucketIndex, Bucket>& map() const;
-    const Bucket& getNodesAtDepth(size_t depth) const;
+    std::optional<Bucket> getNodesAtDepth(size_t depth) const;
     const size_t size() const;
 
     std::vector<Bucket> nonEmptyBuckets();
 
-    size_t calcBucketIndex(const ID& id);
+    int16_t calcBucketIndex(const ID& id);
     friend std::ostream& operator<< (std::ostream& out, const BucketMap& b);
 
 };
