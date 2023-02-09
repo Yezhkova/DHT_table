@@ -20,8 +20,7 @@ bool BucketMap::addNode(const ID& id)
 {
     size_t BucketIndex = calcBucketIndex(id);
     if(m_node.id() != id) {
-        m_Buckets[BucketIndex].updateNode
-                (Contact(id));
+        m_Buckets[BucketIndex].updateNode(Contact(id));
         return true;
     }
     return false;

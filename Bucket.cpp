@@ -7,12 +7,15 @@ const std::list<Contact> &Bucket::bucket() const {
     return m_Bucket;
 };
 
-//TODO: test
 std::list<Contact>::iterator Bucket::find_node(const ID& id)
 {
     auto it = m_Bucket.begin();
-    for(; it != m_Bucket.end() && *it != id; ++it);
-    return it;
+    for(; it != m_Bucket.end(); ++it) {
+        if(*it == id) {
+            return it;
+        }
+    }
+    return m_Bucket.end();
 }
 
 size_t Bucket::size() const
@@ -33,8 +36,8 @@ bool Bucket::isEmpty() const
 // documentation p.5, 2.2
 bool Bucket::updateNode(const Contact &contact)
 {
-    // TODO: moving a node to head optimization
-    // TODO: how many dead nodes do we evict?
+// TODO: moving a node to head optimization
+// TODO: how many dead nodes do we evict?
     if(!isFull())
     {
         auto it = find_node(contact.id());

@@ -25,7 +25,7 @@ public:
 
     void start(const ID & bootstrapId);
 
-    void addNode(const ID & id);
+    bool addNode(const ID & id);
 
     void sendPing(const ID & queriedId);
     void sendPingResponse(const ID & queryingId, const ID & queriedId);

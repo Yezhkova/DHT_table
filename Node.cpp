@@ -73,6 +73,7 @@ void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids)
 
 std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
 {
+    //TODO: do we return exactly k closest nodes or AT LEAST k?
     updateLastSeen();
     LOG("-->findClosestNodes...");
     std::vector<ID> res;
@@ -124,22 +125,22 @@ void Node::receiveFindNode(const ID & myID,
     LOG(myID << " receives FindNode.");
     if(m_BucketMap.containsNode(queriedId))
     {
+        // TODO: update queriedId
         sendFindNodeResponse(senderId, myID, queriedId);
-        bool add = addNode(senderId);
-        LOG(id() << " just added " << senderId << (add ? " yes" : " no"));
     }
     else
     {
-        bool add = addNode(senderId);
-        LOG(id() << " just added " << senderId << (add ? " yes" : " no"));
+        bool add = addNode(queriedId);
+        LOG(id() << " just added " << queriedId << (add ? " yes" : " no"));
+        add = Swarm::getInstace().getPeer(queriedId)->addNode(id());
+        LOG(queriedId << " just added " << id() << (add ? " yes" : " no"));
+
         std::vector<ID> closestNodes = findClosestNodes(3, queriedId);
+        // TODO: must be asynchronous
         for(auto& id : closestNodes)
         {
             Swarm::getInstace().getPeer(id)->node()
                     .sendFindNode(senderId, queriedId);
-
-            Swarm::getInstace().getPeer(id)->node()
-                    .addNode(senderId);
         }
 
     }

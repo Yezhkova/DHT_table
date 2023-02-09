@@ -15,11 +15,12 @@ void Peer::randomize()
     m_node.randomizeId();
 }
 
-void Peer::addNode(const ID & id)
+bool Peer::addNode(const ID & id)
 {
     if(m_node.id() != id) {
-        m_node.addNode(id);
+        return m_node.addNode(id);
     }
+    return false;
 }
 
 void Peer::start(const ID& bootstrapId)
