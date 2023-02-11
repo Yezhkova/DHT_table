@@ -1,6 +1,7 @@
 #include "Peer.h"
 #include "Utils.h"
 #include "Swarm.h"
+#include <boost/chrono.hpp>
 
 ID Peer::id() {
     return m_node.id();
@@ -8,6 +9,10 @@ ID Peer::id() {
 
 Node& Peer::node() {
     return m_node;
+}
+
+NodeInfo& Peer::info() {
+    return m_node.nodeInfo();
 }
 
 void Peer::randomize()
@@ -30,33 +35,50 @@ void Peer::start(const ID& bootstrapId)
 }
 
 void Peer::sendPing(const ID& queriedId) {
-    Swarm::getInstace().getPeer(queriedId)->node().sendPing(m_node.id());
+    Swarm::getInstance().getPeer(queriedId)->node().sendPing(m_node.id());
 }
 
 
-void Peer::sendFindNode(const ID & recipientId,
-                        const ID & myId, const ID & queriedId)
+void Peer::sendFindNode(const ID& recipientId
+                        , const ID& senderId
+                        , const ID& queriedId)
 {
-    auto peer = Swarm::getInstace().getPeer(recipientId);
-    if(peer != nullptr)
-    {
-        peer->node().receiveFindNode(recipientId, myId, queriedId);
+    // sender side
+    auto recipient = Swarm::getInstance().getPeer(recipientId);
+    if(recipient != nullptr) {
+        recipient->receiveFindNode(senderId, queriedId);
     }
     else{
         LOG("sendFindNode Warning: the recipient peer does not exist");
     }
 }
 
-void Peer::receiveFindNode(const ID & recipientId,
-                     const ID & senderId, const ID & queriedId)
-{
-
+void Peer::receiveFindNode(const ID& senderId
+                           , const ID& queriedId) {
+    // receiver side
+    auto idsFound = m_node.receiveFindNode(senderId, queriedId
+                                           , boost::chrono::system_clock::now());
+    sendFindNodeResponse(senderId, queriedId, idsFound);
 }
 
-void Peer::receiveFindNodeResponse(const ID& senderId, const ID& queriedId)
-{
-    LOG("received node " << queriedId <<
-        " from node "    << senderId);
+void Peer::sendFindNodeResponse(const ID& receiverId, const ID& queriedId, std::vector<ID> idsFound) {
+    // receiver side
+//    Swarm::getInstance().addTask([receiverId, queriedId, idsFound] {
+        auto receiver = Swarm::getInstance().getPeer(receiverId);
+        receiver->receiveFindNodeResponse(queriedId, idsFound);
+//    });
+//    Swarm::getInstance().run();
+}
+
+void Peer::receiveFindNodeResponse(const ID& queriedId, std::vector<ID> ids) {
+    if(ids.size() == 1 && ids[0] == queriedId) {
+        LOG(queriedId << " found");
+    }
+    else {
+        for(auto& id : ids) {
+            sendFindNode(id, m_node.id(),queriedId);
+        }
+    }
 }
 
 bool Peer::receivePingResponse(const ID& queriedId) {

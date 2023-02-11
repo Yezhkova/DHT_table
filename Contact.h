@@ -10,6 +10,7 @@ struct Contact
 {
     ID        m_id;
     endpoint  m_endpoint; // can split into address + port
+
     Contact(const ID &id) : m_id(id) {};
 
     const ID& id () const;

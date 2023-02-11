@@ -10,11 +10,12 @@
 #define BITS 4 // 4 bits in hexadecimal character
 #define PART 40
 
-class ID //: public std::array<uint8_t, DIGEST_BYTES>
+class ID
 {
+    static std::mt19937 g_random_generator;
+
 private:
     std::array<uint8_t, DIGEST_BYTES>   m_id;
-    static std::mt19937                 random_generator_;
 
 public:
     ID();
@@ -29,35 +30,3 @@ public:
 };
 
 ID createRandomId();
-
-
-/*
-class ID
-{
-private:
-
-    std::bitset<DIGEST> m_idBits;
-
-public:
-
-    ID();
-
-    const std::bitset<DIGEST> getIdBits() const;
-    void randomize();
-
-    static ID createRandomId();
-    const std::bitset<DIGEST> distance(const ID & anotherId);
-    uint16_t prefixLength(const ID & anotherId) const;
-    std::array<std::bitset<PART>,BITS> getPartitionId() const;
-
-    operator std::string() const;
-    friend bool operator == (const ID & l, const ID & r);
-    friend bool operator != (const ID & l, const ID & r);
-    friend bool operator <  (const ID & l, const ID & r);
-    friend bool operator <= (const ID & l, const ID & r);
-    friend bool operator >  (const ID & l, const ID & r);
-    friend bool operator >= (const ID & l, const ID & r);
-    friend std::ostream& operator<<(std::ostream& out, const ID& id);
-
-};
-*/

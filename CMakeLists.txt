@@ -17,7 +17,6 @@ set(SOURCE main.cpp
            Bucket.h                         Bucket.cpp
            BucketMap.h                      BucketMap.cpp
            Peer.h                           Peer.cpp
-           SwarmSimulator.h                 SwarmSimulator.cpp
            Swarm.h                          Swarm.cpp
            ISimulationTask.h                ISimulationTask.cpp
            IKademliaTransportProtocol.h     IKademliaTransportProtocol.cpp

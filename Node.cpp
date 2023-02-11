@@ -22,33 +22,31 @@ NodeInfo& Node::nodeInfo() {
     return m_info;
 }
 
-INodeEventHandler& Node::eventHandler()
-{
+INodeEventHandler& Node::eventHandler() {
     return m_eventHandler;
 }
 
-void Node::randomizeId()
-{
+void Node::randomizeId() {
     m_contact.randomize();
 }
 
-bool Node::addNode(const ID& id)
-{
+bool Node::addNode(const ID& id) {
     return m_BucketMap.addNode(id);
 }
 
-void Node::updateLastSeen()
-{
-    nodeInfo().updateLastSeen(system_clock::now());
+void Node::updateLastSeen(const ID& id
+                          , boost::chrono::system_clock::time_point time) {
+    auto peerToUpdate = Swarm::getInstance().getPeer(id);
+    if(peerToUpdate != nullptr) {
+        peerToUpdate->info().updateLastSeen(time);
+    }
 }
 
-bool operator==(const Node& l, const Node& r)
-{
+bool operator==(const Node& l, const Node& r) {
     return l.m_contact.m_id == r.m_contact.m_id;
 }
 
-IKademliaTransportProtocol& Node::protocol()
-{
+IKademliaTransportProtocol& Node::protocol() {
     return m_protocol;
 }
 
@@ -56,54 +54,61 @@ const ID& Node::pickRandomNode(const Bucket& b) const
 {
     auto it = b.bucket().begin();
     std::uniform_int_distribution<int> range(0, b.size()-1);
-//    std::mt19937 m_randomGenerator;
     int randomNodeNumber = range(m_randomGenerator);
     std::advance(it, randomNodeNumber);
     return it->id();
 }
 
-void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids)
+void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, uint16_t k)
 {
     if(bucket.has_value()) {
-        for(auto& contact: bucket.value().bucket()) {
-            ids.push_back(contact.id());
+        for(uint16_t i = 0; i < k; ++i) {
+            ids.push_back(pickRandomNode(bucket.value()));
         }
+
+// TODO: THIS is simpler, is this better?
+
+//        for(auto& contact: bucket.value().bucket()) {
+//            ids.push_back(contact.id());
+//        }
     }
 }
 
 std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
 {
     //TODO: do we return exactly k closest nodes or AT LEAST k?
-    updateLastSeen();
-    LOG("-->findClosestNodes...");
+
     std::vector<ID> res;
+
+    // start with the bucket where ID could be
     uint16_t bucketIndex = m_BucketMap.calcBucketIndex(id);
     auto closestBucket = m_BucketMap.getNodesAtDepth(bucketIndex);
-    fill(closestBucket, res);
+    fill(closestBucket, res, k);
+
+    // not enough ids
     if(res.size() < k) {
         int nextBucketIndex = bucketIndex, prevBucketIndex = bucketIndex;
         size_t i = 1;
-        for(; res.size() < k && nextBucketIndex < m_treeSize && prevBucketIndex >= 0;
-            ++i)
+        for(; nextBucketIndex < m_treeSize && prevBucketIndex >= 0; ++i)
         {
             nextBucketIndex = bucketIndex + i;
             prevBucketIndex = bucketIndex - i;
             auto nextBucket = m_BucketMap.getNodesAtDepth(nextBucketIndex);
-            fill(nextBucket, res);
+            fill(nextBucket, res, k);
             auto prevBucket = m_BucketMap.getNodesAtDepth(prevBucketIndex);
-            fill(prevBucket, res);
+            fill(prevBucket, res, k);
         }
         for(size_t j = i; res.size() < k && nextBucketIndex < m_treeSize; ++j)
         {
             nextBucketIndex = bucketIndex + j;
             auto nextBucket = m_BucketMap.getNodesAtDepth(nextBucketIndex);
-            fill(nextBucket, res);
+            fill(nextBucket, res, k);
         }
         for(size_t j = i; res.size() < k && prevBucketIndex >= 0; ++j)
         {
             prevBucketIndex = bucketIndex - j;
             auto prevBucket = m_BucketMap.getNodesAtDepth(prevBucketIndex);
-            fill(prevBucket, res);
+            fill(prevBucket, res, k);
         }
     }
     LOG("found " << res.size() << " closest nodes.");
@@ -112,55 +117,35 @@ std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
 }
 
 
-void Node::sendFindNode(const ID & senderId, const ID & queriedId)
-{
-    updateLastSeen();
-    receiveFindNode(id(), senderId, queriedId);
+void Node::sendFindNode(const ID & senderId, const ID & queriedId) {
+
 }
 
-void Node::receiveFindNode(const ID & myID,
-                           const ID & senderId, const ID & queriedId)
+std::vector<ID> Node::receiveFindNode(const ID& senderId
+                                      , const ID& queriedId
+                                      , system_clock::time_point time)
 {
-    updateLastSeen();
-    LOG(myID << " receives FindNode.");
-    if(m_BucketMap.containsNode(queriedId))
-    {
-        // TODO: update queriedId
-        sendFindNodeResponse(senderId, myID, queriedId);
+//    updateLastSeen(senderId, time); // TODO: update sender if exists in bucket
+    addNode(senderId);
+    if(m_BucketMap.containsNode(queriedId)) {
+        return {queriedId};
     }
-    else
-    {
-        bool add = addNode(queriedId);
-        LOG(id() << " just added " << queriedId << (add ? " yes" : " no"));
-        add = Swarm::getInstace().getPeer(queriedId)->addNode(id());
-        LOG(queriedId << " just added " << id() << (add ? " yes" : " no"));
-
-        std::vector<ID> closestNodes = findClosestNodes(3, queriedId);
-        // TODO: must be asynchronous
-        for(auto& id : closestNodes)
-        {
-            Swarm::getInstace().getPeer(id)->node()
-                    .sendFindNode(senderId, queriedId);
-        }
-
+    else {
+        return findClosestNodes(3, queriedId);
     }
 }
 
 void Node::sendFindNodeResponse(const ID & recipientId,
-                                const ID & myId, const ID & queriedId)
-{
-    updateLastSeen();
-    Swarm::getInstace().getPeer(recipientId)->
-            receiveFindNodeResponse(myId, queriedId);
+                                const ID & myId, const ID & queriedId) {
+
 }
 
 void Node::sendPing(const ID & queryingId) {
-    updateLastSeen();
     sendPingResponse(queryingId);
 }
 
 void Node::sendPingResponse(const ID & queryingId) {
-    Swarm::getInstace().getPeer(queryingId)->receivePingResponse(id());
+    Swarm::getInstance().getPeer(queryingId)->receivePingResponse(id());
 }
 
 

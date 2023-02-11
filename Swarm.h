@@ -10,6 +10,7 @@
 class Swarm : public IKademliaTransportProtocol
 {
 private:
+    boost::asio::io_context               m_ioContext;
     std::map<ID, std::shared_ptr<Peer>>   m_peers;
     std::shared_ptr<Peer>                 m_bootstrapNode;
     bool                                  m_useTcp = false;
@@ -18,9 +19,13 @@ private:
 
 public:
 
-    static Swarm& getInstace();
+    static Swarm& getInstance();
 
     void init(bool mode, int PeerNumber);
+    void addTask(std::function<void ()> F);
+    void run();
+    void stop();
+
     void generateSwarm(bool mode, size_t Peers);
     void createBootstrapNode();
     bool tcp();

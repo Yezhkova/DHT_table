@@ -13,14 +13,14 @@ int16_t BucketMap::calcBucketIndex(const ID& id) {
 bool BucketMap::addNode(const Contact& contact)
 {
     size_t BucketIndex = calcBucketIndex(contact.id());
-    return m_Buckets[BucketIndex].updateNode(contact);
+    return m_Buckets[BucketIndex].addNode(contact);
 }
 
 bool BucketMap::addNode(const ID& id)
 {
     size_t BucketIndex = calcBucketIndex(id);
     if(m_node.id() != id) {
-        m_Buckets[BucketIndex].updateNode(Contact(id));
+        m_Buckets[BucketIndex].addNode(Contact(id));
         return true;
     }
     return false;
@@ -39,7 +39,6 @@ bool BucketMap::containsNode(const Contact &contact)
 
 bool BucketMap::containsNode(const ID& id)
 {
-    LOG("-->containsNode. ");
     for(auto& bucket : m_Buckets)
     {
         if(bucket.second.containsNode(id)) {

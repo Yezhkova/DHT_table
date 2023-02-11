@@ -1,6 +1,6 @@
 #include "Swarm.h"
 
-Swarm& Swarm::getInstace()
+Swarm& Swarm::getInstance()
 {
     static Swarm swarm;
     return swarm;
@@ -16,6 +16,21 @@ void Swarm::init(bool mode, int PeerNumber)
     generateSwarm(mode, PeerNumber);
 }
 
+void Swarm::addTask(std::function<void ()> F)
+{
+    m_ioContext.post(F);
+}
+
+void Swarm::run()
+{
+    m_ioContext.run();
+}
+
+void Swarm::stop()
+{
+    m_ioContext.stop();
+}
+
 bool Swarm::tcp() {
     return m_useTcp;
 }
@@ -29,7 +44,11 @@ const std::map<ID, std::shared_ptr<Peer>>& Swarm::peers() const {
 }
 
 std::shared_ptr<Peer> Swarm::getPeer(const ID& id) {
-    return m_peers.find(id)->second;
+    auto it = m_peers.find(id);
+    if(it != m_peers.end()) {
+        return it->second;
+    }
+    return nullptr;
 }
 
 void Swarm::generateSwarm(bool mode, size_t Peers)

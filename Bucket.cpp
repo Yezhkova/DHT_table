@@ -3,19 +3,12 @@
 
 size_t Bucket::m_maxBucketSize = 20;
 
-const std::list<Contact> &Bucket::bucket() const {
+const std::set<Contact> &Bucket::bucket() const {
     return m_Bucket;
 };
 
-std::list<Contact>::iterator Bucket::find_node(const ID& id)
-{
-    auto it = m_Bucket.begin();
-    for(; it != m_Bucket.end(); ++it) {
-        if(*it == id) {
-            return it;
-        }
-    }
-    return m_Bucket.end();
+std::set<Contact>::iterator Bucket::find_node(const ID& id) {
+    return m_Bucket.find(id);
 }
 
 size_t Bucket::size() const
@@ -34,18 +27,11 @@ bool Bucket::isEmpty() const
 }
 
 // documentation p.5, 2.2
-bool Bucket::updateNode(const Contact &contact)
+bool Bucket::addNode(const Contact &contact)
 {
-// TODO: moving a node to head optimization
 // TODO: how many dead nodes do we evict?
-    if(!isFull())
-    {
-        auto it = find_node(contact.id());
-        if(it != m_Bucket.end()) {
-            m_Bucket.erase(it);
-        }
-        m_Bucket.push_back(contact);
-        return true;
+    if(!isFull()) {
+       return m_Bucket.insert(contact).second;
     }
 //    ID me = m_bucketMap.m_node.id();
 //    Swarm::getInstace().getPeer(me)->sendPing(m_Bucket.front().id());
@@ -59,48 +45,26 @@ bool Bucket::updateNode(const Contact &contact)
 
 bool Bucket::addNode(const ID& id)
 {
-    if(!isFull())
-    {
-        auto it = find_node(id);
-        if(it != m_Bucket.end()) {
-            m_Bucket.erase(it);
-        }
-        m_Bucket.push_front(Contact{id}); //TODO: Contact(id) - difference?
-        return true;
+    if(!isFull()) {
+       return m_Bucket.insert(Contact{id}).second;
     }
     return false;
 }
 
-bool Bucket::containsNode(const Contact &contact)
-{
-    return find_node(contact.id()) != m_Bucket.end();
+bool Bucket::containsNode(const Contact &contact) {
+    return m_Bucket.find(contact.id()) != m_Bucket.end();
 }
 
-bool Bucket::containsNode(const ID& id)
-{
-    return find_node(id) != m_Bucket.end();
+bool Bucket::containsNode(const ID& id) {
+    return m_Bucket.find(id) != m_Bucket.end();
 }
 
-bool Bucket::removeNode(const Contact &contact)
-{
-    auto it = find_node(contact.id());
-    if (it != m_Bucket.end())
-    {
-        m_Bucket.erase(it);
-        return true;
-    }
-    return false;
+size_t Bucket::removeNode(const Contact &contact) {
+    return m_Bucket.erase(contact.id());
 }
 
-bool Bucket::removeNode(const ID& id)
-{
-    auto it = find_node(id);
-    if (it != m_Bucket.end())
-    {
-        m_Bucket.erase(it);
-        return true;
-    }
-    return false;
+size_t Bucket::removeNode(const ID& id) {
+    return m_Bucket.erase(id);
 }
 
 std::ostream& operator<<(std::ostream& out, const Bucket& b)

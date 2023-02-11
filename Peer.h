@@ -21,6 +21,7 @@ public:
 
     ID id();
     Node& node();
+    NodeInfo& info();
     void randomize();
 
     void start(const ID & bootstrapId);
@@ -33,11 +34,18 @@ public:
     void receivePing(const ID & queryingId, const ID & queriedId);
     bool receivePingResponse(const ID & queriedId);
 
-    void sendFindNode(const ID & recipientId, const ID & myId, const ID & queriedId);
-    void sendFindNodeResponse(const ID & myId, const ID & queriedId);
+    void sendFindNode(const ID& recipientId
+                      , const ID& senderId
+                      , const ID& queriedId);
 
-    void receiveFindNode(const ID & recipientId, const ID & myId, const ID & queriedId);
-    void receiveFindNodeResponse(const ID & senderId, const ID & queriedId);
+    void sendFindNodeResponse(const ID& senderId
+                              , const ID& queriedId
+                              , std::vector<ID> ids);
+
+    void receiveFindNode(const ID& senderId
+                         , const ID& queriedId);
+
+    void receiveFindNodeResponse(const ID & queriedId, std::vector<ID> ids);
 
     void onFindNodeResponse(bool find, int packetNumber) override;
     void onPacketReceived() override;

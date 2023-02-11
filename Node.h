@@ -24,7 +24,7 @@ private:
     NodeInfo                          m_info; // last seen time
     static std::mt19937               m_randomGenerator;
 
-    void fill(std::optional<Bucket>& bucket, std::vector<ID>& ids);
+    void fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, uint16_t k);
 
 
 public:
@@ -44,7 +44,8 @@ public:
 
     void randomizeId();
     bool addNode(const ID& id);
-    void updateLastSeen();
+    void updateLastSeen(const ID& id
+                        , boost::chrono::system_clock::time_point time);
     const ID& pickRandomNode(const Bucket& b) const;
     std::vector<ID> findClosestNodes(uint16_t k, const ID& id);
 
@@ -57,7 +58,9 @@ public:
 
     void sendFindNode(const ID & senderId, const ID & queriedId);
     void sendFindNodeResponse(const ID & recipientId, const ID & senderId, const ID & queriedId);
-    void receiveFindNode(const ID & myID, const ID & senderId, const ID & queriedId);
+    std::vector<ID> receiveFindNode(const ID& senderId
+                                    , const ID& queriedId
+                                    , system_clock::time_point time);
     void receiveFindNodeResponse(const ID & myId, const ID & queriedId);
 
 };
