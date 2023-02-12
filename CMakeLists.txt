@@ -22,6 +22,7 @@ set(SOURCE main.cpp
            IKademliaTransportProtocol.h     IKademliaTransportProtocol.cpp
            Contact.h                        Contact.cpp
            INodeEventHandler.h              INodeEventHandler.cpp
+           EventQueue.h                     EventQueue.cpp
 )
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)

@@ -4,11 +4,14 @@
 #include "Node.h"
 #include "ID.h"
 #include "IKademliaTransportProtocol.h"
+#include "EventQueue.h"
 
 class Peer: public INodeEventHandler
 {
 private:
-    Node                  m_node;
+    Node                                m_node;
+    EventQueue::Duration                m_packetTime;
+//    std::vector<std::shared_ptr<Peer>>  m_interestingPeers; // fill within start()
 
 public:
     Peer() = delete;
@@ -45,7 +48,9 @@ public:
     void receiveFindNode(const ID& senderId
                          , const ID& queriedId);
 
-    void receiveFindNodeResponse(const ID & queriedId, std::vector<ID> ids);
+    void receiveFindNodeResponse(const ID & queriedId
+                                 , std::vector<ID> ids
+                                 , const ID& responserId);
 
     void onFindNodeResponse(bool find, int packetNumber) override;
     void onPacketReceived() override;

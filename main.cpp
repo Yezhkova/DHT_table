@@ -6,13 +6,13 @@
 
 int main(void) {
     Swarm& swarm = Swarm::getInstance();
-    swarm.init(SIM, 3);
+    swarm.init(SIM, 30);
     swarm.addTask([&swarm]
     {
         auto peers = swarm.peers();
         for(auto & peer1 : peers)
         {
-            LOG(peer1.second->id() << " enters the hall up high");
+            LOG(peer1.second->id() << " enters the swarm");
             if( peer1.second->id() != swarm.bootstrapNode()->id()){
                 peer1.second->start(swarm.bootstrapNode()->id());
             }
