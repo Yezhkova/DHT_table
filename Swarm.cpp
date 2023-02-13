@@ -16,19 +16,16 @@ void Swarm::init(bool mode, int PeerNumber)
     generateSwarm(mode, PeerNumber);
 }
 
-void Swarm::addTask(std::function<void ()> F)
-{
-    m_ioContext.post(F);
+void Swarm::addTask(EventQueue::Duration duration, std::function<void ()> F) {
+    m_eventQueqe.addTask(duration, F);
 }
 
-void Swarm::run()
-{
-    m_ioContext.run();
+void Swarm::run() {
+    m_eventQueqe.run();
 }
 
-void Swarm::stop()
-{
-    m_ioContext.stop();
+void Swarm::stop() {
+    m_eventQueqe.stop();
 }
 
 bool Swarm::tcp() {

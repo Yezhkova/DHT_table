@@ -6,11 +6,13 @@
 #include <map>
 #include <memory>
 #include <random>
+#include "EventQueue.h"
 
 class Swarm : public IKademliaTransportProtocol
 {
 private:
-    boost::asio::io_context               m_ioContext;
+//    boost::asio::io_context               m_ioContext;
+    EventQueue                            m_eventQueqe;
     std::map<ID, std::shared_ptr<Peer>>   m_peers;
     std::shared_ptr<Peer>                 m_bootstrapNode;
     bool                                  m_useTcp = false;
@@ -22,7 +24,7 @@ public:
     static Swarm& getInstance();
 
     void init(bool mode, int PeerNumber);
-    void addTask(std::function<void ()> F);
+    void addTask(EventQueue::Duration duration, std::function<void ()> F);
     void run();
     void stop();
 

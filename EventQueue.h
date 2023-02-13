@@ -24,7 +24,7 @@ public:
         return m_currentTime;
     }
     Timestamp addTask(Duration deltaTime = 0, std::function<void()> task = {});
-    void start();
-//    void stop(); not necessary
+    void run();
+    void stop();
 };
 

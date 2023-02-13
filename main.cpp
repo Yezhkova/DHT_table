@@ -7,7 +7,7 @@
 int main(void) {
     Swarm& swarm = Swarm::getInstance();
     swarm.init(SIM, 30);
-    swarm.addTask([&swarm]
+    swarm.addTask(0.001, [&swarm]
     {
         auto peers = swarm.peers();
         for(auto & peer1 : peers)
