@@ -50,7 +50,7 @@ void Peer::sendFindNode(const ID& recipientId
                         , const ID& queriedId)
 {
     // sender side
-    Swarm::getInstance().addTask(0.001, [recipientId, queriedId, senderId] {
+    Swarm::getInstance().addTask(0.002, [recipientId, queriedId, senderId] {
         auto recipient = Swarm::getInstance().getPeer(recipientId);
         if(recipient != nullptr) {
 
@@ -73,7 +73,7 @@ void Peer::receiveFindNode(const ID& senderId
 
 void Peer::sendFindNodeResponse(const ID& receiverId, const ID& queriedId, std::vector<ID> idsFound) {
     // receiver side
-    Swarm::getInstance().addTask(0.001, [receiverId, queriedId, idsFound, this] {
+    Swarm::getInstance().addTask(0.003, [receiverId, queriedId, idsFound, this] {
         auto receiver = Swarm::getInstance().getPeer(receiverId);
         receiver->receiveFindNodeResponse(queriedId, idsFound, id());
     });
