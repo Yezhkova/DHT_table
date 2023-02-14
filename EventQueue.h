@@ -16,12 +16,12 @@ private:
     };
 
     Event           m_head; // NOT the first event, but a POINTER to the first event
-    Timestamp       m_currentTime = 0;
+    Timestamp       m_queueCurrentTime = 0;
 
 public:
     EventQueue() {}
     Timestamp currentTime() {
-        return m_currentTime;
+        return m_queueCurrentTime;
     }
     Timestamp addTask(Duration deltaTime = 0, std::function<void()> task = {});
     void run();
