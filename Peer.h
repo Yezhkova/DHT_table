@@ -10,7 +10,9 @@ class Peer: public INodeEventHandler
 {
 private:
     Node                                m_node;
-    EventQueue::Duration                m_packetTime;
+    EventQueue::Interval                m_packetTime;
+    static std::mt19937                 s_randomGenerator;
+
 //    std::vector<std::shared_ptr<Peer>>  m_interestingPeers; // fill within start()
 
 public:
@@ -34,7 +36,7 @@ public:
     void sendPing(const ID & queriedId);
     void sendPingResponse(const ID & queryingId, const ID & queriedId);
 
-    void receivePing(const ID & queryingId, const ID & queriedId);
+    void receivePing(const ID & queryingId);
     bool receivePingResponse(const ID & queriedId);
 
     void sendFindNode(const ID& recipientId

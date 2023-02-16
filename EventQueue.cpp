@@ -1,6 +1,7 @@
 #include "EventQueue.h"
 #include <ios>
 #include "Utils.h"
+#include <cassert>
 /*
 class EventQueue
 {
@@ -31,29 +32,45 @@ public:
 
 */
 
-EventQueue::Timestamp EventQueue::addTask(Duration deltaTime
+EventQueue::Timestamp EventQueue::addTask(Interval delay
                                           , std::function<void()> task) {
-    Timestamp t = m_queueCurrentTime + deltaTime;
+    Timestamp t = m_queueCurrentTime + delay;
     auto* event = &m_head;
-//    for(; event != nullptr; event = event->m_next) {
-//        if(event->m_eventTime > t) {
-            auto* e = new Event{event->m_next, t, task};
-            event->m_next = e;
-//        }
-//    }
+    for(; event->m_next != nullptr; event = event->m_next) {
+        if(event->m_eventTime <= t) {
+            continue;
+        }
+        auto* e = new Event{event->m_next, t, task};
+        event->m_next = e;
+        return t;
+    }
+    assert(event->m_next == nullptr);
+    auto* e = new Event{nullptr, t, task};
+    event->m_next = e;
     return t;
 }
 void EventQueue::run() {
     while(m_head.m_next != nullptr) {
         auto* e = m_head.m_next;
         m_head.m_next = e->m_next;
+        m_queueCurrentTime += e->m_eventTime;
         e->m_task();
         delete e;
     }
 }
 
 void EventQueue::stop() {
+    while(m_head.m_next != nullptr) {
+        auto* e = m_head.m_next;
+        m_head.m_next = e->m_next;
+        delete e;
+    }
+}
 
+void EventQueue::setEndTime(Timestamp time) {
+    addTask(time, [this] {
+        stop();
+    });
 }
 
 

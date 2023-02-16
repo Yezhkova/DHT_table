@@ -5,7 +5,7 @@ class EventQueue
 {
 public:
     using Timestamp = double;
-    using Duration = double;
+    using Interval = double;
 
 private:
     struct Event
@@ -23,8 +23,9 @@ public:
     Timestamp currentTime() {
         return m_queueCurrentTime;
     }
-    Timestamp addTask(Duration deltaTime = 0, std::function<void()> task = {});
+    Timestamp addTask(Interval deltaTime = 0, std::function<void()> task = {});
     void run();
+    void setEndTime(Timestamp time);
     void stop();
 };
 

@@ -16,7 +16,7 @@ void Swarm::init(bool mode, int PeerNumber)
     generateSwarm(mode, PeerNumber);
 }
 
-void Swarm::addTask(EventQueue::Duration duration, std::function<void ()> F) {
+void Swarm::addTask(EventQueue::Interval duration, std::function<void ()> F) {
     m_eventQueqe.addTask(duration, F);
 }
 
