@@ -4,6 +4,7 @@
 #include <sstream>
 #include <bitset>
 #include <random>
+#include <array>
 
 #define DIGEST 160
 #define DIGEST_BYTES 20

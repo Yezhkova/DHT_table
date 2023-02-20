@@ -1,0 +1,2 @@
+#pragma code_page(65001)
+1 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ "C:/Users/yezhk/source/repos/DHT_table/out/build/x64-Debug/CMakeFiles/kademlia.dir/embed.manifest"

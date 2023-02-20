@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.14)
 
 project( LANGUAGES CXX)
 
-#ifdef __linux__
+if (UNIX)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-#endif
+endif (UNIX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -28,23 +28,23 @@ set(SOURCE main.cpp
            PeerStatistics.h                 PeerStatistics.cpp
 )
 
-#ifdef __linux__
+if (UNIX)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
-#endif
+endif (UNIX)
 
 add_executable(kademlia ${SOURCE})
 
-#ifdef _WIN32
+if (WIN32)
 set(BOOST_ROOT "C:/Program Files/boost/boost_1_81_0")
 set(BOOST_LIBRARYDIR "C:/Program Files/boost/boost_1_81_0/stage/lib")
 set(Boost_USE_DEBUG_LIBS        ON)  # ignore debug libs and
 set(Boost_USE_RELEASE_LIBS       OFF)  # only find release libs
-
-#elif __linux__
+endif (WIN32)
+if (UNIX)
 set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
 set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
-#endif
+endif (UNIX)
 
 set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
 set(Boost_USE_MULTITHREADED      ON)
