@@ -23,6 +23,7 @@ set(SOURCE main.cpp
            Contact.h                        Contact.cpp
            INodeEventHandler.h              INodeEventHandler.cpp
            EventQueue.h                     EventQueue.cpp
+           PeerStatistics.h                 PeerStatistics.cpp
 )
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)

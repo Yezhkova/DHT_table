@@ -4,6 +4,11 @@
 #define TCP true
 #define SIM false
 
+void calculateStatistic(const Swarm& swarm) {
+    // for auto peer: peers
+    // calculate statistics
+}
+
 int main(void) {
     Swarm& swarm = Swarm::getInstance();
     swarm.init(SIM, 20);
@@ -17,6 +22,10 @@ int main(void) {
                 peer1.second->start(swarm.bootstrapNode()->id());
             }
         }
+    });
+    swarm.addTask(10*60*1000, [&swarm]
+    {
+        calculateStatistic(swarm);
     });
     swarm.run();
     LOG("simulation done");

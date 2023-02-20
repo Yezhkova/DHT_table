@@ -5,8 +5,11 @@
 #include "ID.h"
 #include "IKademliaTransportProtocol.h"
 #include "EventQueue.h"
+#include "PeerStatistics.h"
 
-class Peer: public INodeEventHandler
+inline uint64_t FindLimit = 50;
+
+class Peer: public PeerStatistics
 {
 private:
     Node                                m_node;
