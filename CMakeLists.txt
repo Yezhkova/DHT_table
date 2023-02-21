@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 3.14)
 
 project( LANGUAGES CXX)
 
+#ifdef __linux__
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+#endif
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -26,14 +28,25 @@ set(SOURCE main.cpp
            PeerStatistics.h                 PeerStatistics.cpp
 )
 
+#ifdef __linux__
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+#endif
 
 add_executable(kademlia ${SOURCE})
 
-set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
+#ifdef _WIN32
+set(BOOST_ROOT "C:/Program Files/boost/boost_1_81_0")
+set(BOOST_LIBRARYDIR "C:/Program Files/boost/boost_1_81_0/stage/lib")
+set(Boost_USE_DEBUG_LIBS        ON)  # ignore debug libs and
+set(Boost_USE_RELEASE_LIBS       OFF)  # only find release libs
+
+#elif __linux__
 set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
 set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
+#endif
+
+set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
 
@@ -43,11 +56,6 @@ if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   target_link_libraries(kademlia ${Boost_LIBRARIES})
 endif()
-
-#find_package(Boost 1.81.0)
-#if(Boost_FOUND)
-#  include_directories(${Boost_INCLUDE_DIRS})
-#endif()
 
 install (TARGETS kademlia
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
