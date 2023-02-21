@@ -7,6 +7,7 @@
 void calculateStatistic(const Swarm& swarm) {
     // for auto peer: peers
     // calculate statistics
+    // djkfgnaho
 }
 
 int main(void) {
