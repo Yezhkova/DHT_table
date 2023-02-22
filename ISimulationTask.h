@@ -3,5 +3,5 @@
 class ISimulationTask
 {
 public:
-    ISimulationTask();
+    ISimulationTask() {};
 };

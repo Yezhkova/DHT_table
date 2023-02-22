@@ -17,15 +17,18 @@ private:
 
     Event           m_head; // NOT the first event, but a POINTER to the first event
     Timestamp       m_queueCurrentTime = 0;
+//    unsigned int    m_size = 0;
 
 public:
     EventQueue() {}
     Timestamp currentTime() {
         return m_queueCurrentTime;
     }
-    Timestamp addTask(Interval deltaTime = 0, std::function<void()> task = {});
+    Timestamp addTaskAfter(Interval deltaTime = 0, std::function<void()> task = {});
     void run();
     void setEndTime(Timestamp time);
     void stop();
+//    unsigned int size() const;
 };
+
 

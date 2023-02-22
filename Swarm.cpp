@@ -1,5 +1,9 @@
 #include "Swarm.h"
 
+const EventQueue& Swarm::eventQueqe() const {
+    return m_eventQueqe;
+}
+
 Swarm& Swarm::getInstance()
 {
     static Swarm swarm;
@@ -16,8 +20,8 @@ void Swarm::init(bool mode, int PeerNumber)
     generateSwarm(mode, PeerNumber);
 }
 
-void Swarm::addTask(EventQueue::Interval duration, std::function<void ()> F) {
-    m_eventQueqe.addTask(duration, F);
+void Swarm::addTaskAfter(EventQueue::Interval duration, std::function<void ()> F) {
+    m_eventQueqe.addTaskAfter(duration, F);
 }
 
 void Swarm::run() {

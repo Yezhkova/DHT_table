@@ -5,14 +5,19 @@
 #define SIM false
 
 void calculateStatistic(const Swarm& swarm) {
-    // for auto peer: peers
-    // calculate statistics
+    LOG("------------------------------------calculateStatistic-------------------------");
+    Swarm& s = Swarm::getInstance();
+    auto peers = s.peers();
+    for(auto& p : peers) {
+        LOG(p.second->id() << '\t'
+            << p.second->PeerStatistics::findNodeCounter());
+    }
 }
 
 int main(void) {
     Swarm& swarm = Swarm::getInstance();
-    swarm.init(SIM, 20);
-    swarm.addTask(0, [&swarm]
+    swarm.init(SIM, 10);
+    swarm.addTaskAfter(0, [&swarm]
     {
         auto peers = swarm.peers();
         for(auto & peer1 : peers)
@@ -23,10 +28,12 @@ int main(void) {
             }
         }
     });
-    swarm.addTask(10*60*1000, [&swarm]
+
+    swarm.addTaskAfter(1*60000, [&swarm]
     {
         calculateStatistic(swarm);
     });
+
     swarm.run();
     LOG("simulation done");
     return 0;

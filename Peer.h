@@ -1,6 +1,5 @@
 #pragma once
 
-#include "INodeEventHandler.h"
 #include "Node.h"
 #include "ID.h"
 #include "IKademliaTransportProtocol.h"
@@ -15,21 +14,21 @@ private:
     Node                                m_node;
     EventQueue::Interval                m_packetTime;
     static std::mt19937                 s_randomGenerator;
-
-//    std::vector<std::shared_ptr<Peer>>  m_interestingPeers; // fill within start()
+    std::vector<std::shared_ptr<Peer>>  m_interestingPeers; // fill within start()
 
 public:
     Peer() = delete;
     Peer(const Peer&) = default;
-    Peer(Peer && ) = default;
+    Peer(Peer&&) = default;
     Peer(ID id,
          IKademliaTransportProtocol& protocol,
-         bool useTcp)
-        : m_node(id, protocol, *this) {};
+         bool useTcp);
 
     ID id();
     Node& node();
     NodeInfo& info();
+    EventQueue::Interval packetTime() const;
+
     void randomize();
 
     void start(const ID & bootstrapId);

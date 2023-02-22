@@ -1,6 +1,20 @@
 #include "PeerStatistics.h"
+#include <cstdint>
 
-PeerStatistics::PeerStatistics()
+uint64_t PeerStatistics::findNodeCounter() const
 {
+    return m_findNodeCounter;
+}
 
+void PeerStatistics::setFindNodeCounter(uint64_t newFindNodeCounter)
+{
+    m_findNodeCounter = newFindNodeCounter;
+}
+
+uint64_t PeerStatistics::pingCounter() const {
+    return m_pingCounter;
+}
+
+void PeerStatistics::setPingCounter(uint64_t newPingCounter) {
+    m_pingCounter = newPingCounter;
 }

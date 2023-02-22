@@ -1,38 +1,13 @@
 #include "EventQueue.h"
 #include <ios>
-#include "Utils.h"
 #include <cassert>
-/*
-class EventQueue
-{
-public:
-    using Timestamp = double;
-    using Duration = double;
+#include "Utils.h"
 
-private:
-    struct Event
-    {
-        Event*                 m_next = nullptr;
-        Timestamp              m_eventTime;
-        std::function<void()>  m_task = {};
-    };
+//unsigned int EventQueue::size() const {
+//    return m_size;
+//}
 
-    Event           m_head; // NOT the first event, but a POINTER to the first event
-    Timestamp       m_currentTime = 0;
-
-public:
-    EventQueue() {}
-    Timestamp currentTime() {
-        return m_currentTime;
-    }
-    Timestamp addTask(Duration deltaTime = 0, std::function<void()> task = {});
-    void run();
-    void stop();
-};
-
-*/
-
-EventQueue::Timestamp EventQueue::addTask(Interval delay
+EventQueue::Timestamp EventQueue::addTaskAfter(Interval delay
                                           , std::function<void()> task) {
     Timestamp t = m_queueCurrentTime + delay;
     auto* event = &m_head;
@@ -42,19 +17,23 @@ EventQueue::Timestamp EventQueue::addTask(Interval delay
         }
         auto* e = new Event{event->m_next, t, task};
         event->m_next = e;
+//        ++m_size;
         return t;
     }
     assert(event->m_next == nullptr);
     auto* e = new Event{nullptr, t, task};
     event->m_next = e;
+//    ++m_size;
     return t;
 }
+
 void EventQueue::run() {
     while(m_head.m_next != nullptr) {
         auto* e = m_head.m_next;
         m_head.m_next = e->m_next;
         m_queueCurrentTime += e->m_eventTime;
         e->m_task();
+//        --m_size;
         delete e;
     }
 }
@@ -64,11 +43,12 @@ void EventQueue::stop() {
         auto* e = m_head.m_next;
         m_head.m_next = e->m_next;
         delete e;
+//        --m_size;
     }
 }
 
 void EventQueue::setEndTime(Timestamp time) {
-    addTask(time, [this] {
+    addTaskAfter(time, [this] {
         stop();
     });
 }

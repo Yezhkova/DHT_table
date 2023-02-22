@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project( LANGUAGES CXX)
+project( KADEMLIA_DHT CXX)
 
 if (UNIX)
 set(CMAKE_AUTOUIC ON)
@@ -38,8 +38,8 @@ add_executable(kademlia ${SOURCE})
 if (WIN32)
 set(BOOST_ROOT "C:/Program Files/boost/boost_1_81_0")
 set(BOOST_LIBRARYDIR "C:/Program Files/boost/boost_1_81_0/stage/lib")
-set(Boost_USE_DEBUG_LIBS        ON)  # ignore debug libs and
-set(Boost_USE_RELEASE_LIBS       OFF)  # only find release libs
+set(Boost_USE_DEBUG_LIBS        ON)  # only find debug libs and
+set(Boost_USE_RELEASE_LIBS       OFF)  # ignore release libs
 endif (WIN32)
 if (UNIX)
 set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
