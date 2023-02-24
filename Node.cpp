@@ -111,7 +111,7 @@ std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
             fill(prevBucket, res, k);
         }
     }
-    LOG("found " << res.size() << " closest nodes.");
+    LOG(id << ": found " << res.size() << " closest nodes.");
     for(auto& e : res){LOG(e);};
     return res;
 }

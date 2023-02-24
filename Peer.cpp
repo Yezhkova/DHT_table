@@ -47,9 +47,14 @@ void Peer::start(const ID& bootstrapId)
     addNode(bootstrapId);
     sendFindNode(bootstrapId, m_node.id(),  m_node.id());
 
+    // ...(delays)...
+    // receiveFindNodeResponse() called
+    // if receiveFindNodeResponse returns true: { swarm.addTask( []{} ) }
+
     // task for peer: select some random peers from Swarm and Ping them
     // TODO: findNode or ping?
     // TODO: for(...) {pick and ping} OR fill vector m_interestingPeers first?
+
     Swarm::getInstance().addTaskAfter(0, [this] {
         for(int i = 0; i < Swarm::getInstance().peers().size() * 0.3; ++i) {
             auto it = Swarm::getInstance().peers().begin();
@@ -122,7 +127,7 @@ void Peer::sendFindNode(const ID& recipientId
 void Peer::receiveFindNode(const ID& senderId
                            , const ID& queriedId) {
     // receiver side
-    auto idsFound = m_node.receiveFindNode(senderId, queriedId
+    std::vector<ID> idsFound = m_node.receiveFindNode(senderId, queriedId
                                            , boost::chrono::system_clock::now());
     Swarm::getInstance().addTaskAfter(m_packetTime, [senderId
                                                 , queriedId
@@ -161,7 +166,7 @@ void Peer::receiveFindNodeResponse(const ID& queriedId
     Swarm::getInstance().addTaskAfter(m_packetTime, [this
                                                 , ids
                                                 , queriedId
-                                                , responserId]{
+                                                , responserId] () -> bool {
         if(ids.size() == 1 && ids[0] == queriedId) {
             LOG(queriedId << " found from " << responserId);
         }

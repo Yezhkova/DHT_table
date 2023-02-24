@@ -17,7 +17,7 @@ void calculateStatistic(const Swarm& swarm) {
 
 int main(void) {
     Swarm& swarm = Swarm::getInstance();
-    swarm.init(SIM, 4);
+    swarm.init(SIM, 400);
     swarm.addTaskAfter(0, [&swarm]
     {
         auto peers = swarm.peers();
