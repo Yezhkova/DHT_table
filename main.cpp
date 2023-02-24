@@ -11,7 +11,7 @@ void calculateStatistic(const Swarm& swarm) {
     auto peers = s.peers();
     for(auto& p : peers) {
         LOG(p.second->id() << '\t'
-            << p.second->PeerStatistics::findNodeCounter());
+            << p.second->PeerStatistics::findNode());
     }
 }
 

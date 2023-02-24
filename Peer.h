@@ -56,7 +56,7 @@ public:
                                  , std::vector<ID> ids
                                  , const ID& responserId);
 
-    void onFindNodeResponse(bool find, int packetNumber) override;
+    void onFindNodeResponse(bool find) override;
     void onPacketReceived() override;
     void onPacketSent() override;
 };

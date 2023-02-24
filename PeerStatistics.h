@@ -11,9 +11,11 @@ class PeerStatistics: public INodeEventHandler
 
 public:
     PeerStatistics() {};
-    uint64_t pingCounter() const;
+    uint64_t ping() const;
     void setPingCounter(uint64_t newPingCounter);
-    uint64_t findNodeCounter() const;
-    void setFindNodeCounter(uint64_t newFindNodeCounter);
+    uint64_t findNode() const;
+    void incFindNodeCounter() { m_findNodeCounter++; }
+    void incPacketCounter() { m_packetCounter++; }
+
 };
 

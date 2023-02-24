@@ -61,7 +61,11 @@ public:
     std::vector<ID> receiveFindNode(const ID& senderId
                                     , const ID& queriedId
                                     , system_clock::time_point time);
-    void receiveFindNodeResponse(const ID & myId, const ID & queriedId);
+
+    void receiveFindNodeResponse(
+        const ID& queriedId
+        , std::vector<ID> ids
+        , const ID& responserId);
 
 };
 

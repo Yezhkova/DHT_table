@@ -148,4 +148,21 @@ void Node::sendPingResponse(const ID & queryingId) {
     Swarm::getInstance().getPeer(queryingId)->receivePingResponse(id());
 }
 
+void Node::receiveFindNodeResponse(
+    const ID& queriedId
+    , std::vector<ID> ids
+    , const ID& responserId)
+{
+    if (ids.size() == 1 && ids[0] == queriedId) {
+        LOG(queriedId << " found from " << responserId);
+        m_eventHandler.onFindNodeResponse(true);
+    }
+    else {
+        LOG(queriedId << " not found");
+        for (auto& id : ids) {
+            m_protocol.sendFindNode(id, this->id(), queriedId);
+        }
+    }
+}
+
 
