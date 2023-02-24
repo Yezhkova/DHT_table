@@ -11,7 +11,7 @@ inline std::recursive_mutex gLogMutex;
 #ifndef QDBG
     #define LOG(expr) { \
             const std::lock_guard<std::recursive_mutex> autolock( gLogMutex ); \
-            std::cout << expr << std::endl << std::flush; \
+            std::cout << std::fixed << expr << std::endl << std::flush; \
         }
 #else
     #define LOG(expr) { \

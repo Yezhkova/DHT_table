@@ -14,7 +14,7 @@ private:
     Node                                m_node;
     EventQueue::Interval                m_packetTime;
     static std::mt19937                 s_randomGenerator;
-    std::vector<std::shared_ptr<Peer>>  m_interestingPeers; // fill within start()
+    //std::vector<std::shared_ptr<Peer>>  m_interestingPeers; // fill within start()
 
 public:
     Peer() = delete;

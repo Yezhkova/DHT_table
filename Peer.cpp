@@ -3,7 +3,7 @@
 #include "Swarm.h"
 #include <boost/chrono.hpp>
 
-#define MILLISEC_IN_SEC 1000
+#define MILLISEC_IN_SEC 1000.0
 
 std::mt19937 Peer::s_randomGenerator;
 
@@ -11,7 +11,7 @@ Peer::Peer(ID id, IKademliaTransportProtocol& protocol, bool useTcp)
     : m_node(id, protocol, *this) {
     std::uniform_int_distribution<int> range(1, 100);
 
-    // random number from 10 to 100 ms; data speed
+    // random number from 1 to 100 ms; data speed
     m_packetTime = range(s_randomGenerator) / MILLISEC_IN_SEC;
 }
 
@@ -88,7 +88,7 @@ void Peer::receivePing(const ID & queryingId) {
 }
 
 bool Peer::receivePingResponse(const ID& queriedId) {
-    Swarm::getInstance().addTaskAfter(0, [queriedId] {
+    Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId] {
         auto recipient = Swarm::getInstance().getPeer(queriedId);
         if(recipient != nullptr) {
             LOG(queriedId << " is alive!");

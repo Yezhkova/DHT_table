@@ -10,25 +10,24 @@ public:
 private:
     struct Event
     {
+        //std::string            m_dbgLabel;
         Event*                 m_next = nullptr;
-        Timestamp              m_eventTime;
+        Timestamp              m_time;
         std::function<void()>  m_task = {};
     };
 
-    Event           m_head; // NOT the first event, but a POINTER to the first event
+    Event*          m_head; // NOT the first event, but a POINTER to the first event
     Timestamp       m_queueCurrentTime = 0;
-//    unsigned int    m_size = 0;
 
 public:
     EventQueue() {}
     Timestamp currentTime() {
         return m_queueCurrentTime;
     }
-    Timestamp addTaskAfter(Interval deltaTime = 0, std::function<void()> task = {});
+    Timestamp addTaskAt(Interval delay = 0, std::function<void()> task = {});
     void run();
     void setEndTime(Timestamp time);
     void stop();
-//    unsigned int size() const;
 };
 
 

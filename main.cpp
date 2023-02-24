@@ -3,6 +3,7 @@
 
 #define TCP true
 #define SIM false
+#define MINUTES 60000.0
 
 void calculateStatistic(const Swarm& swarm) {
     LOG("------------------------------------calculateStatistic-------------------------");
@@ -16,24 +17,23 @@ void calculateStatistic(const Swarm& swarm) {
 
 int main(void) {
     Swarm& swarm = Swarm::getInstance();
-    swarm.init(SIM, 10);
+    swarm.init(SIM, 4);
     swarm.addTaskAfter(0, [&swarm]
     {
         auto peers = swarm.peers();
         for(auto & peer1 : peers)
         {
-            LOG(peer1.second->id() << " enters the swarm");
+            LOG(peer1.second->id() << " enters the swarm, " << peer1.second->packetTime());
             if( peer1.second->id() != swarm.bootstrapNode()->id()){
                 peer1.second->start(swarm.bootstrapNode()->id());
             }
         }
     });
 
-    swarm.addTaskAfter(1*60000, [&swarm]
+    swarm.addTaskAfter(10 * MINUTES, [&swarm]
     {
         calculateStatistic(swarm);
     });
-
     swarm.run();
     LOG("simulation done");
     return 0;
