@@ -45,9 +45,9 @@ public:
                       , const ID& senderId
                       , const ID& queriedId);
 
-    void sendFindNodeResponse(const ID& senderId
-                              , const ID& queriedId
-                              , std::vector<ID> ids);
+    //void sendFindNodeResponse(const ID& senderId
+    //                          , const ID& queriedId
+    //                          , std::vector<ID> ids);
 
     void receiveFindNode(const ID& senderId
                          , const ID& queriedId);

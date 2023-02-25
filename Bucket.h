@@ -8,8 +8,6 @@ class Bucket
 private:
     std::set<Contact>  m_Bucket;
     static size_t      m_maxBucketSize;
-    //TODO: need a reference to my BucketMap to get to my Node
-    // (for updateNode: pinging front peers in list)
 public:
     Bucket() = default;
 

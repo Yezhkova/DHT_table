@@ -10,20 +10,20 @@ void calculateStatistic(const Swarm& swarm) {
     Swarm& s = Swarm::getInstance();
     auto peers = s.peers();
     for(auto& p : peers) {
-        LOG(p.second->id() << '\t'
-            << p.second->PeerStatistics::findNode());
+        LOG(p.second->id() << "     " <<
+            std::dec << p.second->PeerStatistics::findNode());
     }
 }
 
 int main(void) {
     Swarm& swarm = Swarm::getInstance();
-    swarm.init(SIM, 400);
+    swarm.init(SIM, 500);
     swarm.addTaskAfter(0, [&swarm]
     {
         auto peers = swarm.peers();
         for(auto & peer1 : peers)
         {
-            LOG(peer1.second->id() << " enters the swarm, " << peer1.second->packetTime());
+            //LOG(peer1.second->id() << " enters the swarm, " << peer1.second->packetTime());
             if( peer1.second->id() != swarm.bootstrapNode()->id()){
                 peer1.second->start(swarm.bootstrapNode()->id());
             }

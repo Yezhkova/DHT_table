@@ -1,4 +1,4 @@
-#include "Node.h"
+﻿#include "Node.h"
 #include "Utils.h"
 #include "Swarm.h"
 #include <optional>
@@ -31,7 +31,10 @@ void Node::randomizeId() {
 }
 
 bool Node::addNode(const ID& id) {
-    return m_BucketMap.addNode(id);
+    if (this->id() != id) {
+        return m_BucketMap.addNode(id);
+    }
+    return false;
 }
 
 void Node::updateLastSeen(const ID& id
@@ -64,6 +67,8 @@ void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, uint16_t k)
     if(bucket.has_value()) {
         for(uint16_t i = 0; i < k; ++i) {
             ids.push_back(pickRandomNode(bucket.value()));
+            // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же  (ЭТО РЕАЛЬНО)
+            // или ноды 1, 2, 2 . тогда какой смысл
         }
 
 // TODO: THIS is simpler, is this better?
@@ -112,7 +117,6 @@ std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
         }
     }
     LOG(id << ": found " << res.size() << " closest nodes.");
-    for(auto& e : res){LOG(e);};
     return res;
 }
 
@@ -122,10 +126,8 @@ void Node::sendFindNode(const ID & senderId, const ID & queriedId) {
 }
 
 std::vector<ID> Node::receiveFindNode(const ID& senderId
-                                      , const ID& queriedId
-                                      , system_clock::time_point time)
-{
-//    updateLastSeen(senderId, time); // TODO: update sender if exists in bucket
+                                      , const ID& queriedId)
+{   
     addNode(senderId);
     if(m_BucketMap.containsNode(queriedId)) {
         return {queriedId};
@@ -160,7 +162,7 @@ void Node::receiveFindNodeResponse(
     else {
         LOG(queriedId << " not found");
         for (auto& id : ids) {
-            m_protocol.sendFindNode(id, this->id(), queriedId);
+            m_protocol.sendFindNode(id, this->id(), queriedId); // Swarm does this
         }
     }
 }

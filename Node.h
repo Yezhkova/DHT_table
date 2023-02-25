@@ -46,26 +46,33 @@ public:
     bool addNode(const ID& id);
     void updateLastSeen(const ID& id
                         , boost::chrono::system_clock::time_point time);
+
     const ID& pickRandomNode(const Bucket& b) const;
     std::vector<ID> findClosestNodes(uint16_t k, const ID& id);
 
     friend bool operator==(const Node & l, const Node & r);
 
     void sendPing(const ID & queryingId);
+
     void sendPingResponse(const ID & queryingId);
+
     void receivePing(const ID & queryingId, const ID & queriedId);
+
     void receivePingResponse(const ID & queryingId, const ID & queriedId);
 
-    void sendFindNode(const ID & senderId, const ID & queriedId);
-    void sendFindNodeResponse(const ID & recipientId, const ID & senderId, const ID & queriedId);
-    std::vector<ID> receiveFindNode(const ID& senderId
-                                    , const ID& queriedId
-                                    , system_clock::time_point time);
 
-    void receiveFindNodeResponse(
-        const ID& queriedId
-        , std::vector<ID> ids
-        , const ID& responserId);
+    void sendFindNode(const ID & senderId, const ID & queriedId);
+
+    void sendFindNodeResponse(const ID & recipientId
+                              , const ID & senderId
+                              , const ID & queriedId);
+
+    std::vector<ID> receiveFindNode(const ID& senderId
+                                    , const ID& queriedId);
+
+    void receiveFindNodeResponse(const ID& queriedId
+                                 , std::vector<ID> ids
+                                 , const ID& responserId);
 
 };
 

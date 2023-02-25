@@ -31,7 +31,8 @@ bool Bucket::addNode(const Contact &contact)
 {
 // TODO: how many dead nodes do we evict?
     if(!isFull()) {
-       return m_Bucket.insert(contact).second;
+       m_Bucket.insert(contact).second;
+       return true;
     }
 //    ID me = m_bucketMap.m_node.id();
 //    Swarm::getInstace().getPeer(me)->sendPing(m_Bucket.front().id());

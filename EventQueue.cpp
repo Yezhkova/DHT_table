@@ -6,8 +6,7 @@
 EventQueue::Timestamp EventQueue::addTaskAt(Interval delay
                                           , std::function<void()> task) {
     Timestamp t = m_queueCurrentTime + delay;
-    Event** ptr = &m_head;
-    for (;; ptr = &(*ptr)->m_next)
+    for (Event** ptr = &m_head; ; ptr = &(*ptr)->m_next)
     {
         if ((*ptr) == nullptr)
         {
