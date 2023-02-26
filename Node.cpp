@@ -116,7 +116,7 @@ std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
             fill(prevBucket, res, k);
         }
     }
-    LOG(id << ": found " << res.size() << " closest nodes.");
+    //LOG(id << ": found " << res.size() << " closest nodes.");
     return res;
 }
 
@@ -156,11 +156,11 @@ void Node::receiveFindNodeResponse(
     , const ID& responserId)
 {
     if (ids.size() == 1 && ids[0] == queriedId) {
-        LOG(queriedId << " found from " << responserId);
+        //LOG(queriedId << " found from " << responserId);
         m_eventHandler.onFindNodeResponse(true);
     }
     else {
-        LOG(queriedId << " not found");
+        //LOG(queriedId << " not found");
         for (auto& id : ids) {
             m_protocol.sendFindNode(id, this->id(), queriedId); // Swarm does this
         }
