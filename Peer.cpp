@@ -35,6 +35,15 @@ void Peer::randomize() {
 	m_node.randomizeId();
 }
 
+ID Peer::pickRandomPeer() {
+    auto it = Swarm::getInstance().peers().begin();
+    std::uniform_int_distribution<int> range(0
+                   , Swarm::getInstance().peers().size() - 1);
+    int randomPeerNumber = range(s_randomGenerator);
+    std::advance(it, randomPeerNumber);
+    return it->second->id();
+}
+
 bool Peer::addNode(const ID& id) {
 	if (m_node.id() != id) {
 		return m_node.addNode(id);
@@ -87,19 +96,19 @@ bool Peer::receivePingResponse(const ID& queriedId) {
 }
 
 void Peer::sendFindNode(const ID& recipientId
-	, const ID& senderId
-	, const ID& queriedId) {
+                        , const ID& requestorId
+                        , const ID& queriedId) {
 	// sender side
 	Swarm::getInstance().addTaskAfter(m_packetTime, [responserId = recipientId
 		, queriedId
-		, senderId
+        , requestorId
 		, this]
 		{
 			// responser side
 			if (auto responser = Swarm::getInstance().getPeer(responserId);
 				responser != nullptr)
 			{
-				responser->receiveFindNode(senderId, queriedId);
+                responser->receiveFindNode(requestorId, queriedId);
 				Swarm::getInstance().getPeer(queriedId)->PeerStatistics::incFindNodeCounter();
 				PeerStatistics::incPacketCounter();
 			}
@@ -145,19 +154,10 @@ void Peer::receiveFindNodeResponse(const ID& queriedId
 void Peer::onFindNodeResponse(bool find)
 {
 	if (find) {
-		//Swarm::getInstance().addTaskAfter(0, [this] {
-		//	for (int i = 0; i < Swarm::getInstance().peers().size() * 0.3; ++i) {
-		//		auto it = Swarm::getInstance().peers().begin();
-		//		std::uniform_int_distribution<int> range(0
-		//			, Swarm::getInstance().peers().size() - 1);
-		//		int randomPeerNumber = range(s_randomGenerator);
-		//		std::advance(it, randomPeerNumber);
-		//		sendPing(it->second->id());
-		//	}
-		//});
-	}
+        // LOG("node found");
+    }
 	else {
-		LOG("---bad node: " << id());
+//        LOG("---bad node: " << id());
 	}
 }
 
@@ -170,3 +170,12 @@ void Peer::onPacketSent()
 
 }
 
+void Peer::onBootstrap() {
+    Swarm::getInstance().addTaskAfter(m_packetTime, [this] {
+        for (int i = 0; i < 2; ++i) {
+            ID recipientId = pickRandomPeer();
+            ID queriedId = pickRandomPeer();
+            sendFindNode(recipientId, id(), queriedId);
+        }
+    });
+}

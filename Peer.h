@@ -30,6 +30,7 @@ public:
     EventQueue::Interval packetTime() const;
 
     void randomize();
+    ID pickRandomPeer();
 
     void start(const ID & bootstrapId);
 
@@ -55,4 +56,5 @@ public:
     void onFindNodeResponse(bool find) override;
     void onPacketReceived() override;
     void onPacketSent() override;
+    void onBootstrap() override;
 };

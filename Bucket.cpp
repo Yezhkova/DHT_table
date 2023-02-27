@@ -1,5 +1,4 @@
 #include "Bucket.h"
-#include "Swarm.h"
 
 size_t Bucket::m_maxBucketSize = 20;
 

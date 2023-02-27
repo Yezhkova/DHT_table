@@ -4,7 +4,7 @@
 #include <optional>
 
 #define CLOSEST_NODES 3
-#define TIMEOUT 20
+#define TIMEOUT 1000
 
 size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;
@@ -154,7 +154,7 @@ void Node::receiveFindNodeResponse(const ID& queriedId
                                     , const ID& responserId)
 {
     if (Swarm::getInstance().getPeer(queriedId)->PeerStatistics::findNode() > TIMEOUT) {
-        Swarm::getInstance().getPeer(queriedId)->PeerStatistics::setFailedFindNode();
+//        Swarm::getInstance().getPeer(queriedId)->PeerStatistics::setFailedFindNode();
         m_eventHandler.onFindNodeResponse(false);
     }
     else if (ids[0] == queriedId) {
