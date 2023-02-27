@@ -29,13 +29,13 @@ bool Bucket::isEmpty() const
 // documentation p.5, 2.2
 bool Bucket::addNode(const Contact &contact)
 {
-// TODO: how many dead nodes do we evict?
     if(!isFull()) {
        m_Bucket.insert(contact).second;
        return true;
     }
 //    ID me = m_bucketMap.m_node.id();
 //    Swarm::getInstace().getPeer(me)->sendPing(m_Bucket.front().id());
+//     while answering -> ping until failure
 //    if(!Swarm::getInstace().getPeer(m_Bucket.front().id())->receivePingResponse(me))
 //    {
 //           m_Bucket.pop_front();

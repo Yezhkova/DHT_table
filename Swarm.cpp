@@ -72,7 +72,9 @@ void Swarm::sendPingResponse(const ID & queryingId, const ID & queriedId)
 
 }
 
-void Swarm::sendFindNode(const ID & recipientId, const ID & requesterId, const ID & queriedId)
+void Swarm::sendFindNode(const ID & recipientId
+                         , const ID & requesterId
+                         , const ID & queriedId)
 {
     auto recipient = Swarm::getInstance().getPeer(recipientId);
     if (recipient != nullptr) {

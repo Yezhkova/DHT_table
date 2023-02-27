@@ -3,8 +3,12 @@
 #include "Swarm.h"
 #include <optional>
 
+#define CLOSEST_NODES 3
+#define TIMEOUT 20
+
 size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;
+
 
 const ID& Node::id() const{
     return m_contact.id();
@@ -62,13 +66,13 @@ const ID& Node::pickRandomNode(const Bucket& b) const
     return it->id();
 }
 
-void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, uint16_t k)
+void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k)
 {
     if(bucket.has_value()) {
         for(uint16_t i = 0; i < k; ++i) {
             ids.push_back(pickRandomNode(bucket.value()));
-            // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же  (ЭТО РЕАЛЬНО)
-            // или ноды 1, 2, 2 . тогда какой смысл
+            // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же  
+            // или ноды 1, 2, 2 . (ЭТО РЕАЛЬНО) тогда какой смысл
         }
 
 // TODO: THIS is simpler, is this better?
@@ -79,7 +83,7 @@ void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, uint16_t k)
     }
 }
 
-std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
+std::vector<ID> Node::findClosestNodes(int k, const ID & id)
 {
     //TODO: do we return exactly k closest nodes or AT LEAST k?
 
@@ -120,11 +124,6 @@ std::vector<ID> Node::findClosestNodes(uint16_t k, const ID & id)
     return res;
 }
 
-
-void Node::sendFindNode(const ID & senderId, const ID & queriedId) {
-
-}
-
 std::vector<ID> Node::receiveFindNode(const ID& senderId
                                       , const ID& queriedId)
 {   
@@ -133,7 +132,7 @@ std::vector<ID> Node::receiveFindNode(const ID& senderId
         return {queriedId};
     }
     else {
-        return findClosestNodes(3, queriedId);
+        return findClosestNodes(CLOSEST_NODES, queriedId);
     }
 }
 
@@ -150,13 +149,17 @@ void Node::sendPingResponse(const ID & queryingId) {
     Swarm::getInstance().getPeer(queryingId)->receivePingResponse(id());
 }
 
-void Node::receiveFindNodeResponse(
-    const ID& queriedId
-    , std::vector<ID> ids
-    , const ID& responserId)
+void Node::receiveFindNodeResponse(const ID& queriedId
+                                    , std::vector<ID> ids
+                                    , const ID& responserId)
 {
-    if (ids.size() == 1 && ids[0] == queriedId) {
+    if (Swarm::getInstance().getPeer(queriedId)->PeerStatistics::findNode() > TIMEOUT) {
+        Swarm::getInstance().getPeer(queriedId)->PeerStatistics::setFailedFindNode();
+        m_eventHandler.onFindNodeResponse(false);
+    }
+    else if (ids[0] == queriedId) {
         //LOG(queriedId << " found from " << responserId);
+        Swarm::getInstance().getPeer(queriedId)->PeerStatistics::incReceiveFindNodeCounter();
         m_eventHandler.onFindNodeResponse(true);
     }
     else {

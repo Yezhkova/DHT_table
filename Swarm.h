@@ -29,7 +29,6 @@ public:
     void stop();
 
     void generateSwarm(bool mode, size_t Peers);
-    void createBootstrapNode();
     bool tcp();
     std::shared_ptr<Peer>& bootstrapNode();
     const std::map<ID, std::shared_ptr<Peer>>& peers() const;

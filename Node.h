@@ -24,8 +24,7 @@ private:
     NodeInfo                          m_info; // last seen time
     static std::mt19937               m_randomGenerator;
 
-    void fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, uint16_t k);
-
+    void fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k);
 
 public:
     Node(ID id, IKademliaTransportProtocol& protocol, INodeEventHandler& peer)
@@ -48,7 +47,7 @@ public:
                         , boost::chrono::system_clock::time_point time);
 
     const ID& pickRandomNode(const Bucket& b) const;
-    std::vector<ID> findClosestNodes(uint16_t k, const ID& id);
+    std::vector<ID> findClosestNodes(int k, const ID& id);
 
     friend bool operator==(const Node & l, const Node & r);
 
@@ -58,10 +57,8 @@ public:
 
     void receivePing(const ID & queryingId, const ID & queriedId);
 
-    void receivePingResponse(const ID & queryingId, const ID & queriedId);
-
-
-    void sendFindNode(const ID & senderId, const ID & queriedId);
+    void receivePingResponse(const ID & queryingId
+                             , const ID & queriedId);
 
     void sendFindNodeResponse(const ID & recipientId
                               , const ID & senderId
