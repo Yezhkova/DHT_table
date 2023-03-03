@@ -4,7 +4,7 @@
 #define TCP true
 #define SIM false
 #define MINUTES 60000.0
-#define SWARM_SIZE 36
+#define SWARM_SIZE 500
 
 void calculateStatistic(const Swarm& swarm) {
 	LOG("------------------------------------calculateStatistic-------------------------");
@@ -22,9 +22,7 @@ void calculateStatistic(const Swarm& swarm) {
 		++packetsStat[p.second->PeerStatistics::packets()];
 		deadNodesStat += p.second->PeerStatistics::failedFindNode();
 	}
-	for (auto& p : peers) {
-		if (p.second->findNode() == 1093) LOG(p.second->id());
-	}
+
 	LOG("number of operations --- number of peers");
 	LOG("findNode");
 	for (auto& i : findNodeStat) {
@@ -59,31 +57,41 @@ int main(void) {
 			}
 		});
 
-	swarm.addTaskAfter(50 * MINUTES, [&swarm]
-		{
-			calculateStatistic(swarm);
-		});
+    swarm.addTaskAfter(50 * MINUTES, [&swarm]
+    {
+        calculateStatistic(swarm);
+        Swarm::getInstance().eventQueqe().removeAllEvents();
 
-	swarm.addTaskAfter(56 * MINUTES, [&swarm]
-		{
-			auto peers = swarm.peers();
-			for (auto& peer : peers)
-			{
-				peer.second->resetFindNodeCounter();
-				peer.second->resetPacketCounter();
-				peer.second->resetReceiveFindNodeCounter();
-				peer.second->resetFailedNode();
-			}
-			for (auto& peer : peers)
-			{
-				peer.second->onBootstrap();
-			}
-		});
+        swarm.addTaskAfter(56 * MINUTES, [&swarm]
+        {
+            auto peers = swarm.peers();
+            for (auto& peer : peers)
+            {
+                peer.second->resetFindNodeCounter();
+                peer.second->resetPacketCounter();
+                peer.second->resetReceiveFindNodeCounter();
+                peer.second->resetFailedNode();
+            }
+            for (auto& peer : peers)
+            {
+                peer.second->onBootstrap();
+            }
+            //            LOG("---impossible quest");
+//            auto b1 = peers.begin(), b2 = peers.begin();
+//            std::advance(b1, 109);
+//            std::advance(b2, 264);
+//            auto p1 = b1->second;
+//            auto p2 = b2->second;
+//            auto rec = p1->node().findClosestNodes(1, p2->id())[0];
+//            LOG( p1->label() << " looking for " << p2->label() << "...");
+//            p1->sendFindNode(rec, p1->id(), p2->id());
+        });
 
-	swarm.addTaskAfter(180 * MINUTES, [&swarm]
-		{
-			calculateStatistic(swarm);
-		});
+        swarm.addTaskAfter(180 * MINUTES, [&swarm]
+        {
+            calculateStatistic(swarm);
+        });
+    });
 
 	swarm.run();
 	LOG("simulation done");

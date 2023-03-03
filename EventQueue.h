@@ -27,7 +27,7 @@ public:
     Timestamp addTaskAt(Interval delay = 0, std::function<void()> task = {});
     void run();
     void setEndTime(Timestamp time);
-    void stop();
+    void removeAllEvents();
 };
 
 

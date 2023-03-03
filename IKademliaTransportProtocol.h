@@ -8,7 +8,7 @@ public:
     virtual void sendPing(const ID & recipientId, const ID & queryingId, const ID & queriedId) = 0;
     virtual void sendPingResponse(const ID & queryingId, const ID & queriedId) = 0;
 
-    virtual void sendFindNode(const ID & recipientId, const ID & myId, const ID & queriedId) = 0;
+    virtual void sendFindNodeInSwarm(const ID & recipientId, const ID & myId, const ID & queriedId) = 0;
     virtual void sendFindNodeResponse(const ID & myId, const ID & queriedId) = 0;
 
 

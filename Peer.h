@@ -14,6 +14,8 @@ private:
     Node                                m_node;
     EventQueue::Interval                m_packetTime;
     static std::mt19937                 s_randomGenerator;
+    static uint64_t                     s_label;
+    uint64_t                            m_label;
     //std::vector<std::shared_ptr<Peer>>  m_interestingPeers; // fill within start()
 
 public:
@@ -28,6 +30,7 @@ public:
     Node& node();
     NodeInfo& info();
     EventQueue::Interval packetTime() const;
+    uint64_t label() const;
 
     void randomize();
     ID pickRandomPeer();
@@ -43,10 +46,10 @@ public:
     bool receivePingResponse(const ID & queriedId);
 
     void sendFindNode(const ID& recipientId
-                      , const ID& senderId
+                      , const ID& initiatorId
                       , const ID& queriedId);
 
-    void receiveFindNode(const ID& senderId
+    void receiveFindNode(const ID& initiatorId
                          , const ID& queriedId);
 
     void receiveFindNodeResponse(const ID & queriedId

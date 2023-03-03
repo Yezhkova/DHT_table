@@ -147,6 +147,10 @@ void Node::receiveFindNodeResponse(const ID& queriedId
                                     , std::vector<ID> ids
                                     , const ID& responserId)
 {
+    if(auto it = m_findNodeMap.find(queriedId); it == m_findNodeMap.end())
+    {
+        return;
+    }
     //if (Swarm::getInstance().getPeer(queriedId)->PeerStatistics::findNode() > TIMEOUT) {
     //    Swarm::getInstance().getPeer(queriedId)->PeerStatistics::setFailedFindNode();
     //    m_eventHandler.onFindNodeResponse(false);
@@ -155,14 +159,26 @@ void Node::receiveFindNodeResponse(const ID& queriedId
         Swarm::getInstance().getPeer(queriedId)->PeerStatistics::incReceiveFindNodeCounter();
         uint64_t tries = Swarm::getInstance().getPeer(queriedId)->PeerStatistics::findNode();
         //LOG(queriedId << " found from " << responserId << " in " << std::dec << tries << " tries");
-        m_eventHandler.onFindNodeResponse(true);
+        onFindNodeEnd(queriedId);
     }
     else {
         //LOG(queriedId << " not found");
         for (auto& id : ids) {
-            m_protocol.sendFindNode(id, this->id(), queriedId); // Swarm does this
+            m_protocol.sendFindNodeInSwarm(id, this->id(), queriedId); // Swarm does this
         }
     }
+
 }
 
+void Node::onFindNodeStart(const ID& queriedId)
+{
+    m_findNodeMap[queriedId]++;
+}
+
+void Node::onFindNodeEnd(const ID& queriedId)
+{
+    m_findNodeMap.erase(queriedId);
+    m_eventHandler.onFindNodeResponse(true);
+
+}
 

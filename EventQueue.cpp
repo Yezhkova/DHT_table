@@ -34,7 +34,7 @@ void EventQueue::run() {
     }
 }
 
-void EventQueue::stop() {
+void EventQueue::removeAllEvents() {
     while(m_head != nullptr) {
         auto* e = m_head;
         m_head = e->m_next;
@@ -44,7 +44,7 @@ void EventQueue::stop() {
 
 void EventQueue::setEndTime(Timestamp time) {
     addTaskAt(time, [this] {
-        stop();
+        removeAllEvents();
     });
 }
 

@@ -26,6 +26,8 @@ private:
 
     void fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k);
 
+    std::map<ID, uint32_t>            m_findNodeMap; // pair<queriedId, packetCounter>
+
 public:
     Node(ID id, IKademliaTransportProtocol& protocol, INodeEventHandler& peer)
         : m_contact(id)
@@ -70,6 +72,9 @@ public:
     void receiveFindNodeResponse(const ID& queriedId
                                  , std::vector<ID> ids
                                  , const ID& responserId);
+
+    void onFindNodeStart(const ID& queriedId);
+    void onFindNodeEnd(const ID& queriedId);
 
 };
 

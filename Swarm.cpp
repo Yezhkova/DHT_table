@@ -1,7 +1,7 @@
 #include "Swarm.h"
 #include "Utils.h"
 
-const EventQueue& Swarm::eventQueqe() const {
+EventQueue& Swarm::eventQueqe() {
     return m_eventQueqe;
 }
 
@@ -30,7 +30,7 @@ void Swarm::run() {
 }
 
 void Swarm::stop() {
-    m_eventQueqe.stop();
+    m_eventQueqe.removeAllEvents();
 }
 
 bool Swarm::tcp() {
@@ -72,17 +72,19 @@ void Swarm::sendPingResponse(const ID & queryingId, const ID & queriedId)
 
 }
 
-void Swarm::sendFindNode(const ID & recipientId
-                         , const ID & requesterId
+void Swarm::sendFindNodeInSwarm(const ID & recipientId
+                         , const ID & initiatorId
                          , const ID & queriedId)
 {
-    auto recipient = Swarm::getInstance().getPeer(requesterId);
-    if (recipient != nullptr) {
-        recipient->sendFindNode(recipientId, requesterId, queriedId);
+
+    if (auto initiator = Swarm::getInstance().getPeer(initiatorId);
+        initiator != nullptr)
+    {
+        initiator->sendFindNode(recipientId, initiatorId, queriedId);
     }
     else {
         LOG("sendFindNode Warning: the recipient peer "
-            << std::hex << requesterId << " does not exist");
+            << std::hex << initiatorId << " does not exist");
     }
 }
 

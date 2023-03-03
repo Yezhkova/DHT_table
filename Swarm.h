@@ -33,12 +33,13 @@ public:
     std::shared_ptr<Peer>& bootstrapNode();
     const std::map<ID, std::shared_ptr<Peer>>& peers() const;
     std::shared_ptr<Peer> getPeer(const ID& id);
+    EventQueue& eventQueqe();
+
 
     virtual void sendPing(const ID & recipientId, const ID & queryingId, const ID & queriedId) override;
     virtual void sendPingResponse(const ID & queryingId, const ID & queriedId) override;
 
-    virtual void sendFindNode(const ID & recipientId, const ID & myId, const ID & queriedId) override;
+    virtual void sendFindNodeInSwarm(const ID & recipientId, const ID & myId, const ID & queriedId) override;
     virtual void sendFindNodeResponse(const ID & myId, const ID & queriedId) override;
 
-    const EventQueue& eventQueqe() const;
 };

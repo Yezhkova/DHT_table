@@ -6,13 +6,14 @@
 #define MILLISEC_IN_SEC 1000.0
 
 std::mt19937 Peer::s_randomGenerator;
+uint64_t Peer::s_label = 0;
+
 
 Peer::Peer(ID id, IKademliaTransportProtocol& protocol, bool useTcp)
 	: m_node(id, protocol, *this) {
-	std::uniform_int_distribution<int> range(1, 100);
-
-	// random number from 1 to 100 ms; data speed
-	m_packetTime = range(s_randomGenerator) / MILLISEC_IN_SEC;
+    std::uniform_int_distribution<int> range(1, 100);
+    m_packetTime = range(s_randomGenerator) / MILLISEC_IN_SEC;
+    m_label = ++s_label;
 }
 
 ID Peer::id() {
@@ -29,6 +30,10 @@ NodeInfo& Peer::info() {
 
 EventQueue::Interval Peer::packetTime() const {
 	return m_packetTime;
+}
+
+uint64_t Peer::label() const {
+    return m_label;
 }
 
 void Peer::randomize() {
@@ -96,24 +101,26 @@ bool Peer::receivePingResponse(const ID& queriedId) {
 }
 
 void Peer::sendFindNode(const ID& recipientId
-                        , const ID& requestorId
+                        , const ID& initiatorId
                         , const ID& queriedId) {
+    m_node.onFindNodeStart(queriedId);
     // sender side
     Swarm::getInstance().addTaskAfter(m_packetTime, [responserId = recipientId
 		, queriedId
-        , requestorId
+        , initiatorId
 		, this]
-		{
-			auto requestor = Swarm::getInstance().getPeer(requestorId);
-			if (requestor->m_node.bucketMap().containsNode(queriedId)) {
-				receiveFindNodeResponse(queriedId, { queriedId }, id());
-				return;
-			}
+		{	
+            if (auto initiator = Swarm::getInstance().getPeer(initiatorId);
+                    initiator->m_node.bucketMap().containsNode(queriedId))
+            {
+                receiveFindNodeResponse(queriedId, { queriedId }, id());
+                return;
+            }
 			// responser side
 			if (auto responser = Swarm::getInstance().getPeer(responserId);
 				responser != nullptr)
 			{
-                responser->receiveFindNode(requestorId, queriedId);
+                responser->receiveFindNode(initiatorId, queriedId);
 				Swarm::getInstance().getPeer(queriedId)->PeerStatistics::incFindNodeCounter();
 				PeerStatistics::incPacketCounter();
 			}
@@ -125,20 +132,21 @@ void Peer::sendFindNode(const ID& recipientId
 		});
 }
 
-void Peer::receiveFindNode(const ID& requesterId
-    , const ID& queriedId) {
+void Peer::receiveFindNode(const ID& initiatorId
+                          , const ID& queriedId) {
 	// responser side
-    std::vector<ID> ids = m_node.receiveFindNode(requesterId, queriedId);
+    std::vector<ID> ids = m_node.receiveFindNode(initiatorId, queriedId);
 
-    Swarm::getInstance().addTaskAfter(m_packetTime, [requesterId
+    Swarm::getInstance().addTaskAfter(m_packetTime, [initiatorId
 		, queriedId
 		, ids
 		, this]
 		{
             // requester side
-            auto recipient = Swarm::getInstance().getPeer(requesterId);
-            if (recipient != nullptr) {
-                recipient->receiveFindNodeResponse(queriedId, ids, id());
+            if (auto initiator = Swarm::getInstance().getPeer(initiatorId);
+                    initiator != nullptr)
+            {
+                initiator->receiveFindNodeResponse(queriedId, ids, id());
 				PeerStatistics::incPacketCounter();
 			}
 			else {
@@ -177,7 +185,7 @@ void Peer::onPacketSent()
 
 void Peer::onBootstrap() {
     Swarm::getInstance().addTaskAfter(m_packetTime, [this] {
-        for (int i = 0; i < 3; ++i) {
+        for (int i = 0; i < 2; ++i) {
 			ID queriedId = pickRandomPeer();
 			//if (queriedId != ID()) {
 				ID recipientId = m_node.findClosestNodes(1, queriedId)[0];
