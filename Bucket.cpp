@@ -51,11 +51,11 @@ bool Bucket::addNode(const ID& id)
     return false;
 }
 
-bool Bucket::containsNode(const Contact &contact) {
+bool Bucket::containsNode(const Contact &contact) const {
     return m_Bucket.find(contact.id()) != m_Bucket.end();
 }
 
-bool Bucket::containsNode(const ID& id) {
+bool Bucket::containsNode(const ID& id) const {
     return m_Bucket.find(id) != m_Bucket.end();
 }
 

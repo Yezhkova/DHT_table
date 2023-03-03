@@ -19,8 +19,8 @@ public:
     bool addNode(const Contact& contact);
     bool addNode(const ID& id);
 
-    bool containsNode(const Contact& contact);
-    bool containsNode(const ID& id);
+    bool containsNode(const Contact& contact)const;
+    bool containsNode(const ID& id) const;
 
     const std::map<BucketIndex, Bucket>& map() const;
     std::optional<Bucket> getNodesAtDepth(size_t depth) const;

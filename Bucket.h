@@ -18,8 +18,8 @@ public:
     bool addNode(const Contact &contact);
     bool addNode(const ID& id);
 
-    bool containsNode(const Contact& contact);
-    bool containsNode(const ID& id);
+    bool containsNode(const Contact& contact)const;
+    bool containsNode(const ID& id) const;
 
     size_t removeNode(const Contact& contact);
     size_t removeNode(const ID& id);

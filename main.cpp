@@ -4,7 +4,7 @@
 #define TCP true
 #define SIM false
 #define MINUTES 60000.0
-#define SWARM_SIZE 10
+#define SWARM_SIZE 50
 
 void calculateStatistic(const Swarm& swarm) {
     LOG("------------------------------------calculateStatistic-------------------------");
@@ -22,7 +22,10 @@ void calculateStatistic(const Swarm& swarm) {
         ++packetsStat[p.second->PeerStatistics::packets()];
         deadNodesStat += p.second->PeerStatistics::failedFindNode();
     }
-
+    for(auto& p : peers) {
+        if(p.second->findNode() == 1093) LOG(p.second->id());
+    }
+    LOG("number of operations --- number of peers");
     LOG("findNode");
     for (auto& i : findNodeStat) {
         LOG(std::dec << i.first << ' ' << i.second);
@@ -55,10 +58,10 @@ int main(void) {
             }
         }
 
-        for(auto & peer : peers)
-        {
-            peer.second->onBootstrap();
-        }
+//        for(auto & peer : peers)
+//        {
+//            peer.second->onBootstrap();
+//        }
     });
 
     swarm.addTaskAfter(100 * MINUTES, [&swarm]

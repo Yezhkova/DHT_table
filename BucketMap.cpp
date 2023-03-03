@@ -22,7 +22,7 @@ bool BucketMap::addNode(const ID& id)
     return m_Buckets[BucketIndex].addNode(Contact(id));
 }
 
-bool BucketMap::containsNode(const Contact &contact)
+bool BucketMap::containsNode(const Contact &contact) const
 {
     for(auto & bucket : m_Buckets)
     {
@@ -33,7 +33,7 @@ bool BucketMap::containsNode(const Contact &contact)
     return false;
 }
 
-bool BucketMap::containsNode(const ID& id)
+bool BucketMap::containsNode(const ID& id) const
 {
     for(auto& bucket : m_Buckets)
     {

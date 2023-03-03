@@ -53,7 +53,7 @@ bool Peer::addNode(const ID& id) {
 
 void Peer::start(const ID& bootstrapId) {
 	addNode(bootstrapId);
-	sendFindNode(bootstrapId, m_node.id(), m_node.id());
+    sendFindNode(bootstrapId, m_node.id(), m_node.id());
 }
 
 void Peer::sendPing(const ID& queriedId) {
@@ -98,8 +98,8 @@ bool Peer::receivePingResponse(const ID& queriedId) {
 void Peer::sendFindNode(const ID& recipientId
                         , const ID& requestorId
                         , const ID& queriedId) {
-	// sender side
-	Swarm::getInstance().addTaskAfter(m_packetTime, [responserId = recipientId
+    // sender side
+    Swarm::getInstance().addTaskAfter(m_packetTime, [responserId = recipientId
 		, queriedId
         , requestorId
 		, this]
@@ -121,19 +121,19 @@ void Peer::sendFindNode(const ID& recipientId
 }
 
 void Peer::receiveFindNode(const ID& requesterId
-	, const ID& queriedId) {
+    , const ID& queriedId) {
 	// responser side
-	std::vector<ID> ids = m_node.receiveFindNode(requesterId, queriedId);
+    std::vector<ID> ids = m_node.receiveFindNode(requesterId, queriedId);
 
-	Swarm::getInstance().addTaskAfter(m_packetTime, [requesterId
+    Swarm::getInstance().addTaskAfter(m_packetTime, [requesterId
 		, queriedId
 		, ids
 		, this]
 		{
-			// requester side
-			auto recipient = Swarm::getInstance().getPeer(requesterId);
-			if (recipient != nullptr) {
-				recipient->receiveFindNodeResponse(queriedId, ids, id());
+            // requester side
+            auto recipient = Swarm::getInstance().getPeer(requesterId);
+            if (recipient != nullptr) {
+                recipient->receiveFindNodeResponse(queriedId, ids, id());
 				PeerStatistics::incPacketCounter();
 			}
 			else {
