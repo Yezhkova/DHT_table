@@ -76,13 +76,13 @@ void Swarm::sendFindNode(const ID & recipientId
                          , const ID & requesterId
                          , const ID & queriedId)
 {
-    auto recipient = Swarm::getInstance().getPeer(recipientId);
+    auto recipient = Swarm::getInstance().getPeer(requesterId);
     if (recipient != nullptr) {
         recipient->sendFindNode(recipientId, requesterId, queriedId);
     }
     else {
         LOG("sendFindNode Warning: the recipient peer "
-            << std::hex << recipientId << " does not exist");
+            << std::hex << requesterId << " does not exist");
     }
 }
 

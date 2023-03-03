@@ -4,7 +4,7 @@
 #include <optional>
 
 #define CLOSEST_NODES 3
-#define TIMEOUT 1000
+#define TIMEOUT 100000
 
 size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;
@@ -74,12 +74,6 @@ void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k)
             // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же  
             // или ноды 1, 2, 2 . (ЭТО РЕАЛЬНО) тогда какой смысл
         }
-
-// TODO: THIS is simpler, is this better?
-
-//        for(auto& contact: bucket.value().bucket()) {
-//            ids.push_back(contact.id());
-//        }
     }
 }
 
@@ -153,13 +147,14 @@ void Node::receiveFindNodeResponse(const ID& queriedId
                                     , std::vector<ID> ids
                                     , const ID& responserId)
 {
-    if (Swarm::getInstance().getPeer(queriedId)->PeerStatistics::findNode() > TIMEOUT) {
-        Swarm::getInstance().getPeer(queriedId)->PeerStatistics::setFailedFindNode();
-        m_eventHandler.onFindNodeResponse(false);
-    }
-    else if (ids[0] == queriedId) {
-        //LOG(queriedId << " found from " << responserId);
+    //if (Swarm::getInstance().getPeer(queriedId)->PeerStatistics::findNode() > TIMEOUT) {
+    //    Swarm::getInstance().getPeer(queriedId)->PeerStatistics::setFailedFindNode();
+    //    m_eventHandler.onFindNodeResponse(false);
+    //}
+    if (ids[0] == queriedId) {
         Swarm::getInstance().getPeer(queriedId)->PeerStatistics::incReceiveFindNodeCounter();
+        uint64_t tries = Swarm::getInstance().getPeer(queriedId)->PeerStatistics::findNode();
+        //LOG(queriedId << " found from " << responserId << " in " << std::dec << tries << " tries");
         m_eventHandler.onFindNodeResponse(true);
     }
     else {

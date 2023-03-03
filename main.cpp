@@ -59,18 +59,20 @@ int main(void) {
 			}
 		});
 
-	swarm.addTaskAfter(10 * MINUTES, [&swarm]
+	swarm.addTaskAfter(50 * MINUTES, [&swarm]
 		{
 			calculateStatistic(swarm);
 		});
 
-	swarm.addTaskAfter(20 * MINUTES, [&swarm]
+	swarm.addTaskAfter(56 * MINUTES, [&swarm]
 		{
 			auto peers = swarm.peers();
 			for (auto& peer : peers)
 			{
 				peer.second->resetFindNodeCounter();
 				peer.second->resetPacketCounter();
+				peer.second->resetReceiveFindNodeCounter();
+				peer.second->resetFailedNode();
 			}
 			for (auto& peer : peers)
 			{
@@ -78,7 +80,7 @@ int main(void) {
 			}
 		});
 
-	swarm.addTaskAfter(40 * MINUTES, [&swarm]
+	swarm.addTaskAfter(180 * MINUTES, [&swarm]
 		{
 			calculateStatistic(swarm);
 		});

@@ -104,6 +104,11 @@ void Peer::sendFindNode(const ID& recipientId
         , requestorId
 		, this]
 		{
+			auto requestor = Swarm::getInstance().getPeer(requestorId);
+			if (requestor->m_node.bucketMap().containsNode(queriedId)) {
+				receiveFindNodeResponse(queriedId, { queriedId }, id());
+				return;
+			}
 			// responser side
 			if (auto responser = Swarm::getInstance().getPeer(responserId);
 				responser != nullptr)
@@ -174,9 +179,11 @@ void Peer::onBootstrap() {
     Swarm::getInstance().addTaskAfter(m_packetTime, [this] {
         for (int i = 0; i < 3; ++i) {
 			ID queriedId = pickRandomPeer();
-			ID recipientId = m_node.findClosestNodes(1, queriedId)[0];
-			//LOG(id() << ' ' << queriedId << ' ' << recipientId);
-            sendFindNode(recipientId, id(), queriedId);
+			//if (queriedId != ID()) {
+				ID recipientId = m_node.findClosestNodes(1, queriedId)[0];
+				//LOG(id() << " is looking for " << queriedId << " in " << recipientId << std::endl);
+				sendFindNode(recipientId, id(), queriedId);
+			//}
         }
     });
 }

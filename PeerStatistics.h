@@ -26,9 +26,11 @@ public:
 
     uint64_t receiveFindNode() const { return m_receiveFindNodeCounter; }
     void incReceiveFindNodeCounter() { ++m_receiveFindNodeCounter; }
+    void resetReceiveFindNodeCounter() { m_receiveFindNodeCounter = 0; }
 
     bool failedFindNode() const { return m_failedFindNode; }
     void setFailedFindNode() { m_failedFindNode = true; }
+    void resetFailedNode() { m_failedFindNode = false; }
 
 };
 
