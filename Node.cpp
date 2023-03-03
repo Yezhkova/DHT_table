@@ -154,7 +154,7 @@ void Node::receiveFindNodeResponse(const ID& queriedId
                                     , const ID& responserId)
 {
     if (Swarm::getInstance().getPeer(queriedId)->PeerStatistics::findNode() > TIMEOUT) {
-//        Swarm::getInstance().getPeer(queriedId)->PeerStatistics::setFailedFindNode();
+        Swarm::getInstance().getPeer(queriedId)->PeerStatistics::setFailedFindNode();
         m_eventHandler.onFindNodeResponse(false);
     }
     else if (ids[0] == queriedId) {

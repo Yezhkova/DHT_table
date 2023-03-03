@@ -15,12 +15,14 @@ public:
 
     uint64_t packets() const { return m_packetCounter; }
     void incPacketCounter() { ++m_packetCounter; }
+    void resetPacketCounter() { m_packetCounter = 0; }
 
     uint64_t ping() const { return m_pingCounter; }
     void incPingCounter() { ++m_pingCounter; }
 
     uint64_t findNode() const { return m_findNodeCounter; }
     void incFindNodeCounter() { ++m_findNodeCounter; }
+    void resetFindNodeCounter() { m_findNodeCounter = 0; }
 
     uint64_t receiveFindNode() const { return m_receiveFindNodeCounter; }
     void incReceiveFindNodeCounter() { ++m_receiveFindNodeCounter; }
