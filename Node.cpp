@@ -69,11 +69,17 @@ const ID& Node::pickRandomNode(const Bucket& b) const
 void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k)
 {
     if(bucket.has_value()) {
-        for(uint16_t i = 0; i < k; ++i) {
-            ids.push_back(pickRandomNode(bucket.value()));
-            // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же  
-            // или ноды 1, 2, 2 . (ЭТО РЕАЛЬНО) тогда какой смысл
+//        for(uint16_t i = 0; i < k; ++i) {
+//            ids.push_back(pickRandomNode(bucket.value()));
+//            // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же
+//            // или ноды 1, 2, 2 . (ЭТО РЕАЛЬНО) тогда какой смысл
+//        }
+        // это медленно на втором этапе (рандомные пары)
+
+        for(auto& contact : bucket.value().bucket()) {
+            ids.push_back(contact.id());
         }
+        // тут медленнее бутстрап, но гораздо быстрее 2 фаза
     }
 }
 

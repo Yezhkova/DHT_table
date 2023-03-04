@@ -76,15 +76,6 @@ int main(void) {
             {
                 peer.second->onBootstrap();
             }
-            //            LOG("---impossible quest (swarm size == 500)");
-//            auto b1 = peers.begin(), b2 = peers.begin();
-//            std::advance(b1, 109);
-//            std::advance(b2, 264);
-//            auto p1 = b1->second;
-//            auto p2 = b2->second;
-//            auto rec = p1->node().findClosestNodes(1, p2->id())[0];
-//            LOG( p1->label() << " looking for " << p2->label() << "...");
-//            p1->sendFindNode(rec, p1->id(), p2->id());
         });
 
         swarm.addTaskAfter(180 * MINUTES, [&swarm]
