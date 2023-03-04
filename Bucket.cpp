@@ -2,7 +2,7 @@
 
 size_t Bucket::m_maxBucketSize = 20;
 
-const std::set<Contact> &Bucket::data() const {
+const std::set<Contact> Bucket::data() const {
     return m_Bucket;
 };
 

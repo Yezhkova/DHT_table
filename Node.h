@@ -49,7 +49,7 @@ public:
     void updateLastSeen(const ID& id
                         , boost::chrono::system_clock::time_point time);
 
-    const ID& pickRandomNode(const Bucket& b) const;
+    const ID pickRandomNode(const Bucket& b) const;
     std::vector<ID> findClosestNodes(int k, const ID& id);
 
     friend bool operator==(const Node & l, const Node & r);

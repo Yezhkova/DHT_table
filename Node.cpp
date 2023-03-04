@@ -5,7 +5,7 @@
 
 #define CLOSEST_NODES 3
 #define FIND_NODE_TIMEOUT 10000
-#define PING_TIMEOUT 5
+#define PING_TIMEOUT 1
 
 size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;
@@ -73,7 +73,7 @@ IKademliaTransportProtocol& Node::protocol() {
     return m_protocol;
 }
 
-const ID& Node::pickRandomNode(const Bucket& b) const
+const ID Node::pickRandomNode(const Bucket& b) const
 {
     auto it = b.data().begin();
     std::uniform_int_distribution<int> range(0, b.size()-1);
@@ -210,7 +210,7 @@ void Node::onFindNodeEnd(bool found, const ID& queriedId)
 
 void Node::onPingStart(const ID& queriedId)
 {
-    m_pingMap[queriedId]++;
+    m_pingMap[queriedId]= 1;
 }
 
 void Node::onPingEnd(bool online, const ID& queriedId)

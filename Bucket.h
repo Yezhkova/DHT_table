@@ -11,7 +11,7 @@ private:
 public:
     Bucket() = default;
 
-    const std::set<Contact>& data() const;
+    const std::set<Contact> data() const;
 
     std::set<Contact>::iterator find_node(const ID& id);
 

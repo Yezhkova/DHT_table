@@ -71,7 +71,7 @@ void Peer::sendPing(const ID& queriedId) {
 		else {
 			LOG("sendPing Warning: the recipient peer does not exist");
 		}
-		});
+    });
 
     Swarm::getInstance().getPeer(queriedId)->PeerStatistics::incPingCounter();
     PeerStatistics::incPacketCounter();
@@ -96,7 +96,9 @@ void Peer::receivePing(const ID& requestorId) {
 }
 
 void Peer::receivePingResponse(bool online, const ID& queriedId) {
-    m_node.receivePingResponse(online, queriedId);
+    Swarm::getInstance().addTaskAfter(m_packetTime, [online, queriedId, this] {
+        m_node.receivePingResponse(online, queriedId);
+    });
 
     PeerStatistics::incPacketCounter();
 }
@@ -108,13 +110,14 @@ void Peer::sendFindNode(const ID& recipientId
     // sender side
     Swarm::getInstance().addTaskAfter(m_packetTime, [responserId = recipientId
 		, queriedId
-        , initiatorId]
+        , initiatorId, this]
 		{	
-//            if (m_node.bucketMap().containsNode(queriedId))
-//            {
-//                receiveFindNodeResponse(queriedId, { queriedId }, id());
-//                return;
-//            }
+            if (m_node.bucketMap().containsNode(queriedId))
+            {
+                receiveFindNodeResponse(queriedId, { queriedId }, id());
+                PeerStatistics::incPacketCounter();
+                return;
+            }
             // responser side
 			if (auto responser = Swarm::getInstance().getPeer(responserId);
 				responser != nullptr)
@@ -134,14 +137,14 @@ void Peer::sendFindNode(const ID& recipientId
 
 void Peer::receiveFindNode(const ID& initiatorId
                           , const ID& queriedId) {
-	// responser side
+    // responser side
     std::vector<ID> ids = m_node.receiveFindNode(initiatorId, queriedId);
 
     Swarm::getInstance().addTaskAfter(m_packetTime, [initiatorId
 		, queriedId
-		, ids
+        , ids
         , id = id()]
-		{
+        {
             // requester side
             if (auto initiator = Swarm::getInstance().getPeer(initiatorId);
                     initiator != nullptr)
@@ -160,7 +163,12 @@ void Peer::receiveFindNodeResponse(const ID& queriedId
 	, std::vector<ID> ids
 	, const ID& responserId)
 {
-	m_node.receiveFindNodeResponse(queriedId, ids, responserId);
+    Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId
+                                                    , ids
+                                                    , responserId
+                                                    , this]{
+        m_node.receiveFindNodeResponse(queriedId, ids, responserId);
+    });
 
 	PeerStatistics::incPacketCounter();
 }
