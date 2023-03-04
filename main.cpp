@@ -50,7 +50,7 @@ int main(void) {
 			auto peers = swarm.peers();
 			for (auto& peer : peers)
 			{
-				//LOG(peer1.second->id() << " enters the swarm, " << peer1.second->packetTime());
+//                LOG(peer.second->id() << " enters the swarm, " << std::dec << peer.second->label());
 				if (peer.second->id() != swarm.bootstrapNode()->id()) {
 					peer.second->start(swarm.bootstrapNode()->id());
 				}
@@ -76,7 +76,7 @@ int main(void) {
             {
                 peer.second->onBootstrap();
             }
-            //            LOG("---impossible quest");
+            //            LOG("---impossible quest (swarm size == 500)");
 //            auto b1 = peers.begin(), b2 = peers.begin();
 //            std::advance(b1, 109);
 //            std::advance(b2, 264);

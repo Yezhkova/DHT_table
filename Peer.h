@@ -57,6 +57,7 @@ public:
                                  , const ID& responserId);
 
     void onFindNodeResponse(bool find) override;
+    void onPingResponse(bool find) override;
     void onPacketReceived() override;
     void onPacketSent() override;
     void onBootstrap() override;

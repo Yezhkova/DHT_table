@@ -23,10 +23,9 @@ private:
     IKademliaTransportProtocol&       m_protocol;
     NodeInfo                          m_info; // last seen time
     static std::mt19937               m_randomGenerator;
-
-    void fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k);
-
     std::map<ID, uint32_t>            m_findNodeMap; // pair<queriedId, packetCounter>
+    std::map<ID, uint32_t>            m_pingMap;
+    void fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k);
 
 public:
     Node(ID id, IKademliaTransportProtocol& protocol, INodeEventHandler& peer)
@@ -75,6 +74,8 @@ public:
 
     void onFindNodeStart(const ID& queriedId);
     void onFindNodeEnd(const ID& queriedId);
+    void onPingStart(const ID& queriedId);
+    void onPingEnd(const ID& queriedId);
 
 };
 

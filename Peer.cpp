@@ -107,22 +107,18 @@ void Peer::sendFindNode(const ID& recipientId
     // sender side
     Swarm::getInstance().addTaskAfter(m_packetTime, [responserId = recipientId
 		, queriedId
-        , initiatorId
-		, this]
+        , initiatorId]
 		{	
-            if (auto initiator = Swarm::getInstance().getPeer(initiatorId);
-                    initiator->m_node.bucketMap().containsNode(queriedId))
-            {
-                receiveFindNodeResponse(queriedId, { queriedId }, id());
-                return;
-            }
-			// responser side
+//            if (m_node.bucketMap().containsNode(queriedId))
+//            {
+//                receiveFindNodeResponse(queriedId, { queriedId }, id());
+//                return;
+//            }
+            // responser side
 			if (auto responser = Swarm::getInstance().getPeer(responserId);
 				responser != nullptr)
 			{
                 responser->receiveFindNode(initiatorId, queriedId);
-				Swarm::getInstance().getPeer(queriedId)->PeerStatistics::incFindNodeCounter();
-				PeerStatistics::incPacketCounter();
 			}
 			else
 			{
@@ -130,6 +126,9 @@ void Peer::sendFindNode(const ID& recipientId
 					<< std::hex << responserId << " does not exist");
 			}
 		});
+
+    Swarm::getInstance().getPeer(queriedId)->PeerStatistics::incFindNodeCounter();
+    PeerStatistics::incPacketCounter();
 }
 
 void Peer::receiveFindNode(const ID& initiatorId
@@ -140,19 +139,20 @@ void Peer::receiveFindNode(const ID& initiatorId
     Swarm::getInstance().addTaskAfter(m_packetTime, [initiatorId
 		, queriedId
 		, ids
-		, this]
+        , id = id()]
 		{
             // requester side
             if (auto initiator = Swarm::getInstance().getPeer(initiatorId);
                     initiator != nullptr)
             {
-                initiator->receiveFindNodeResponse(queriedId, ids, id());
-				PeerStatistics::incPacketCounter();
+                initiator->receiveFindNodeResponse(queriedId, ids, id);
 			}
 			else {
 				LOG("receiveFindNode Warning: the recipient peer does not exist");
 			}
 		});
+
+    PeerStatistics::incPacketCounter();
 }
 
 void Peer::receiveFindNodeResponse(const ID& queriedId
@@ -174,12 +174,13 @@ void Peer::onFindNodeResponse(bool find)
 	}
 }
 
-void Peer::onPacketReceived()
-{
+void Peer::onPingResponse(bool find) {
 
 }
-void Peer::onPacketSent()
-{
+void Peer::onPacketReceived() {
+
+}
+void Peer::onPacketSent() {
 
 }
 
