@@ -13,12 +13,13 @@ class PeerStatistics: public INodeEventHandler
 public:
     PeerStatistics() {};
 
-    uint64_t packets() const { return m_packetCounter; }
+    uint64_t packetsCnt() const { return m_packetCounter; };
     void incPacketCounter() { ++m_packetCounter; }
     void resetPacketCounter() { m_packetCounter = 0; }
 
-    uint64_t ping() const { return m_pingCounter; }
+    uint64_t pingCnt() const { return m_pingCounter; }
     void incPingCounter() { ++m_pingCounter; }
+    void resetPingCounter() { m_pingCounter = 0; }
 
     uint64_t findNode() const { return m_findNodeCounter; }
     void incFindNodeCounter() { ++m_findNodeCounter; }

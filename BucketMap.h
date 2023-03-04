@@ -16,15 +16,15 @@ public:
     BucketMap() = delete;
     BucketMap(Node& node) : m_node(node) {};
 
-    bool addNode(const Contact& contact);
-    bool addNode(const ID& id);
-
-    bool containsNode(const Contact& contact)const;
+    bool addNode(const ID& id, int16_t BucketIndex);
+    bool removeNode(const ID& id);
     bool containsNode(const ID& id) const;
 
     const std::map<BucketIndex, Bucket>& map() const;
     std::optional<Bucket> getNodesAtDepth(size_t depth) const;
     const size_t size() const;
+    int16_t bucketSize(int16_t bucketIdx) const;
+    bool bucketFull(int16_t bucketIdx) const;
 
     std::vector<Bucket> nonEmptyBuckets();
 

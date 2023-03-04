@@ -10,27 +10,29 @@ int16_t BucketMap::calcBucketIndex(const ID& id) {
     return m_node.id() == id ? -1 : DIGEST - 1 - m_node.id().prefixLength(id);
 }
 
-bool BucketMap::addNode(const Contact& contact)
-{
-    size_t BucketIndex = calcBucketIndex(contact.id());
-    return m_Buckets[BucketIndex].addNode(contact);
+int16_t BucketMap::bucketSize(int16_t bucketIdx) const {
+    auto b = getNodesAtDepth(bucketIdx);
+    if(b.has_value()) {
+        return b.value().size();
+    }
+    return 0;
 }
 
-bool BucketMap::addNode(const ID& id)
-{
-    size_t BucketIndex = calcBucketIndex(id);
-    return m_Buckets[BucketIndex].addNode(Contact(id));
-}
-
-bool BucketMap::containsNode(const Contact &contact) const
-{
-    for(auto & bucket : m_Buckets)
-    {
-        if(bucket.second.containsNode(contact)) {
-            return true;
-        }
+bool BucketMap::bucketFull(int16_t bucketIdx) const {
+    auto b = getNodesAtDepth(bucketIdx);
+    if(b.has_value()) {
+        return b.value().isFull();
     }
     return false;
+}
+
+bool BucketMap::addNode(const ID& id, int16_t BucketIndex) {
+    return m_Buckets[BucketIndex].addNode(id);
+}
+
+bool BucketMap::removeNode(const ID& id) {
+    size_t BucketIndex = calcBucketIndex(id);
+    return m_Buckets[BucketIndex].removeNode(id);
 }
 
 bool BucketMap::containsNode(const ID& id) const
@@ -74,7 +76,7 @@ std::ostream& operator<< (std::ostream& out, const BucketMap& b)
     LOG(b.m_node.id() << " bucket map size: " << b.m_Buckets.size());
     for(auto& e: b.m_Buckets) {
         out << "Bucket depth " << e.first << ":\n";
-        for(auto& e2: e.second.bucket()){
+        for(auto& e2: e.second.data()){
             out << e2.id() << "\n";
         }
     }

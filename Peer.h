@@ -40,10 +40,10 @@ public:
     bool addNode(const ID & id);
 
     void sendPing(const ID & queriedId);
-    void sendPingResponse(const ID & queryingId, const ID & queriedId);
+    void sendPingResponse(const ID & requestorId, const ID & queriedId);
 
-    void receivePing(const ID & queryingId);
-    bool receivePingResponse(const ID & queriedId);
+    void receivePing(const ID & requestorId);
+    void receivePingResponse(bool online, const ID & queriedId);
 
     void sendFindNode(const ID& recipientId
                       , const ID& initiatorId

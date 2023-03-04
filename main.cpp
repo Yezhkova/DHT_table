@@ -4,7 +4,7 @@
 #define TCP true
 #define SIM false
 #define MINUTES 60000.0
-#define SWARM_SIZE 500
+#define SWARM_SIZE 45
 
 void calculateStatistic(const Swarm& swarm) {
 	LOG("------------------------------------calculateStatistic-------------------------");
@@ -12,14 +12,12 @@ void calculateStatistic(const Swarm& swarm) {
 	auto peers = s.peers();
 
 	std::map<int, int> findNodeStat;
-	std::map<int, int> receiveFindNodeStat;
 	std::map<int, int> packetsStat;
 	int deadNodesStat = 0;
 
 	for (auto& p : peers) {
 		++findNodeStat[p.second->PeerStatistics::findNode()];
-		++receiveFindNodeStat[p.second->PeerStatistics::receiveFindNode()];
-		++packetsStat[p.second->PeerStatistics::packets()];
+        ++packetsStat[p.second->PeerStatistics::packetsCnt()];
 		deadNodesStat += p.second->PeerStatistics::failedFindNode();
 	}
 
@@ -27,11 +25,6 @@ void calculateStatistic(const Swarm& swarm) {
 	LOG("findNode");
 	for (auto& i : findNodeStat) {
 		LOG(std::dec << i.first << ' ' << i.second);
-	}
-
-	LOG("receiveFindNode");
-	for (auto& i : receiveFindNodeStat) {
-		LOG(i.first << ' ' << i.second);
 	}
 
 	LOG("packets");

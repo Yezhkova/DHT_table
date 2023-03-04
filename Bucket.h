@@ -11,17 +11,12 @@ private:
 public:
     Bucket() = default;
 
-    const std::set<Contact>& bucket() const;
+    const std::set<Contact>& data() const;
 
     std::set<Contact>::iterator find_node(const ID& id);
 
-    bool addNode(const Contact &contact);
     bool addNode(const ID& id);
-
-    bool containsNode(const Contact& contact)const;
     bool containsNode(const ID& id) const;
-
-    size_t removeNode(const Contact& contact);
     size_t removeNode(const ID& id);
 
     bool isFull() const;

@@ -4,7 +4,8 @@
 #include <optional>
 
 #define CLOSEST_NODES 3
-#define TIMEOUT 100000
+#define FIND_NODE_TIMEOUT 10000
+#define PING_TIMEOUT 5
 
 size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;
@@ -34,11 +35,26 @@ void Node::randomizeId() {
     m_contact.randomize();
 }
 
-bool Node::addNode(const ID& id) {
-    if (this->id() != id) {
-        return m_BucketMap.addNode(id);
+bool Node::addNode(const ID& newId) {
+    if (this->id() != newId) {
+        int16_t bucketIdx = m_BucketMap.calcBucketIndex(newId);
+        if(!m_BucketMap.bucketFull(bucketIdx)){
+            return m_BucketMap.addNode(newId, bucketIdx);
+        }
+        int16_t size = m_BucketMap.bucketSize(bucketIdx);
+        for(auto& contact : m_BucketMap.getNodesAtDepth(bucketIdx).value().data())
+        {
+            m_protocol.sendPingInSwarm(this->id(), contact.id());
+        }
+        if(m_BucketMap.bucketSize(bucketIdx) < size) {
+            addNode(newId);
+        }
     }
     return false;
+}
+
+bool Node::removeNode(const ID& id) {
+    return m_BucketMap.removeNode(id);
 }
 
 void Node::updateLastSeen(const ID& id
@@ -59,7 +75,7 @@ IKademliaTransportProtocol& Node::protocol() {
 
 const ID& Node::pickRandomNode(const Bucket& b) const
 {
-    auto it = b.bucket().begin();
+    auto it = b.data().begin();
     std::uniform_int_distribution<int> range(0, b.size()-1);
     int randomNodeNumber = range(m_randomGenerator);
     std::advance(it, randomNodeNumber);
@@ -76,7 +92,7 @@ void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k)
 //        }
         // это медленно на втором этапе (рандомные пары)
 
-        for(auto& contact : bucket.value().bucket()) {
+        for(auto& contact : bucket.value().data()) {
             ids.push_back(contact.id());
         }
         // тут медленнее бутстрап, но гораздо быстрее 2 фаза
@@ -85,8 +101,6 @@ void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k)
 
 std::vector<ID> Node::findClosestNodes(int k, const ID & id)
 {
-    //TODO: do we return exactly k closest nodes or AT LEAST k?
-
     std::vector<ID> res;
 
     // start with the bucket where ID could be
@@ -136,17 +150,24 @@ std::vector<ID> Node::receiveFindNode(const ID& senderId
     }
 }
 
-void Node::sendFindNodeResponse(const ID & recipientId,
-                                const ID & myId, const ID & queriedId) {
-
+bool Node::receivePing(const ID & requestorId) {
+    return m_online;
 }
 
-void Node::sendPing(const ID & queryingId) {
-    sendPingResponse(queryingId);
-}
+void Node::receivePingResponse(bool online
+                              , const ID & queriedId)
+{
+    if(auto it = m_pingMap.find(queriedId); it == m_pingMap.end()) {
+        return;
+    }
 
-void Node::sendPingResponse(const ID & queryingId) {
-    Swarm::getInstance().getPeer(queryingId)->receivePingResponse(id());
+    if(!online && m_pingMap[queriedId] < PING_TIMEOUT)
+    {
+        m_protocol.sendPingInSwarm(id(), queriedId);
+    }
+    else {
+        onPingEnd(online, queriedId);
+    }
 }
 
 void Node::receiveFindNodeResponse(const ID& queriedId
@@ -156,13 +177,14 @@ void Node::receiveFindNodeResponse(const ID& queriedId
     if(auto it = m_findNodeMap.find(queriedId); it == m_findNodeMap.end()) {
         return;
     }
-    //if (Swarm::getInstance().getPeer(queriedId)->PeerStatistics::findNode() > TIMEOUT) {
-    //    Swarm::getInstance().getPeer(queriedId)->PeerStatistics::setFailedFindNode();
-    //    m_eventHandler.onFindNodeResponse(false);
-    //}
-    if (ids[0] == queriedId) {
+
+    if (m_findNodeMap[queriedId] > FIND_NODE_TIMEOUT) {
+        Swarm::getInstance().getPeer(queriedId)->PeerStatistics::setFailedFindNode();
+        onFindNodeEnd(false, queriedId);
+    }
+    else if (ids[0] == queriedId) {
         Swarm::getInstance().getPeer(queriedId)->PeerStatistics::incReceiveFindNodeCounter();
-        onFindNodeEnd(queriedId);
+        onFindNodeEnd(true, queriedId);
     }
     else {
         //LOG(queriedId << " not found");
@@ -178,10 +200,12 @@ void Node::onFindNodeStart(const ID& queriedId)
     m_findNodeMap[queriedId]++;
 }
 
-void Node::onFindNodeEnd(const ID& queriedId)
+void Node::onFindNodeEnd(bool found, const ID& queriedId)
 {
     m_findNodeMap.erase(queriedId);
+    if(found){
 //    m_eventHandler.onFindNodeResponse(true);
+    }
 }
 
 void Node::onPingStart(const ID& queriedId)
@@ -189,10 +213,20 @@ void Node::onPingStart(const ID& queriedId)
     m_pingMap[queriedId]++;
 }
 
-void Node::onPingEnd(const ID& queriedId)
+void Node::onPingEnd(bool online, const ID& queriedId)
 {
     m_pingMap.erase(queriedId);
-//    m_eventHandler.onPingResponse(true);
-
+    if(!online) {
+        removeNode(queriedId);
+    }
 }
+
+void Node::setOffline() {
+    m_online = false;
+}
+
+void Node::setOnline() {
+    m_online = true;
+}
+
 

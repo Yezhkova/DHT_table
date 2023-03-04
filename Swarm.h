@@ -36,10 +36,8 @@ public:
     EventQueue& eventQueqe();
 
 
-    virtual void sendPing(const ID & recipientId, const ID & queryingId, const ID & queriedId) override;
-    virtual void sendPingResponse(const ID & queryingId, const ID & queriedId) override;
-
+    virtual void sendPingInSwarm(const ID & requestorId
+                                 , const ID & queriedId) override;
     virtual void sendFindNodeInSwarm(const ID & recipientId, const ID & myId, const ID & queriedId) override;
-    virtual void sendFindNodeResponse(const ID & myId, const ID & queriedId) override;
 
 };

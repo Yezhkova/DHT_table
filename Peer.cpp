@@ -62,42 +62,43 @@ void Peer::start(const ID& bootstrapId) {
 }
 
 void Peer::sendPing(const ID& queriedId) {
-	Swarm::getInstance().addTaskAfter(m_packetTime, [this, queriedId] {
+    m_node.onPingStart(queriedId);
+    Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId, id = id()] {
 		auto recipient = Swarm::getInstance().getPeer(queriedId);
 		if (recipient != nullptr) {
-			recipient->receivePing(m_node.id());
+            recipient->receivePing(id);
 		}
 		else {
 			LOG("sendPing Warning: the recipient peer does not exist");
 		}
 		});
 
-	PeerStatistics::incPingCounter();
+    Swarm::getInstance().getPeer(queriedId)->PeerStatistics::incPingCounter();
+    PeerStatistics::incPacketCounter();
 }
 
-void Peer::receivePing(const ID& queryingId) {
-	Swarm::getInstance().addTaskAfter(m_packetTime, [this, queryingId] {
-		auto recipient = Swarm::getInstance().getPeer(queryingId);
-		if (recipient != nullptr) {
-			recipient->receivePingResponse(m_node.id());
+void Peer::receivePing(const ID& requestorId) {
+    bool online = m_node.receivePing(requestorId);
+
+    Swarm::getInstance().addTaskAfter(m_packetTime, [requestorId
+                                                    , online
+                                                    , id = id()] {
+        auto requestor = Swarm::getInstance().getPeer(requestorId);
+        if (requestor != nullptr) {
+            requestor->receivePingResponse(online, id);
 		}
 		else {
 			LOG("receivePing Warning: the recipient peer does not exist");
 		}
 		});
+
+    PeerStatistics::incPacketCounter();
 }
 
-bool Peer::receivePingResponse(const ID& queriedId) {
-	Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId] {
-		auto recipient = Swarm::getInstance().getPeer(queriedId);
-		if (recipient != nullptr) {
-			LOG(queriedId << " is alive!");
-		}
-		else {
-			LOG("receivePing Warning: the recipient peer does not exist");
-		}
-		});
-	return true;
+void Peer::receivePingResponse(bool online, const ID& queriedId) {
+    m_node.receivePingResponse(online, queriedId);
+
+    PeerStatistics::incPacketCounter();
 }
 
 void Peer::sendFindNode(const ID& recipientId

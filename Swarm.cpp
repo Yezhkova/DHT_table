@@ -62,15 +62,20 @@ void Swarm::generateSwarm(bool mode, size_t Peers)
     }
 }
 
-void Swarm::sendPing(const ID & recipientId, const ID & queryingId, const ID & queriedId)
+void Swarm::sendPingInSwarm(const ID & requestorId
+                            , const ID & queriedId)
 {
-
+    if (auto requestor = Swarm::getInstance().getPeer(requestorId);
+        requestor != nullptr)
+    {
+        requestor->sendPing(queriedId);
+    }
+    else {
+        LOG("sendPing Warning: the recipient peer "
+            << std::hex << requestorId << " does not exist");
+    }
 }
 
-void Swarm::sendPingResponse(const ID & queryingId, const ID & queriedId)
-{
-
-}
 
 void Swarm::sendFindNodeInSwarm(const ID & recipientId
                          , const ID & initiatorId
@@ -86,11 +91,6 @@ void Swarm::sendFindNodeInSwarm(const ID & recipientId
         LOG("sendFindNode Warning: the recipient peer "
             << std::hex << initiatorId << " does not exist");
     }
-}
-
-void Swarm::sendFindNodeResponse(const ID & myId, const ID & queriedId)
-{
-
 }
 
 

@@ -15,7 +15,7 @@ using system_clock = boost::chrono::system_clock;
 class Node
 {
 private:
-    bool                              m_isStarting = true;
+    bool                              m_online = true;
     Contact                           m_contact;
     INodeEventHandler&                m_eventHandler;
     BucketMap                         m_BucketMap;
@@ -25,6 +25,7 @@ private:
     static std::mt19937               m_randomGenerator;
     std::map<ID, uint32_t>            m_findNodeMap; // pair<queriedId, packetCounter>
     std::map<ID, uint32_t>            m_pingMap;
+
     void fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k);
 
 public:
@@ -44,6 +45,7 @@ public:
 
     void randomizeId();
     bool addNode(const ID& id);
+    bool removeNode(const ID& id);
     void updateLastSeen(const ID& id
                         , boost::chrono::system_clock::time_point time);
 
@@ -52,18 +54,10 @@ public:
 
     friend bool operator==(const Node & l, const Node & r);
 
-    void sendPing(const ID & queryingId);
+    bool receivePing(const ID & requestorId);
 
-    void sendPingResponse(const ID & queryingId);
-
-    void receivePing(const ID & queryingId, const ID & queriedId);
-
-    void receivePingResponse(const ID & queryingId
+    void receivePingResponse(bool online
                              , const ID & queriedId);
-
-    void sendFindNodeResponse(const ID & recipientId
-                              , const ID & senderId
-                              , const ID & queriedId);
 
     std::vector<ID> receiveFindNode(const ID& senderId
                                     , const ID& queriedId);
@@ -73,9 +67,13 @@ public:
                                  , const ID& responserId);
 
     void onFindNodeStart(const ID& queriedId);
-    void onFindNodeEnd(const ID& queriedId);
+    void onFindNodeEnd(bool found, const ID& queriedId);
     void onPingStart(const ID& queriedId);
-    void onPingEnd(const ID& queriedId);
+    void onPingEnd(bool online, const ID& queriedId);
+
+    void setOffline();
+    void setOnline();
+    bool online() { return m_online; };
 
 };
 
