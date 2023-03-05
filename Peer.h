@@ -8,7 +8,7 @@
 
 inline uint64_t FindLimit = 50;
 
-class Peer: public PeerStatistics
+class Peer: public PeerStatistics, public IKademliaTransportProtocol, public ITimer
 {
 private:
     Node                                m_node;
@@ -23,8 +23,6 @@ public:
     Peer(const Peer&) = default;
     Peer(Peer&&) = default;
     Peer(ID id,
-         IKademliaTransportProtocol& protocol,
-         ITimer& timerProtocol,
          bool useTcp);
 
     ID id();
@@ -40,15 +38,15 @@ public:
 
     bool addNode(const ID & id);
 
-    void sendPing(const ID & queriedId);
+    virtual void sendPing(const ID & queriedId) override;
     void sendPingResponse(const ID & requestorId, const ID & queriedId);
 
     void receivePing(const ID & requestorId);
     void receivePingResponse(bool online, const ID & queriedId);
 
-    void sendFindNode(const ID& recipientId
+    virtual void sendFindNode(const ID& recipientId
                       , const ID& initiatorId
-                      , const ID& queriedId);
+                      , const ID& queriedId) override;
 
     void receiveFindNode(const ID& initiatorId
                          , const ID& queriedId);
@@ -62,4 +60,8 @@ public:
     void onPacketReceived() override;
     void onPacketSent() override;
     void onBootstrap() override;
+
+    virtual void startTimer(EventQueue::Interval duration, std::function<void ()> F) override;
+
+
 };

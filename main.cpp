@@ -4,7 +4,7 @@
 #define TCP true
 #define SIM false
 #define MINUTES 60000.0
-#define SWARM_SIZE 150
+#define SWARM_SIZE 50
 
 void calculateStatistic(const Swarm& swarm) {
 	LOG("------------------------------------calculateStatistic-------------------------");

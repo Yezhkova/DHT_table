@@ -1,5 +1,4 @@
 #include "Swarm.h"
-#include "Utils.h"
 
 EventQueue& Swarm::eventQueqe() {
     return m_eventQueqe;
@@ -16,7 +15,7 @@ void Swarm::init(bool mode, int PeerNumber)
     m_peers.clear();
     m_bootstrapNode.reset();
 
-    m_bootstrapNode = std::make_shared<Peer>(ID(), *this, *this, mode);
+    m_bootstrapNode = std::make_shared<Peer>(ID(), mode);
     m_peers[m_bootstrapNode->id()] = m_bootstrapNode;
     generateSwarm(mode, PeerNumber);
 }
@@ -58,39 +57,6 @@ void Swarm::generateSwarm(bool mode, size_t Peers)
     for(size_t i = 0; i < Peers; ++i)
     {
         ID id = createRandomId();
-        m_peers[id] = std::make_shared<Peer>(id, *this, *this, mode);
+        m_peers[id] = std::make_shared<Peer>(id, mode);
     }
 }
-
-void Swarm::sendPingInSwarm(const ID & requestorId
-                            , const ID & queriedId)
-{
-    if (auto requestor = Swarm::getInstance().getPeer(requestorId);
-        requestor != nullptr)
-    {
-        requestor->sendPing(queriedId);
-    }
-    else {
-        LOG("sendPing Warning: the recipient peer "
-            << std::hex << requestorId << " does not exist");
-    }
-}
-
-
-void Swarm::sendFindNodeInSwarm(const ID & recipientId
-                         , const ID & initiatorId
-                         , const ID & queriedId)
-{
-
-    if (auto requestor = Swarm::getInstance().getPeer(initiatorId);
-        requestor != nullptr)
-    {
-       requestor->sendFindNode(recipientId, initiatorId, queriedId);
-    }
-    else {
-        LOG("sendFindNode Warning: the recipient peer "
-            << std::hex << initiatorId << " does not exist");
-    }
-}
-
-

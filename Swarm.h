@@ -1,14 +1,13 @@
 #pragma once
 
 #include "ID.h"
-#include "IKademliaTransportProtocol.h"
 #include "Peer.h"
 #include <map>
 #include <memory>
 #include <random>
 #include "EventQueue.h"
 
-class Swarm : public IKademliaTransportProtocol, public ITimer
+class Swarm
 {
 private:
 //    boost::asio::io_context               m_ioContext;
@@ -25,11 +24,6 @@ public:
 
     void init(bool mode, int PeerNumber);
     void addTaskAfter(EventQueue::Interval duration, std::function<void ()> F);
-    virtual void startTimer(EventQueue::Interval duration, std::function<void ()> F) override
-    {
-        addTaskAfter(duration, F);
-    }
-
     void run();
     void stop();
 
@@ -42,10 +36,5 @@ public:
 
 private:
 
-    virtual void sendPingInSwarm(const ID & requestorId
-                                 , const ID & queriedId) override;
-    virtual void sendFindNodeInSwarm(const ID & recipientId
-                                     , const ID & initiatorId
-                                     , const ID & queriedId) override;
     // startTimer
 };

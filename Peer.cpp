@@ -2,6 +2,8 @@
 #include "Utils.h"
 #include "Swarm.h"
 #include <boost/chrono.hpp>
+#include "Swarm.h"
+
 
 #define MILLISEC_IN_SEC 1000.0
 
@@ -9,8 +11,8 @@ std::mt19937 Peer::s_randomGenerator;
 uint64_t Peer::s_label = 0;
 
 
-Peer::Peer(ID id, IKademliaTransportProtocol& protocol, ITimer& timerProtocol, bool useTcp)
-    : m_node(id, protocol, timerProtocol, *this) {
+Peer::Peer(ID id, bool useTcp)
+    : m_node(id, *this, *this, *this) {
     std::uniform_int_distribution<int> range(1, 100);
     m_packetTime = range(s_randomGenerator) / MILLISEC_IN_SEC;
     m_label = ++s_label;
@@ -205,3 +207,8 @@ void Peer::onBootstrap() {
         }
     });
 }
+
+void Peer::startTimer(EventQueue::Interval duration, std::function<void ()> F) {
+    Swarm::getInstance().addTaskAfter(duration, F);
+}
+

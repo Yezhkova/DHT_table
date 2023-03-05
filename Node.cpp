@@ -44,7 +44,7 @@ bool Node::addNode(const ID& newId) {
         int16_t size = m_BucketMap.bucketSize(bucketIdx);
         for(auto& contact : m_BucketMap.getNodesAtDepth(bucketIdx).value().data())
         {
-            m_protocol.sendPingInSwarm(this->id(), contact.id());
+            m_protocol.sendPing(contact.id());
         }
         if(m_BucketMap.bucketSize(bucketIdx) < size) {
             addNode(newId);
@@ -163,7 +163,7 @@ void Node::receivePingResponse(bool online
 
     if(!online && m_pingMap[queriedId] < PING_THRESHOLD)
     {
-        m_protocol.sendPingInSwarm(id(), queriedId);
+        m_protocol.sendPing(queriedId);
     }
     else {
         onPingEnd(online, queriedId);
@@ -189,7 +189,7 @@ void Node::receiveFindNodeResponse(const ID& queriedId
     else {
         //LOG(queriedId << " not found");
         for (auto& id : ids) {
-            m_protocol.sendFindNodeInSwarm(id, this->id(), queriedId); // Swarm does this
+            m_protocol.sendFindNode(id, this->id(), queriedId); // Swarm does this
         }
     }
 
@@ -220,7 +220,7 @@ void Node::onPingEnd(bool online, const ID& queriedId)
         removeNode(queriedId);
     }
     m_timerProtocol.startTimer(15*60000, [this, queriedId]{
-        m_protocol.sendPingInSwarm(id(), queriedId);
+        m_protocol.sendPing(queriedId);
     });
 }
 
