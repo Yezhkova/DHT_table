@@ -5,7 +5,7 @@
 
 #define CLOSEST_NODES 3
 #define FIND_NODE_TIMEOUT 10000
-#define PING_TIMEOUT 1
+#define PING_THRESHOLD 1
 
 size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;
@@ -161,7 +161,7 @@ void Node::receivePingResponse(bool online
         return;
     }
 
-    if(!online && m_pingMap[queriedId] < PING_TIMEOUT)
+    if(!online && m_pingMap[queriedId] < PING_THRESHOLD)
     {
         m_protocol.sendPingInSwarm(id(), queriedId);
     }
@@ -219,6 +219,9 @@ void Node::onPingEnd(bool online, const ID& queriedId)
     if(!online) {
         removeNode(queriedId);
     }
+    m_timerProtocol.startTimer(15*60000, [this, queriedId]{
+        m_protocol.sendPingInSwarm(id(), queriedId);
+    });
 }
 
 void Node::setOffline() {

@@ -24,6 +24,7 @@ public:
     Peer(Peer&&) = default;
     Peer(ID id,
          IKademliaTransportProtocol& protocol,
+         ITimer& timerProtocol,
          bool useTcp);
 
     ID id();

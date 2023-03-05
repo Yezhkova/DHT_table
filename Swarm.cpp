@@ -16,7 +16,7 @@ void Swarm::init(bool mode, int PeerNumber)
     m_peers.clear();
     m_bootstrapNode.reset();
 
-    m_bootstrapNode = std::make_shared<Peer>(ID(), *this, mode);
+    m_bootstrapNode = std::make_shared<Peer>(ID(), *this, *this, mode);
     m_peers[m_bootstrapNode->id()] = m_bootstrapNode;
     generateSwarm(mode, PeerNumber);
 }
@@ -58,7 +58,7 @@ void Swarm::generateSwarm(bool mode, size_t Peers)
     for(size_t i = 0; i < Peers; ++i)
     {
         ID id = createRandomId();
-        m_peers[id] = std::make_shared<Peer>(id, *this, mode);
+        m_peers[id] = std::make_shared<Peer>(id, *this, *this, mode);
     }
 }
 
@@ -82,10 +82,10 @@ void Swarm::sendFindNodeInSwarm(const ID & recipientId
                          , const ID & queriedId)
 {
 
-    if (auto initiator = Swarm::getInstance().getPeer(initiatorId);
-        initiator != nullptr)
+    if (auto requestor = Swarm::getInstance().getPeer(initiatorId);
+        requestor != nullptr)
     {
-        initiator->sendFindNode(recipientId, initiatorId, queriedId);
+       requestor->sendFindNode(recipientId, initiatorId, queriedId);
     }
     else {
         LOG("sendFindNode Warning: the recipient peer "

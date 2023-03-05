@@ -8,7 +8,7 @@
 #include <random>
 #include "EventQueue.h"
 
-class Swarm : public IKademliaTransportProtocol
+class Swarm : public IKademliaTransportProtocol, public ITimer
 {
 private:
 //    boost::asio::io_context               m_ioContext;
@@ -25,6 +25,11 @@ public:
 
     void init(bool mode, int PeerNumber);
     void addTaskAfter(EventQueue::Interval duration, std::function<void ()> F);
+    virtual void startTimer(EventQueue::Interval duration, std::function<void ()> F) override
+    {
+        addTaskAfter(duration, F);
+    }
+
     void run();
     void stop();
 
@@ -35,9 +40,12 @@ public:
     std::shared_ptr<Peer> getPeer(const ID& id);
     EventQueue& eventQueqe();
 
+private:
 
     virtual void sendPingInSwarm(const ID & requestorId
                                  , const ID & queriedId) override;
-    virtual void sendFindNodeInSwarm(const ID & recipientId, const ID & myId, const ID & queriedId) override;
-
+    virtual void sendFindNodeInSwarm(const ID & recipientId
+                                     , const ID & initiatorId
+                                     , const ID & queriedId) override;
+    // startTimer
 };

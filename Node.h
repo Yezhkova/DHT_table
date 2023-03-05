@@ -21,6 +21,8 @@ private:
     BucketMap                         m_BucketMap;
     static size_t                     m_treeSize;
     IKademliaTransportProtocol&       m_protocol;
+    ITimer&                           m_timerProtocol;
+
     NodeInfo                          m_info; // last seen time
     static std::mt19937               m_randomGenerator;
     std::map<ID, uint32_t>            m_findNodeMap; // pair<queriedId, packetCounter>
@@ -29,11 +31,12 @@ private:
     void fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k);
 
 public:
-    Node(ID id, IKademliaTransportProtocol& protocol, INodeEventHandler& peer)
+    Node(ID id, IKademliaTransportProtocol& protocol, ITimer& timer, INodeEventHandler& peer)
         : m_contact(id)
         , m_eventHandler(peer)
         , m_BucketMap(*this)
         , m_protocol(protocol)
+        , m_timerProtocol(timer)
         , m_info(boost::chrono::system_clock::now()) {};
 
     const ID& id() const;

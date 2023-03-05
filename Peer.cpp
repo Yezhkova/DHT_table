@@ -9,8 +9,8 @@ std::mt19937 Peer::s_randomGenerator;
 uint64_t Peer::s_label = 0;
 
 
-Peer::Peer(ID id, IKademliaTransportProtocol& protocol, bool useTcp)
-	: m_node(id, protocol, *this) {
+Peer::Peer(ID id, IKademliaTransportProtocol& protocol, ITimer& timerProtocol, bool useTcp)
+    : m_node(id, protocol, timerProtocol, *this) {
     std::uniform_int_distribution<int> range(1, 100);
     m_packetTime = range(s_randomGenerator) / MILLISEC_IN_SEC;
     m_label = ++s_label;
