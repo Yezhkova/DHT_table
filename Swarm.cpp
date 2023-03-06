@@ -1,4 +1,5 @@
 #include "Swarm.h"
+#include "Utils.h"
 
 EventQueue& Swarm::eventQueqe() {
     return m_eventQueqe;
@@ -60,3 +61,31 @@ void Swarm::generateSwarm(bool mode, size_t Peers)
         m_peers[id] = std::make_shared<Peer>(id, mode);
     }
 }
+
+void Swarm::calculateStatistic() {
+    LOG("------------------------------------calculateStatistic-------------------------");
+    std::map<int, int> findNodeStat;
+    std::map<int, int> packetsStat;
+    int deadNodesStat = 0;
+
+    for (auto& p : m_peers) {
+        ++findNodeStat[p.second->PeerStatistics::findNode()];
+        ++packetsStat[p.second->PeerStatistics::packetsCnt()];
+        deadNodesStat += p.second->PeerStatistics::failedFindNode();
+    }
+
+    LOG("number of operations --- number of peers");
+    LOG("findNode");
+    for (auto& i : findNodeStat) {
+        LOG(std::dec << i.first << ' ' << i.second);
+    }
+
+    LOG("packets");
+    for (auto& i : packetsStat) {
+        LOG(i.first << ' ' << i.second);
+    }
+
+    LOG("dead nodes: " << deadNodesStat);
+
+}
+

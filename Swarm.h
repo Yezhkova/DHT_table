@@ -34,6 +34,8 @@ public:
     std::shared_ptr<Peer> getPeer(const ID& id);
     EventQueue& eventQueqe();
 
+    void calculateStatistic();
+
 private:
 
     // startTimer

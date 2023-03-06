@@ -35,6 +35,14 @@ void Node::randomizeId() {
     m_contact.randomize();
 }
 
+uint64_t Node::label() const {
+    return m_label;
+}
+
+void Node::setLabel(uint64_t label){
+    m_label = label;
+}
+
 bool Node::addNode(const ID& newId) {
     if (this->id() != newId) {
         int16_t bucketIdx = m_BucketMap.calcBucketIndex(newId);
@@ -73,20 +81,21 @@ IKademliaTransportProtocol& Node::protocol() {
     return m_protocol;
 }
 
-const ID Node::pickRandomNode(const Bucket& b) const
+const ID Node::pickRandomNode(const std::set<Contact>& s) const
 {
-    auto it = b.data().begin();
-    std::uniform_int_distribution<int> range(0, b.size()-1);
+    auto it = s.begin();
+    std::uniform_int_distribution<int> range(0, s.size()-1);
     int randomNodeNumber = range(m_randomGenerator);
     std::advance(it, randomNodeNumber);
     return it->id();
 }
 
-void Node::fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k)
+void Node::fill(int idx, std::vector<ID>& ids, int k)
 {
+    auto bucket = m_BucketMap.getNodesAtDepth(idx);
     if(bucket.has_value()) {
 //        for(uint16_t i = 0; i < k; ++i) {
-//            ids.push_back(pickRandomNode(bucket.value()));
+//            ids.push_back(pickRandomNode(bucket.value().data());
 //            // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же
 //            // или ноды 1, 2, 2 . (ЭТО РЕАЛЬНО) тогда какой смысл
 //        }
@@ -105,8 +114,7 @@ std::vector<ID> Node::findClosestNodes(int k, const ID & id)
 
     // start with the bucket where ID could be
     uint16_t bucketIndex = m_BucketMap.calcBucketIndex(id);
-    auto closestBucket = m_BucketMap.getNodesAtDepth(bucketIndex);
-    fill(closestBucket, res, k);
+    fill(bucketIndex, res, k);
 
     // not enough ids
     if(res.size() < k) {
@@ -114,24 +122,16 @@ std::vector<ID> Node::findClosestNodes(int k, const ID & id)
         size_t i = 1;
         for(; nextBucketIndex < m_treeSize && prevBucketIndex >= 0; ++i)
         {
-            nextBucketIndex = bucketIndex + i;
-            prevBucketIndex = bucketIndex - i;
-            auto nextBucket = m_BucketMap.getNodesAtDepth(nextBucketIndex);
-            fill(nextBucket, res, k);
-            auto prevBucket = m_BucketMap.getNodesAtDepth(prevBucketIndex);
-            fill(prevBucket, res, k);
+            fill(bucketIndex + i, res, k);
+            fill(bucketIndex - i, res, k);
         }
         for(size_t j = i; res.size() < k && nextBucketIndex < m_treeSize; ++j)
         {
-            nextBucketIndex = bucketIndex + j;
-            auto nextBucket = m_BucketMap.getNodesAtDepth(nextBucketIndex);
-            fill(nextBucket, res, k);
+            fill(bucketIndex + j, res, k);
         }
         for(size_t j = i; res.size() < k && prevBucketIndex >= 0; ++j)
         {
-            prevBucketIndex = bucketIndex - j;
-            auto prevBucket = m_BucketMap.getNodesAtDepth(prevBucketIndex);
-            fill(prevBucket, res, k);
+            fill(bucketIndex - j, res, k);
         }
     }
     //LOG(id << ": found " << res.size() << " closest nodes.");
@@ -204,7 +204,12 @@ void Node::onFindNodeEnd(bool found, const ID& queriedId)
 {
     m_findNodeMap.erase(queriedId);
     if(found){
-//    m_eventHandler.onFindNodeResponse(true);
+        if(m_label == Swarm::getInstance().peers().size()) {
+            // add onBootstrap task
+            Swarm::getInstance().addTaskAfter(0, []{
+                Swarm::getInstance().calculateStatistic();
+            });
+        }
     }
 }
 

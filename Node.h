@@ -22,13 +22,11 @@ private:
     static size_t                     m_treeSize;
     IKademliaTransportProtocol&       m_protocol;
     ITimer&                           m_timerProtocol;
-
+    uint64_t                          m_label;
     NodeInfo                          m_info; // last seen time
     static std::mt19937               m_randomGenerator;
     std::map<ID, uint32_t>            m_findNodeMap; // pair<queriedId, packetCounter>
     std::map<ID, uint32_t>            m_pingMap;
-
-    void fill(std::optional<Bucket>& bucket, std::vector<ID>& ids, int k);
 
 public:
     Node(ID id, IKademliaTransportProtocol& protocol, ITimer& timer, INodeEventHandler& peer)
@@ -45,6 +43,8 @@ public:
     IKademliaTransportProtocol& protocol();
     NodeInfo& nodeInfo();
     INodeEventHandler& eventHandler();
+    uint64_t label() const;
+    void setLabel(uint64_t label);
 
     void randomizeId();
     bool addNode(const ID& id);
@@ -52,7 +52,7 @@ public:
     void updateLastSeen(const ID& id
                         , boost::chrono::system_clock::time_point time);
 
-    const ID pickRandomNode(const Bucket& b) const;
+    const ID pickRandomNode(const std::set<Contact>& b) const;
     std::vector<ID> findClosestNodes(int k, const ID& id);
 
     friend bool operator==(const Node & l, const Node & r);
@@ -77,6 +77,10 @@ public:
     void setOffline();
     void setOnline();
     bool online() { return m_online; };
+
+private:
+
+    void fill(int idx, std::vector<ID>& ids, int k);
 
 };
 

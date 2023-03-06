@@ -8,14 +8,14 @@
 #define MILLISEC_IN_SEC 1000.0
 
 std::mt19937 Peer::s_randomGenerator;
-uint64_t Peer::s_label = 0;
+//uint64_t Peer::s_label = 0;
 
 
 Peer::Peer(ID id, bool useTcp)
     : m_node(id, *this, *this, *this) {
     std::uniform_int_distribution<int> range(1, 100);
     m_packetTime = range(s_randomGenerator) / MILLISEC_IN_SEC;
-    m_label = ++s_label;
+//    m_label = ++s_label;
 }
 
 ID Peer::id() {
@@ -32,10 +32,6 @@ NodeInfo& Peer::info() {
 
 EventQueue::Interval Peer::packetTime() const {
 	return m_packetTime;
-}
-
-uint64_t Peer::label() const {
-    return m_label;
 }
 
 void Peer::randomize() {
