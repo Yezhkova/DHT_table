@@ -94,16 +94,16 @@ void Node::fill(int idx, std::vector<ID>& ids, int k)
 {
     auto bucket = m_BucketMap.getNodesAtDepth(idx);
     if(bucket.has_value()) {
-//        for(uint16_t i = 0; i < k; ++i) {
-//            ids.push_back(pickRandomNode(bucket.value().data());
-//            // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же
-//            // или ноды 1, 2, 2 . (ЭТО РЕАЛЬНО) тогда какой смысл
-//        }
+        for(uint16_t i = 0; i < k; ++i) {
+            ids.push_back(pickRandomNode(bucket.value().data()));
+            // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же
+            // или ноды 1, 2, 2 . (ЭТО РЕАЛЬНО) тогда какой смысл
+        }
         // это медленно на втором этапе (рандомные пары)
 
-        for(auto& contact : bucket.value().data()) {
-            ids.push_back(contact.id());
-        }
+//        for(auto& contact : bucket.value().data()) {
+//            ids.push_back(contact.id());
+//        }
         // тут медленнее бутстрап, но гораздо быстрее 2 фаза
     }
 }
@@ -122,19 +122,23 @@ std::vector<ID> Node::findClosestNodes(int k, const ID & id)
         size_t i = 1;
         for(; nextBucketIndex < m_treeSize && prevBucketIndex >= 0; ++i)
         {
-            fill(bucketIndex + i, res, k);
-            fill(bucketIndex - i, res, k);
+            nextBucketIndex = bucketIndex + i;
+            prevBucketIndex = bucketIndex - i;
+            fill(nextBucketIndex, res, k);
+            fill(prevBucketIndex, res, k);
         }
         for(size_t j = i; res.size() < k && nextBucketIndex < m_treeSize; ++j)
         {
-            fill(bucketIndex + j, res, k);
+            nextBucketIndex = bucketIndex + j;
+            fill(nextBucketIndex, res, k);
         }
         for(size_t j = i; res.size() < k && prevBucketIndex >= 0; ++j)
         {
-            fill(bucketIndex - j, res, k);
+            prevBucketIndex = bucketIndex - j;
+            fill(prevBucketIndex, res, k);
         }
     }
-    //LOG(id << ": found " << res.size() << " closest nodes.");
+//    LOG(id << ": found " << res.size() << " closest nodes.");
     return res;
 }
 
@@ -206,8 +210,21 @@ void Node::onFindNodeEnd(bool found, const ID& queriedId)
     if(found){
         if(m_label == Swarm::getInstance().peers().size()) {
             // add onBootstrap task
-            Swarm::getInstance().addTaskAfter(0, []{
+            Swarm::getInstance().addTaskAfter(0, [] {
                 Swarm::getInstance().calculateStatistic();
+                Swarm::getInstance().eventQueqe().removeAllEvents();
+                auto peers = Swarm::getInstance().peers();
+                for (auto& peer : peers)
+                {
+                    peer.second->resetFindNodeCounter();
+                    peer.second->resetPacketCounter();
+                    peer.second->resetReceiveFindNodeCounter();
+                    peer.second->resetFailedNode();
+                }
+                for (auto& peer : peers)
+                {
+                    peer.second->onBootstrap();
+                }
             });
         }
     }
