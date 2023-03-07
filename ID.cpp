@@ -19,10 +19,10 @@ ID ID::randomize()
     return *this;
 }
 
-const std::array<uint16_t, DIGEST_BYTES> ID::distance(const ID & anotherId)
+const std::array<uint16_t, DIGEST_BYTES> ID::distance(const ID& anotherId)
 {
     std::array<uint16_t, DIGEST_BYTES> res;
-    for(uint16_t i  = 0; i < DIGEST_BYTES; ++i) { // TODO: auto&
+    for(uint16_t i  = 0; i < DIGEST_BYTES; ++i) {
         res[i] = m_id[i] ^ anotherId.m_id[i];
     }
     return res;

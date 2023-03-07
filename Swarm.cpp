@@ -80,10 +80,10 @@ void Swarm::calculateStatistic() {
         LOG(std::dec << i.first << ' ' << i.second);
     }
 
-    LOG("packets");
-    for (auto& i : packetsStat) {
-        LOG(i.first << ' ' << i.second);
-    }
+//    LOG("packets");
+//    for (auto& i : packetsStat) {
+//        LOG(i.first << ' ' << i.second);
+//    }
 
     LOG("dead nodes: " << deadNodesStat);
 

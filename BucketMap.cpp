@@ -2,6 +2,8 @@
 #include "Node.h"
 #include "Utils.h"
 
+uint16_t BucketMap::g_bucketSize = 20;
+
 const std::map<BucketIndex, Bucket>& BucketMap::map() const {
     return m_Buckets;
 };
@@ -10,36 +12,31 @@ int16_t BucketMap::calcBucketIndex(const ID& id) {
     return m_node.id() == id ? -1 : DIGEST - 1 - m_node.id().prefixLength(id);
 }
 
-int16_t BucketMap::bucketSize(int16_t bucketIdx) const {
+int16_t BucketMap::bucketSize(int16_t bucketIdx) {
     auto b = getNodesAtDepth(bucketIdx);
-    if(b.has_value()) {
-        return b.value().size();
-    }
-    return 0;
+    return b.size();
 }
 
-bool BucketMap::bucketFull(int16_t bucketIdx) const {
+bool BucketMap::bucketFull(int16_t bucketIdx) {
     auto b = getNodesAtDepth(bucketIdx);
-    if(b.has_value()) {
-        return b.value().isFull();
-    }
-    return false;
+    return b.size() == g_bucketSize;
 }
 
 bool BucketMap::addNode(const ID& id, int16_t BucketIndex) {
-    return m_Buckets[BucketIndex].addNode(id);
+    return m_Buckets[BucketIndex].insert(Contact{id}).second;
 }
 
 bool BucketMap::removeNode(const ID& id) {
     size_t BucketIndex = calcBucketIndex(id);
-    return m_Buckets[BucketIndex].removeNode(id);
+    return m_Buckets[BucketIndex].erase(id);
 }
 
 bool BucketMap::containsNode(const ID& id) const
 {
     for(auto& bucket : m_Buckets)
     {
-        if(bucket.second.containsNode(id)) {
+        Bucket b = bucket.second;
+        if(b.find(id) != b.end()) {
             return true;
         }
     }
@@ -57,13 +54,8 @@ std::vector<Bucket> BucketMap::nonEmptyBuckets()
     return res;
 }
 
-std::optional<Bucket> BucketMap::getNodesAtDepth(size_t depth) const
-{
-    try {
-       return m_Buckets.at(depth);
-    } catch (std::out_of_range) {
-        return {};
-    }
+Bucket BucketMap::getNodesAtDepth(size_t depth) {
+   return m_Buckets[depth];
 }
 
 const size_t BucketMap::size() const
@@ -76,7 +68,7 @@ std::ostream& operator<< (std::ostream& out, const BucketMap& b)
     LOG(b.m_node.id() << " bucket map size: " << b.m_Buckets.size());
     for(auto& e: b.m_Buckets) {
         out << "Bucket depth " << e.first << ":\n";
-        for(auto& e2: e.second.data()){
+        for(auto& e2: e.second){
             out << e2.id() << "\n";
         }
     }

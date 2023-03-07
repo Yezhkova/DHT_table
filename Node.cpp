@@ -1,11 +1,13 @@
 ﻿#include "Node.h"
-#include "Utils.h"
 #include "Swarm.h"
+#include "Utils.h"
 #include <optional>
 
 #define CLOSEST_NODES 3
 #define FIND_NODE_TIMEOUT 10000
 #define PING_THRESHOLD 1
+#define PING_INTERVAL 15
+#define MINUTES 60000
 
 size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;
@@ -42,6 +44,7 @@ uint64_t Node::label() const {
 void Node::setLabel(uint64_t label){
     m_label = label;
 }
+// TODO: node offline mode not implemented
 
 bool Node::addNode(const ID& newId) {
     if (this->id() != newId) {
@@ -49,13 +52,14 @@ bool Node::addNode(const ID& newId) {
         if(!m_BucketMap.bucketFull(bucketIdx)){
             return m_BucketMap.addNode(newId, bucketIdx);
         }
-        int16_t size = m_BucketMap.bucketSize(bucketIdx);
-        for(auto& contact : m_BucketMap.getNodesAtDepth(bucketIdx).value().data())
-        {
+        for(auto& contact : m_BucketMap.getNodesAtDepth(bucketIdx)) {
             m_protocol.sendPing(contact.id());
         }
-        if(m_BucketMap.bucketSize(bucketIdx) < size) {
-            addNode(newId);
+
+        // wait for ping response here
+
+        if(!m_BucketMap.bucketFull(bucketIdx)){
+            return m_BucketMap.addNode(newId, bucketIdx);
         }
     }
     return false;
@@ -81,7 +85,7 @@ IKademliaTransportProtocol& Node::protocol() {
     return m_protocol;
 }
 
-const ID Node::pickRandomNode(const std::set<Contact>& s) const
+const ID Node::pickRandomNode(const std::set<Contact> s) const
 {
     auto it = s.begin();
     std::uniform_int_distribution<int> range(0, s.size()-1);
@@ -92,23 +96,22 @@ const ID Node::pickRandomNode(const std::set<Contact>& s) const
 
 void Node::fill(int idx, std::vector<ID>& ids, int k)
 {
-    auto bucket = m_BucketMap.getNodesAtDepth(idx);
-    if(bucket.has_value()) {
-        for(uint16_t i = 0; i < k; ++i) {
-            ids.push_back(pickRandomNode(bucket.value().data()));
-            // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же
-            // или ноды 1, 2, 2 . (ЭТО РЕАЛЬНО) тогда какой смысл
-        }
-        // это медленно на втором этапе (рандомные пары)
-
-//        for(auto& contact : bucket.value().data()) {
-//            ids.push_back(contact.id());
-//        }
-        // тут медленнее бутстрап, но гораздо быстрее 2 фаза
+    std::set<Contact> bucket = m_BucketMap.getNodesAtDepth(idx);
+    if(bucket.size() == 0) return;
+    for(uint16_t i = 0; i < k; ++i) {
+        ids.push_back(pickRandomNode(bucket));
+        // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же
+        // или ноды 1, 2, 2 . (ЭТО РЕАЛЬНО) тогда какой смысл
     }
+    // это медленно на втором этапе (рандомные пары)
+
+//    for(auto& contact : bucket) {
+//        ids.push_back(contact.id());
+//    }
+    // тут медленнее бутстрап, но гораздо быстрее 2 фаза
 }
 
-std::vector<ID> Node::findClosestNodes(int k, const ID & id)
+std::vector<ID> Node::findClosestNodes(int k, const ID& id)
 {
     std::vector<ID> res;
 
@@ -241,7 +244,7 @@ void Node::onPingEnd(bool online, const ID& queriedId)
     if(!online) {
         removeNode(queriedId);
     }
-    m_timerProtocol.startTimer(15*60000, [this, queriedId]{
+    m_timerProtocol.startTimer(PING_INTERVAL * MINUTES, [this, queriedId]{
         m_protocol.sendPing(queriedId);
     });
 }

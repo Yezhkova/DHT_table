@@ -16,7 +16,6 @@ set(SOURCE main.cpp
            Utils.h                          Utils.cpp
            Node.h                           Node.cpp
            NodeInfo.h                       NodeInfo.cpp
-           Bucket.h                         Bucket.cpp
            BucketMap.h                      BucketMap.cpp
            Peer.h                           Peer.cpp
            Swarm.h                          Swarm.cpp

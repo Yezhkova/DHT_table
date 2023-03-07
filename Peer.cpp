@@ -193,8 +193,8 @@ void Peer::onPacketSent() {
 
 void Peer::onBootstrap() {
     Swarm::getInstance().addTaskAfter(m_packetTime, [this] {
-        for (int i = 0; i < 2; ++i) {
-			ID queriedId = pickRandomPeer();
+        for (int i = 0; i < 1; ++i) {
+            ID queriedId = pickRandomPeer();
             ID recipientId = m_node.findClosestNodes(1, queriedId)[0];
 //            LOG(id() << " is looking for " << queriedId << " in " << recipientId << std::endl);
             sendFindNode(recipientId, id(), queriedId);
