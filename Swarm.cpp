@@ -15,8 +15,8 @@ void Swarm::init(bool mode, int PeerNumber)
 {
     m_peers.clear();
     m_bootstrapNode.reset();
-
-    m_bootstrapNode = std::make_shared<Peer>(ID(), mode);
+    // MOD
+    m_bootstrapNode = std::make_shared<Peer>(ID().normalRandomize(), mode);
     m_peers[m_bootstrapNode->id()] = m_bootstrapNode;
     generateSwarm(mode, PeerNumber);
 }

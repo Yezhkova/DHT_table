@@ -10,11 +10,20 @@ const std::array<uint8_t, DIGEST_BYTES>& ID::id() const {
     return m_id;
 }
 
-ID ID::randomize()
+ID ID::uniformRandomize()
 {
     std::uniform_int_distribution<> range(0, UINT8_MAX);
     for(auto it = m_id.begin(); it != m_id.end(); ++it) {
         *it = range(g_random_generator);
+    }
+    return *this;
+}
+
+ID ID::normalRandomize()
+{
+    std::normal_distribution<> range{128, 127};
+    for(auto it = m_id.begin(); it != m_id.end(); ++it) {
+        *it = std::round(range(g_random_generator));
     }
     return *this;
 }
@@ -64,7 +73,7 @@ std::ostream& operator<<(std::ostream& out, const ID& id) {
     return out;
 }
 
-
+// MOD
 ID createRandomId() {
-    return ID().randomize();
+    return ID().normalRandomize();
 }

@@ -21,7 +21,8 @@ private:
 public:
     ID();
     const std::array<uint8_t, DIGEST_BYTES>& id() const;
-    ID randomize();
+    ID uniformRandomize();
+    ID normalRandomize();
     const std::array<uint16_t, DIGEST_BYTES> distance(const ID & anotherId);
     uint16_t prefixLength(const ID & anotherId) const;
     friend bool operator <  (const ID & l, const ID & r);

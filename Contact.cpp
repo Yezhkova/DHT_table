@@ -9,7 +9,7 @@ const endpoint& Contact::edp() const {
 }
 
 void Contact::randomize() {
-    m_id.randomize();
+    m_id.uniformRandomize();
 }
 
 bool Contact::operator == (const Contact & otherContact) const
