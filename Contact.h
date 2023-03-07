@@ -13,9 +13,6 @@ struct Contact
 
     Contact(const ID &id) : m_id(id) {};
 
-    const ID& id () const;
-    const endpoint& edp() const;
-
     void randomize();
     bool operator == (const Contact & otherContact) const;
     bool operator != (const Contact & otherContact) const;

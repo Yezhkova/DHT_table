@@ -2,13 +2,13 @@
 
 #include "Node.h"
 #include "ID.h"
-#include "IKademliaTransportProtocol.h"
+#include "IDhtTransportProtocol.h"
 #include "EventQueue.h"
 #include "PeerStatistics.h"
 
 inline uint64_t FindLimit = 50;
 
-class Peer: public PeerStatistics, public IKademliaTransportProtocol, public ITimer
+class Peer: public PeerStatistics, public IDhtTransportProtocol, public ITimer
 {
 private:
     Node                                m_node;

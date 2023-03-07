@@ -12,19 +12,19 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SOURCE main.cpp
-           ID.h                             ID.cpp
-           Utils.h                          Utils.cpp
-           Node.h                           Node.cpp
-           NodeInfo.h                       NodeInfo.cpp
-           BucketMap.h                      BucketMap.cpp
-           Peer.h                           Peer.cpp
-           Swarm.h                          Swarm.cpp
-           ISimulationTask.h                ISimulationTask.cpp
-           IKademliaTransportProtocol.h     IKademliaTransportProtocol.cpp
-           Contact.h                        Contact.cpp
-           INodeEventHandler.h              INodeEventHandler.cpp
-           EventQueue.h                     EventQueue.cpp
-           PeerStatistics.h                 PeerStatistics.cpp
+           ID.h                        ID.cpp
+           Utils.h                     Utils.cpp
+           Node.h                      Node.cpp
+           NodeInfo.h                  NodeInfo.cpp
+           BucketMap.h                 BucketMap.cpp
+           Peer.h                      Peer.cpp
+           Swarm.h                     Swarm.cpp
+           ISimulationTask.h           ISimulationTask.cpp
+           IDhtTransportProtocol.h     IDhtTransportProtocol.cpp
+           Contact.h                   Contact.cpp
+           INodeEventHandler.h         INodeEventHandler.cpp
+           EventQueue.h                EventQueue.cpp
+           PeerStatistics.h            PeerStatistics.cpp
 )
 
 if (UNIX)

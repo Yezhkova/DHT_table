@@ -2,10 +2,10 @@
 
 #include "ID.h"
 #include "EventQueue.h"
-class IKademliaTransportProtocol
+class IDhtTransportProtocol
 {
 public:
-    virtual ~IKademliaTransportProtocol() = default;
+    virtual ~IDhtTransportProtocol() = default;
     virtual void sendPing(const ID & queriedId) = 0;
 
     virtual void sendFindNode(const ID & recipientId, const ID & myId, const ID & queriedId) = 0;

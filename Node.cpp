@@ -14,7 +14,7 @@ std::mt19937 Node::m_randomGenerator;
 
 
 const ID& Node::id() const{
-    return m_contact.id();
+    return m_contact.m_id;
 }
 
 const BucketMap& Node::bucketMap() const{
@@ -53,7 +53,7 @@ bool Node::addNode(const ID& newId) {
             return m_BucketMap.addNode(newId, bucketIdx);
         }
         for(auto& contact : m_BucketMap.getNodesAtDepth(bucketIdx)) {
-            m_protocol.sendPing(contact.id());
+            m_protocol.sendPing(contact.m_id);
         }
 
         // wait for ping response here
@@ -81,7 +81,7 @@ bool operator==(const Node& l, const Node& r) {
     return l.m_contact.m_id == r.m_contact.m_id;
 }
 
-IKademliaTransportProtocol& Node::protocol() {
+IDhtTransportProtocol& Node::protocol() {
     return m_protocol;
 }
 
@@ -91,7 +91,7 @@ const ID Node::pickRandomNode(const std::set<Contact> s) const
     std::uniform_int_distribution<int> range(0, s.size()-1);
     int randomNodeNumber = range(m_randomGenerator);
     std::advance(it, randomNodeNumber);
-    return it->id();
+    return it->m_id;
 }
 
 void Node::fill(int idx, std::vector<ID>& ids, int k)
@@ -103,12 +103,10 @@ void Node::fill(int idx, std::vector<ID>& ids, int k)
         // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же
         // или ноды 1, 2, 2 . (ЭТО РЕАЛЬНО) тогда какой смысл
     }
-    // это медленно на втором этапе (рандомные пары)
 
 //    for(auto& contact : bucket) {
-//        ids.push_back(contact.id());
+//        ids.push_back(contact.m_id);
 //    }
-    // тут медленнее бутстрап, но гораздо быстрее 2 фаза
 }
 
 std::vector<ID> Node::findClosestNodes(int k, const ID& id)

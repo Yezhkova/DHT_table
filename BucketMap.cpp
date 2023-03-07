@@ -2,7 +2,7 @@
 #include "Node.h"
 #include "Utils.h"
 
-uint16_t BucketMap::g_bucketSize = 20;
+uint16_t BucketMap::g_bucketSize = 30;
 
 const std::map<BucketIndex, Bucket>& BucketMap::map() const {
     return m_Buckets;
@@ -69,7 +69,7 @@ std::ostream& operator<< (std::ostream& out, const BucketMap& b)
     for(auto& e: b.m_Buckets) {
         out << "Bucket depth " << e.first << ":\n";
         for(auto& e2: e.second){
-            out << e2.id() << "\n";
+            out << e2.m_id << "\n";
         }
     }
     return out;

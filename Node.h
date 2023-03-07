@@ -7,7 +7,7 @@
 #include "BucketMap.h"
 #include <boost/asio.hpp>
 #include <cassert>
-#include "IKademliaTransportProtocol.h"
+#include "IDhtTransportProtocol.h"
 #include <boost/chrono.hpp>
 
 using system_clock = boost::chrono::system_clock;
@@ -20,7 +20,7 @@ private:
     INodeEventHandler&                m_eventHandler;
     BucketMap                         m_BucketMap;
     static size_t                     m_treeSize;
-    IKademliaTransportProtocol&       m_protocol;
+    IDhtTransportProtocol&       m_protocol;
     ITimer&                           m_timerProtocol;
     uint64_t                          m_label;
     NodeInfo                          m_info; // last seen time
@@ -29,7 +29,7 @@ private:
     std::map<ID, uint32_t>            m_pingMap;
 
 public:
-    Node(ID id, IKademliaTransportProtocol& protocol, ITimer& timer, INodeEventHandler& peer)
+    Node(ID id, IDhtTransportProtocol& protocol, ITimer& timer, INodeEventHandler& peer)
         : m_contact(id)
         , m_eventHandler(peer)
         , m_BucketMap(*this)
@@ -40,7 +40,7 @@ public:
     const ID& id() const;
     const BucketMap& bucketMap() const;
     const Contact& contact() const;
-    IKademliaTransportProtocol& protocol();
+    IDhtTransportProtocol& protocol();
     NodeInfo& nodeInfo();
     INodeEventHandler& eventHandler();
     uint64_t label() const;
