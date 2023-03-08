@@ -75,5 +75,5 @@ std::ostream& operator<<(std::ostream& out, const ID& id) {
 
 // MOD
 ID createRandomId() {
-    return ID().normalRandomize();
+    return ID().uniformRandomize();
 }

@@ -55,9 +55,9 @@ public:
     void onPingResponse(bool find) override;
     void onPacketReceived() override;
     void onPacketSent() override;
-    void onBootstrap() override;
+    void findRandomNodes(int nodeNumber);
+    void onNodeNotFound() override;
 
     virtual void startTimer(EventQueue::Interval duration, std::function<void ()> F) override;
-
 
 };

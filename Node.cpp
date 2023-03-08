@@ -4,7 +4,7 @@
 #include <optional>
 
 #define CLOSEST_NODES 3
-#define FIND_NODE_TIMEOUT 10000
+#define FIND_NODE_THRESHOLD 1000
 #define PING_THRESHOLD 1
 #define PING_INTERVAL 15
 #define MINUTES 60000
@@ -38,11 +38,11 @@ void Node::randomizeId() {
 }
 
 uint64_t Node::label() const {
-    return m_label;
+    return m_index;
 }
 
-void Node::setLabel(uint64_t label){
-    m_label = label;
+void Node::setLabel(uint64_t label) {
+    m_index = label;
 }
 // TODO: node offline mode not implemented
 
@@ -52,15 +52,7 @@ bool Node::addNode(const ID& newId) {
         if(!m_BucketMap.bucketFull(bucketIdx)){
             return m_BucketMap.addNode(newId, bucketIdx);
         }
-        for(auto& contact : m_BucketMap.getNodesAtDepth(bucketIdx)) {
-            m_protocol.sendPing(contact.m_id);
-        }
-
-        // wait for ping response here
-
-        if(!m_BucketMap.bucketFull(bucketIdx)){
-            return m_BucketMap.addNode(newId, bucketIdx);
-        }
+        return false;
     }
     return false;
 }
@@ -85,7 +77,7 @@ IDhtTransportProtocol& Node::protocol() {
     return m_protocol;
 }
 
-const ID Node::pickRandomNode(const std::set<Contact> s) const
+const ID Node::pickRandomNode(const std::set<Contact>& s) const
 {
     auto it = s.begin();
     std::uniform_int_distribution<int> range(0, s.size()-1);
@@ -94,19 +86,38 @@ const ID Node::pickRandomNode(const std::set<Contact> s) const
     return it->m_id;
 }
 
-void Node::fill(int idx, std::vector<ID>& ids, int k)
+void Node::fill(int idx, std::vector<ID>& ids, int k, const ID &id)
 {
     std::set<Contact> bucket = m_BucketMap.getNodesAtDepth(idx);
     if(bucket.size() == 0) return;
+    std::pair<const ID*, int> candidates [k];
+
     for(uint16_t i = 0; i < k; ++i) {
-        ids.push_back(pickRandomNode(bucket));
-        // TODO: в бакете ~3 ноды и он все три раза (случайно) выбрал одну и ту же
-        // или ноды 1, 2, 2 . (ЭТО РЕАЛЬНО) тогда какой смысл
+        for(auto& ref : candidates) {
+            ref.first = nullptr;
+            ref.second = INT_MAX;
+        }
+
+        for(auto& contact : bucket) {
+            int distance = id.prefixLength(contact.m_id);
+            for(int i = 0; i < k; ++i) {
+                if(candidates[i].second > distance) {
+                    for(int j = k-1; j > i; --j) {
+                        candidates[j] = candidates[j-1];
+                    }
+                    candidates[i].first = &contact.m_id;
+                    candidates[i].second = distance;
+                    break;
+                }
+            }
+        }
     }
 
-//    for(auto& contact : bucket) {
-//        ids.push_back(contact.m_id);
-//    }
+    for(auto& candidate : candidates) {
+        if(candidate.first != nullptr) {
+            ids.push_back(*candidate.first);
+        }
+    }
 }
 
 std::vector<ID> Node::findClosestNodes(int k, const ID& id)
@@ -115,7 +126,7 @@ std::vector<ID> Node::findClosestNodes(int k, const ID& id)
 
     // start with the bucket where ID could be
     uint16_t bucketIndex = m_BucketMap.calcBucketIndex(id);
-    fill(bucketIndex, res, k);
+    fill(bucketIndex, res, k, id);
 
     // not enough ids
     if(res.size() < k) {
@@ -182,15 +193,17 @@ void Node::receiveFindNodeResponse(const ID& queriedId
     if(auto it = m_findNodeMap.find(queriedId); it == m_findNodeMap.end()) {
         return;
     }
-
-    if (m_findNodeMap[queriedId] > FIND_NODE_TIMEOUT) {
-        Swarm::getInstance().getPeer(queriedId)->PeerStatistics::setFailedFindNode();
+    if (m_findNodeMap[queriedId] > FIND_NODE_THRESHOLD) {
         onFindNodeEnd(false, queriedId);
+        return;
     }
-    else if (ids[0] == queriedId) {
-        Swarm::getInstance().getPeer(queriedId)->PeerStatistics::incReceiveFindNodeCounter();
+    if(ids.size() == 0) {
+        return;
+    }
+    if (ids[0] == queriedId) {
         onFindNodeEnd(true, queriedId);
     }
+
     else {
         //LOG(queriedId << " not found");
         for (auto& id : ids) {
@@ -209,25 +222,10 @@ void Node::onFindNodeEnd(bool found, const ID& queriedId)
 {
     m_findNodeMap.erase(queriedId);
     if(found){
-        if(m_label == Swarm::getInstance().peers().size()) {
-            // add onBootstrap task
-            Swarm::getInstance().addTaskAfter(0, [] {
-                Swarm::getInstance().calculateStatistic();
-                Swarm::getInstance().eventQueqe().removeAllEvents();
-                auto peers = Swarm::getInstance().peers();
-                for (auto& peer : peers)
-                {
-                    peer.second->resetFindNodeCounter();
-                    peer.second->resetPacketCounter();
-                    peer.second->resetReceiveFindNodeCounter();
-                    peer.second->resetFailedNode();
-                }
-                for (auto& peer : peers)
-                {
-                    peer.second->onBootstrap();
-                }
-            });
-        }
+
+    }
+    else {
+        m_eventHandler.onNodeNotFound();
     }
 }
 

@@ -2,14 +2,16 @@
 #include "Node.h"
 #include "Utils.h"
 
-uint16_t BucketMap::g_bucketSize = 30;
+uint32_t BucketMap::g_bucketSize = 20; // maximum amount of nodes in a bucket
+const uint32_t g_bucketMultiplier = 8;
 
 const std::map<BucketIndex, Bucket>& BucketMap::map() const {
     return m_Buckets;
 };
 
+// TODO :
 int16_t BucketMap::calcBucketIndex(const ID& id) {
-    return m_node.id() == id ? -1 : DIGEST - 1 - m_node.id().prefixLength(id);
+    return m_node.id() == id ? -1 : m_node.id().prefixLength(id) / g_bucketMultiplier;
 }
 
 int16_t BucketMap::bucketSize(int16_t bucketIdx) {
@@ -23,7 +25,7 @@ bool BucketMap::bucketFull(int16_t bucketIdx) {
 }
 
 bool BucketMap::addNode(const ID& id, int16_t BucketIndex) {
-    return m_Buckets[BucketIndex].insert(Contact{id}).second;
+    return m_Buckets[BucketIndex / g_bucketMultiplier].insert(Contact{id}).second;
 }
 
 bool BucketMap::removeNode(const ID& id) {

@@ -1,7 +1,34 @@
 #include "EventQueue.h"
+#include "Utils.h"
 #include <ios>
 #include <cassert>
-#include "Utils.h"
+
+#ifdef PRIORITY_QUEUE
+void EventQueue::addTaskAt(Interval delay, std::function<void()> task)
+{
+    assert(m_queueCurrentTime <= delay);
+    Event e {delay, task};
+    m_queue.push(e);
+}
+
+void EventQueue::run() {
+    while(!m_queue.empty())
+    {
+        Event e = m_queue.top();
+        m_queue.pop();
+        assert(m_queueCurrentTime <= e.m_time);
+        m_queueCurrentTime = e.m_time;
+        e.m_task();
+    }
+}
+
+void EventQueue::removeAllEvents() {
+    while(!m_queue.empty()) {
+        m_queue.pop();
+    }
+}
+
+#else
 
 EventQueue::Timestamp EventQueue::addTaskAt(Interval delay
                                           , std::function<void()> task) {
@@ -28,7 +55,7 @@ void EventQueue::run() {
     while(m_head != nullptr) {
         auto* e = m_head;
         m_head = e->m_next;
-        m_queueCurrentTime += e->m_time;
+        m_queueCurrentTime = e->m_time;
         e->m_task();
         delete e;
     }
@@ -48,5 +75,6 @@ void EventQueue::setEndTime(Timestamp time) {
     });
 }
 
+#endif
 
 

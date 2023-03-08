@@ -16,13 +16,13 @@ void Swarm::init(bool mode, int PeerNumber)
     m_peers.clear();
     m_bootstrapNode.reset();
     // MOD
-    m_bootstrapNode = std::make_shared<Peer>(ID().normalRandomize(), mode);
+    m_bootstrapNode = std::make_shared<Peer>(ID(), mode);
     m_peers[m_bootstrapNode->id()] = m_bootstrapNode;
     generateSwarm(mode, PeerNumber);
 }
 
 void Swarm::addTaskAfter(EventQueue::Interval duration, std::function<void ()> F) {
-    m_eventQueqe.addTaskAt(duration, F);
+    m_eventQueqe.addTaskAt(m_eventQueqe.currentTime() + duration, F);
 }
 
 void Swarm::run() {
@@ -64,28 +64,29 @@ void Swarm::generateSwarm(bool mode, size_t Peers)
 
 void Swarm::calculateStatistic() {
     LOG("------------------------------------calculateStatistic-------------------------");
-    std::map<int, int> findNodeStat;
-    std::map<int, int> packetsStat;
-    int deadNodesStat = 0;
+//    std::map<int, int> findNodeStat;
+//    std::map<int, int> packetsStat;
+//    std::map<int, int> pingsStat;
+    int nodeNotFoundCounter = 0;
+    int pingCounter = 0;
+    int packetCounter = 0;
+    int findNodeCounter = 0;
 
     for (auto& p : m_peers) {
-        ++findNodeStat[p.second->PeerStatistics::findNode()];
-        ++packetsStat[p.second->PeerStatistics::packetsCnt()];
-        deadNodesStat += p.second->PeerStatistics::failedFindNode();
+//        ++findNodeStat[p.second->PeerStatistics::findNode()];
+//        ++packetsStat[p.second->PeerStatistics::packetsCnt()];
+//        ++pingsStat[p.second->PeerStatistics::packetsCnt()];
+        nodeNotFoundCounter += p.second->failedFindNodeCounter();
+        findNodeCounter += p.second->findNodeCounter();
+        packetCounter += p.second->packetsCounter();
+        pingCounter += p.second->pingCounter();
     }
 
-    LOG("number of operations --- number of peers");
-    LOG("findNode");
-    for (auto& i : findNodeStat) {
-        LOG(std::dec << i.first << ' ' << i.second);
-    }
+    LOG("dead nodes: " << nodeNotFoundCounter);
+    LOG("find node: " << findNodeCounter);
+    LOG("packets: " << packetCounter);
+    LOG("ping: " << pingCounter);
 
-//    LOG("packets");
-//    for (auto& i : packetsStat) {
-//        LOG(i.first << ' ' << i.second);
-//    }
-
-    LOG("dead nodes: " << deadNodesStat);
 
 }
 

@@ -1,6 +1,44 @@
 #pragma once
 
 #include <functional>
+
+// comment/uncomment define to switch
+#define PRIORITY_QUEUE
+
+#ifdef PRIORITY_QUEUE
+#include <queue>
+
+class EventQueue
+{
+public:
+    using Timestamp = double;
+    using Interval = double;
+
+private:
+    struct Event
+    {
+        Timestamp              m_time;
+        std::function<void()>  m_task = {};
+
+        friend bool operator< (Event const& lhs, Event const& rhs) {
+            return lhs.m_time > rhs.m_time;
+        }
+    };
+
+    std::priority_queue<Event> m_queue;
+    Timestamp                  m_queueCurrentTime = 0;
+
+public:
+    EventQueue() {}
+    void addTaskAt(Interval delay, std::function<void()> task = {});
+    void run();
+    void removeAllEvents();
+
+    Timestamp currentTime() const { return m_queueCurrentTime; }
+};
+
+#else
+
 class EventQueue
 {
 public:
@@ -30,4 +68,4 @@ public:
     void removeAllEvents();
 };
 
-
+#endif
