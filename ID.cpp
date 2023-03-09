@@ -28,14 +28,14 @@ ID ID::normalRandomize()
     return *this;
 }
 
-const std::array<int, DIGEST_BYTES> ID::distance(const ID& anotherId)
-{
-    std::array<int, DIGEST_BYTES> res;
-    for(int i  = 0; i < DIGEST_BYTES; ++i) {
-        res[i] = m_id[i] ^ anotherId.m_id[i];
-    }
-    return res;
-}
+//const std::array<int, DIGEST_BYTES> ID::distance(const ID& anotherId)
+//{
+//    std::array<int, DIGEST_BYTES> res;
+//    for(int i  = 0; i < DIGEST_BYTES; ++i) {
+//        res[i] = m_id[i] ^ anotherId.m_id[i];
+//    }
+//    return res;
+//}
 
 int ID::prefixLength(const ID & anotherId) const
 {

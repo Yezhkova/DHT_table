@@ -5,7 +5,7 @@
 
 #define CLOSEST_NODES 3
 #define FIND_NODE_THRESHOLD 1000
-#define PING_THRESHOLD 1
+#define PING_THRESHOLD 2
 #define PING_INTERVAL 15
 #define MINUTES 60000
 
@@ -50,7 +50,9 @@ bool Node::addNode(const ID& newId) {
     if (this->id() != newId) {
         int bucketIdx = m_BucketMap.calcBucketIndex(newId);
         if(!m_BucketMap.bucketFull(bucketIdx)){
-            return m_BucketMap.addNode(newId, bucketIdx);
+            bool res = m_BucketMap.addNode(newId, bucketIdx);
+            m_protocol.sendPing(newId);
+            return res;
         }
         return false;
     }

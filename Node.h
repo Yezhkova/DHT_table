@@ -15,16 +15,16 @@ using system_clock = boost::chrono::system_clock;
 class Node
 {
 private:
-    bool                              m_online = true;
-    Contact                           m_contact;
-    INodeEventHandler&                m_eventHandler;
-    BucketMap                         m_BucketMap;
-    static size_t                     m_treeSize;
+    bool                         m_online = true;
+    Contact                      m_contact;
+    INodeEventHandler&           m_eventHandler;
+    BucketMap                    m_BucketMap;
+    static size_t                m_treeSize;
     IDhtTransportProtocol&       m_protocol;
-    ITimer&                           m_timerProtocol;
-    uint64_t                          m_index;
-    NodeInfo                          m_info; // last seen time
-    static std::mt19937               m_randomGenerator;
+    ITimer&                      m_timerProtocol;
+    uint64_t                     m_index;
+    NodeInfo                     m_info; // last seen time
+    static std::mt19937          m_randomGenerator;
     std::map<ID, int>            m_findNodeMap; // pair<queriedId, packetCounter>
     std::map<ID, int>            m_pingMap;
 

@@ -6,7 +6,6 @@
 #include <random>
 #include <array>
 
-#define DIGEST 160
 #define DIGEST_BYTES 20
 #define BITS 4 // 4 bits in hexadecimal character
 #define PART 40
@@ -23,7 +22,7 @@ public:
     const std::array<uint8_t, DIGEST_BYTES>& id() const;
     ID uniformRandomize();
     ID normalRandomize();
-    const std::array<int, DIGEST_BYTES> distance(const ID & anotherId);
+//    const std::array<int, DIGEST_BYTES> distance(const ID & anotherId);
     int prefixLength(const ID & anotherId) const;
     friend bool operator <  (const ID & l, const ID & r);
     friend bool operator ==  (const ID & l, const ID & r);

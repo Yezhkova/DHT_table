@@ -15,7 +15,7 @@ private:
 
     Node&                           m_node;
     std::map<BucketIndex, Bucket>   m_Buckets;
-    static int                 g_bucketSize;
+    static int                      g_bucketSize;
 
 public:
 

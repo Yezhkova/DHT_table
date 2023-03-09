@@ -3,7 +3,8 @@
 #include "Utils.h"
 
 int BucketMap::g_bucketSize = 20; // maximum amount of nodes in a bucket
-const int g_bucketMultiplier = 8;
+const int g_bucketMultiplier = 8; // optimization for 160 buckets in map
+const int g_bucketMax = 20; // maximum amount of buckets in a map
 
 const std::map<BucketIndex, Bucket>& BucketMap::map() const {
     return m_Buckets;
@@ -11,7 +12,7 @@ const std::map<BucketIndex, Bucket>& BucketMap::map() const {
 
 // TODO :
 int BucketMap::calcBucketIndex(const ID& id) {
-    return m_node.id() == id ? -1 : m_node.id().prefixLength(id) / g_bucketMultiplier;
+    return (m_node.id().prefixLength(id)-1) / g_bucketMultiplier;
 }
 
 int BucketMap::bucketSize(int bucketIdx) {
@@ -25,12 +26,12 @@ bool BucketMap::bucketFull(int bucketIdx) {
 }
 
 bool BucketMap::addNode(const ID& id, int BucketIndex) {
-    return m_Buckets[BucketIndex / g_bucketMultiplier].insert(Contact{id}).second;
+    return m_Buckets[BucketIndex].insert(Contact{id}).second;
 }
 
 bool BucketMap::removeNode(const ID& id) {
     size_t BucketIndex = calcBucketIndex(id);
-    return m_Buckets[BucketIndex].erase(id);
+    return m_Buckets[BucketIndex].erase(Contact{id});
 }
 
 bool BucketMap::containsNode(const ID& id) const
@@ -60,8 +61,7 @@ Bucket BucketMap::getNodesAtDepth(size_t depth) {
    return m_Buckets[depth];
 }
 
-const size_t BucketMap::size() const
-{
+const size_t BucketMap::size() const {
     return m_Buckets.size();
 }
 
