@@ -8,9 +8,9 @@ size_t pow2(size_t power)
     return 1 << power;
 }
 
-char hex(uint16_t symbol)
+char hex(int symbol)
 {
-    std::map<uint16_t, char> bin_to_hex{
+    std::map<int, char> bin_to_hex{
         {0, '0'},
         {1, '1'},
         {2, '2'},

@@ -15,26 +15,26 @@ private:
 
     Node&                           m_node;
     std::map<BucketIndex, Bucket>   m_Buckets;
-    static uint32_t                 g_bucketSize;
+    static int                 g_bucketSize;
 
 public:
 
     BucketMap() = delete;
     BucketMap(Node& node) : m_node(node) {};
 
-    bool addNode(const ID& id, int16_t BucketIndex);
+    bool addNode(const ID& id, int BucketIndex);
     bool removeNode(const ID& id);
     bool containsNode(const ID& id) const;
 
     const std::map<BucketIndex, Bucket>& map() const;
     Bucket getNodesAtDepth(size_t depth);
     const size_t size() const;
-    int16_t bucketSize(int16_t bucketIdx);
-    bool bucketFull(int16_t bucketIdx);
+    int bucketSize(int bucketIdx);
+    bool bucketFull(int bucketIdx);
 
     std::vector<Bucket> nonEmptyBuckets();
 
-    int16_t calcBucketIndex(const ID& id);
+    int calcBucketIndex(const ID& id);
     friend std::ostream& operator<< (std::ostream& out, const BucketMap& b);
 
 };

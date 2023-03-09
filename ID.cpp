@@ -28,19 +28,19 @@ ID ID::normalRandomize()
     return *this;
 }
 
-const std::array<uint16_t, DIGEST_BYTES> ID::distance(const ID& anotherId)
+const std::array<int, DIGEST_BYTES> ID::distance(const ID& anotherId)
 {
-    std::array<uint16_t, DIGEST_BYTES> res;
-    for(uint16_t i  = 0; i < DIGEST_BYTES; ++i) {
+    std::array<int, DIGEST_BYTES> res;
+    for(int i  = 0; i < DIGEST_BYTES; ++i) {
         res[i] = m_id[i] ^ anotherId.m_id[i];
     }
     return res;
 }
 
-uint16_t ID::prefixLength(const ID & anotherId) const
+int ID::prefixLength(const ID & anotherId) const
 {
-    uint16_t len = 0;
-    uint16_t j = 0;
+    int len = 0;
+    int j = 0;
     for(; m_id[j] == anotherId.m_id[j] && j < DIGEST_BYTES; ++j)
     {
         len += 8;
@@ -68,7 +68,7 @@ bool operator !=  (const ID & l, const ID & r) {
 
 std::ostream& operator<<(std::ostream& out, const ID& id) {
     for(auto it = id.m_id.begin(); it != id.m_id.end(); ++it) {
-        out << std::hex << uint16_t(*it);
+        out << std::hex << int(*it);
     }
     return out;
 }

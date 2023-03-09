@@ -48,7 +48,7 @@ void Node::setLabel(uint64_t label) {
 
 bool Node::addNode(const ID& newId) {
     if (this->id() != newId) {
-        int16_t bucketIdx = m_BucketMap.calcBucketIndex(newId);
+        int bucketIdx = m_BucketMap.calcBucketIndex(newId);
         if(!m_BucketMap.bucketFull(bucketIdx)){
             return m_BucketMap.addNode(newId, bucketIdx);
         }
@@ -92,7 +92,7 @@ void Node::fill(int idx, std::vector<ID>& ids, int k, const ID &id)
     if(bucket.size() == 0) return;
     std::pair<const ID*, int> candidates [k];
 
-    for(uint16_t i = 0; i < k; ++i) {
+    for(int i = 0; i < k; ++i) {
         for(auto& ref : candidates) {
             ref.first = nullptr;
             ref.second = INT_MAX;
@@ -125,7 +125,7 @@ std::vector<ID> Node::findClosestNodes(int k, const ID& id)
     std::vector<ID> res;
 
     // start with the bucket where ID could be
-    uint16_t bucketIndex = m_BucketMap.calcBucketIndex(id);
+    int bucketIndex = m_BucketMap.calcBucketIndex(id);
     fill(bucketIndex, res, k, id);
 
     // not enough ids

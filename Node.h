@@ -25,8 +25,8 @@ private:
     uint64_t                          m_index;
     NodeInfo                          m_info; // last seen time
     static std::mt19937               m_randomGenerator;
-    std::map<ID, uint32_t>            m_findNodeMap; // pair<queriedId, packetCounter>
-    std::map<ID, uint32_t>            m_pingMap;
+    std::map<ID, int>            m_findNodeMap; // pair<queriedId, packetCounter>
+    std::map<ID, int>            m_pingMap;
 
 public:
     Node(ID id, IDhtTransportProtocol& protocol, ITimer& timer, INodeEventHandler& peer)

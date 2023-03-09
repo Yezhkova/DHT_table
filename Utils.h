@@ -27,6 +27,6 @@ namespace Utils
 
 size_t pow2(size_t power);
 
-char hex(uint16_t symbol);
+char hex(int symbol);
 
 }
