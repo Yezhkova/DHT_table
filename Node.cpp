@@ -88,20 +88,20 @@ const ID Node::pickRandomNode(const std::set<Contact>& s) const
     return it->m_id;
 }
 
-void Node::fill(int idx, std::vector<ID>& ids, int k, const ID &id)
+void Node::fill(int idx, std::vector<ID>& ids, int k, const ID& id)
 {
-    std::set<Contact> bucket = m_BucketMap.getNodesAtDepth(idx);
+    std::set<Contact> bucket = m_BucketMap.data()[idx];
     if(bucket.size() == 0) return;
     std::pair<const ID*, int> candidates [k];
 
-    for(int i = 0; i < k; ++i) {
-        for(auto& ref : candidates) {
-            ref.first = nullptr;
-            ref.second = INT_MAX;
-        }
+    for(auto& ref : candidates) {
+        ref.first = nullptr;
+        ref.second = INT_MAX;
+    }
 
+    for(int n = 0; n < k; ++n) {
         for(auto& contact : bucket) {
-            int distance = id.prefixLength(contact.m_id);
+            int distance = 159 - id.prefixLength(contact.m_id);
             for(int i = 0; i < k; ++i) {
                 if(candidates[i].second > distance) {
                     for(int j = k-1; j > i; --j) {
@@ -138,18 +138,18 @@ std::vector<ID> Node::findClosestNodes(int k, const ID& id)
         {
             nextBucketIndex = bucketIndex + i;
             prevBucketIndex = bucketIndex - i;
-            fill(nextBucketIndex, res, k);
-            fill(prevBucketIndex, res, k);
+            fill(nextBucketIndex, res, k, id);
+            fill(prevBucketIndex, res, k, id);
         }
         for(size_t j = i; res.size() < k && nextBucketIndex < m_treeSize; ++j)
         {
             nextBucketIndex = bucketIndex + j;
-            fill(nextBucketIndex, res, k);
+            fill(nextBucketIndex, res, k, id);
         }
         for(size_t j = i; res.size() < k && prevBucketIndex >= 0; ++j)
         {
             prevBucketIndex = bucketIndex - j;
-            fill(prevBucketIndex, res, k);
+            fill(prevBucketIndex, res, k, id);
         }
     }
 //    LOG(id << ": found " << res.size() << " closest nodes.");

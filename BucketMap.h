@@ -26,8 +26,8 @@ public:
     bool removeNode(const ID& id);
     bool containsNode(const ID& id) const;
 
-    const std::map<BucketIndex, Bucket>& map() const;
-    Bucket getNodesAtDepth(size_t depth);
+    std::map<BucketIndex, Bucket>& data();
+//    Bucket getNodesAtDepth(size_t depth);
     const size_t size() const;
     int bucketSize(int bucketIdx);
     bool bucketFull(int bucketIdx);
