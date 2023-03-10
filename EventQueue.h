@@ -3,7 +3,7 @@
 #include <functional>
 
 // comment/uncomment define to switch
-//#define PRIORITY_QUEUE
+#define PRIORITY_QUEUE
 
 #ifdef PRIORITY_QUEUE
 #include <queue>
@@ -21,7 +21,7 @@ private:
         std::function<void()>  m_task = {};
 
         friend bool operator< (Event const& lhs, Event const& rhs) {
-            return lhs.m_time > rhs.m_time;
+            return rhs.m_time < lhs.m_time;
         }
     };
 
@@ -62,7 +62,7 @@ public:
     Timestamp currentTime() const {
         return m_queueCurrentTime;
     }
-    Timestamp addTaskAt(Interval delay, std::function<void()> task = {});
+    void addTaskAt(Interval delay, std::function<void()> task = {});
     void run();
     void setEndTime(Timestamp time);
     void removeAllEvents();

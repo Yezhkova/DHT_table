@@ -3,7 +3,7 @@
 
 #define TCP true
 #define SIM false
-#define MINUTES 60
+#define MINUTES 60000
 #define SWARM_SIZE 100
 
 int main(void) {
@@ -24,7 +24,7 @@ int main(void) {
     });
 
 
-    swarm.addTaskAfter(50 * MINUTES, [&swarm]
+    swarm.addTaskAfter(6 * MINUTES, [&swarm]
     {
         swarm.calculateStatistic();
 //        Swarm::getInstance().eventQueqe().removeAllEvents();
@@ -45,7 +45,7 @@ int main(void) {
             }
         });
 
-        swarm.addTaskAfter(50 * MINUTES, [&swarm]
+        swarm.addTaskAfter(10 * MINUTES, [&swarm]
         {
             swarm.calculateStatistic();
         });

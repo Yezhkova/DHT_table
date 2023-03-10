@@ -31,25 +31,24 @@ void EventQueue::removeAllEvents() {
 
 #else
 
-EventQueue::Timestamp EventQueue::addTaskAt(Interval delay
-                                          , std::function<void()> task) {
+void EventQueue::addTaskAt(Interval delay, std::function<void()> task) {
     Timestamp t = delay; //m_queueCurrentTime + delay;
     for (Event** ptr = &m_head; ; ptr = &(*ptr)->m_next)
     {
         if ((*ptr) == nullptr)
         {
             (*ptr) = new Event{ nullptr, delay, task };
-            return t;
+            return;
         }
 
         if ((*ptr)->m_time > t)
         {
             auto e = new Event{ (*ptr), delay, task };
             (*ptr) = e;
-            return t;
+            return;
         }
     }
-    return t;
+    return;
 }
 
 void EventQueue::run() {
