@@ -26,13 +26,14 @@ void EventQueue::removeAllEvents() {
     while(!m_queue.empty()) {
         m_queue.pop();
     }
+    m_queueCurrentTime = 0;
 }
 
 #else
 
 EventQueue::Timestamp EventQueue::addTaskAt(Interval delay
                                           , std::function<void()> task) {
-    Timestamp t = m_queueCurrentTime + delay;
+    Timestamp t = delay; //m_queueCurrentTime + delay;
     for (Event** ptr = &m_head; ; ptr = &(*ptr)->m_next)
     {
         if ((*ptr) == nullptr)
@@ -67,6 +68,7 @@ void EventQueue::removeAllEvents() {
         m_head = e->m_next;
         delete e;
     }
+    m_queueCurrentTime = 0;
 }
 
 void EventQueue::setEndTime(Timestamp time) {

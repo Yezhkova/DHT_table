@@ -3,7 +3,7 @@
 #include <functional>
 
 // comment/uncomment define to switch
-#define PRIORITY_QUEUE
+//#define PRIORITY_QUEUE
 
 #ifdef PRIORITY_QUEUE
 #include <queue>
@@ -59,10 +59,10 @@ private:
 
 public:
     EventQueue() {}
-    Timestamp currentTime() {
+    Timestamp currentTime() const {
         return m_queueCurrentTime;
     }
-    Timestamp addTaskAt(Interval delay = 0, std::function<void()> task = {});
+    Timestamp addTaskAt(Interval delay, std::function<void()> task = {});
     void run();
     void setEndTime(Timestamp time);
     void removeAllEvents();
