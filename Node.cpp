@@ -1,6 +1,5 @@
 ﻿#include "Node.h"
 #include "Swarm.h"
-#include "Utils.h"
 #include <optional>
 
 #define CLOSEST_NODES 3
@@ -99,18 +98,16 @@ void Node::fill(int idx, std::vector<ID>& ids, int k, const ID& id)
         ref.second = INT_MAX;
     }
 
-    for(int n = 0; n < k; ++n) {
-        for(auto& contact : bucket) {
-            int distance = 159 - id.prefixLength(contact.m_id);
-            for(int i = 0; i < k; ++i) {
-                if(candidates[i].second > distance) {
-                    for(int j = k-1; j > i; --j) {
-                        candidates[j] = candidates[j-1];
-                    }
-                    candidates[i].first = &contact.m_id;
-                    candidates[i].second = distance;
-                    break;
+    for(auto& contact : bucket) {
+        int distance = 159 - id.prefixLength(contact.m_id);
+        for(int i = 0; i < k; ++i) {
+            if(candidates[i].second > distance) {
+                for(int j = k-1; j > i; --j) {
+                    candidates[j] = candidates[j-1];
                 }
+                candidates[i].first = &contact.m_id;
+                candidates[i].second = distance;
+                break;
             }
         }
     }
