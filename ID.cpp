@@ -59,7 +59,7 @@ bool operator !=  (const ID & l, const ID & r) {
 
 std::ostream& operator<<(std::ostream& out, const ID& id) {
     for(auto it = id.m_id.begin(); it != id.m_id.end(); ++it) {
-        out << std::dec << int(*it) << ' ';
+        out << std::hex << int(*it);
     }
     return out;
 }
