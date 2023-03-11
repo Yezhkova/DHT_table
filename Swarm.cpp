@@ -15,7 +15,6 @@ void Swarm::init(bool mode, int PeerNumber)
 {
     m_peers.clear();
     m_bootstrapNode.reset();
-    // MOD
     m_bootstrapNode = std::make_shared<Peer>(ID(), mode);
     m_peers[m_bootstrapNode->id()] = m_bootstrapNode;
     generateSwarm(mode, PeerNumber);
@@ -64,18 +63,12 @@ void Swarm::generateSwarm(bool mode, size_t Peers)
 
 void Swarm::calculateStatistic() {
     LOG("------------------------------------calculateStatistic-------------------------");
-//    std::map<int, int> findNodeStat;
-//    std::map<int, int> packetsStat;
-//    std::map<int, int> pingsStat;
     int nodeNotFoundCounter = 0;
     int pingCounter = 0;
     int packetCounter = 0;
     int findNodeCounter = 0;
 
     for (auto& p : m_peers) {
-//        ++findNodeStat[p.second->PeerStatistics::findNode()];
-//        ++packetsStat[p.second->PeerStatistics::packetsCnt()];
-//        ++pingsStat[p.second->PeerStatistics::packetsCnt()];
         nodeNotFoundCounter += p.second->failedFindNodeCounter();
         findNodeCounter += p.second->findNodeCounter();
         packetCounter += p.second->packetsCounter();

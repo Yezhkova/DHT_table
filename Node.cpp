@@ -7,7 +7,7 @@
 #define FIND_NODE_THRESHOLD 1000
 #define PING_THRESHOLD 2
 #define PING_INTERVAL 15
-#define MINUTES 60000
+#define MINUTES 60
 
 size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;

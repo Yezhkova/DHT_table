@@ -3,7 +3,7 @@
 
 #define TCP true
 #define SIM false
-#define MINUTES 60000
+#define MINUTES 60
 #define SWARM_SIZE 1000
 
 int main(void) {

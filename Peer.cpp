@@ -15,7 +15,6 @@ Peer::Peer(ID id, bool useTcp)
     : m_node(id, *this, *this, *this) {
     std::uniform_int_distribution<int> range(20, 30);
     m_packetTime = range(s_randomGenerator) / MILLISEC_IN_SEC;
-//    m_label = ++s_label;
 }
 
 ID Peer::id() {
