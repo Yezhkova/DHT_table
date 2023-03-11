@@ -5,14 +5,17 @@
 int BucketMap::g_bucketSize = 20; // maximum amount of nodes in a bucket
 const int g_bucketMultiplier = 8; // optimization for 160 buckets in map
 const int g_bucketMax = 20; // maximum amount of buckets in a map
-
+const int g_maxLength = 159;
 std::map<BucketIndex, Bucket> &BucketMap::data() {
     return m_Buckets;
 };
 
-// TODO :
 int BucketMap::calcBucketIndex(const ID& id) {
-    return (m_node.id().prefixLength(id)-1) / g_bucketMultiplier;
+    if(m_node.label() == 23) {
+        LOG(m_node.id() << ".prefixLength with " << id << " = " << m_node.id().prefixLength(id));
+        LOG("bucket index = " << (g_maxLength - m_node.id().prefixLength(id)) / g_bucketMultiplier);
+    }
+    return (g_maxLength - m_node.id().prefixLength(id)) / g_bucketMultiplier;
 }
 
 int BucketMap::bucketSize(int bucketIdx) {
@@ -56,10 +59,6 @@ std::vector<Bucket> BucketMap::nonEmptyBuckets()
     }
     return res;
 }
-
-//Bucket BucketMap::getNodesAtDepth(size_t depth) {
-//   return m_Buckets[depth];
-//}
 
 const size_t BucketMap::size() const {
     return m_Buckets.size();
