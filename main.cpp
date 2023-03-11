@@ -4,7 +4,7 @@
 #define TCP true
 #define SIM false
 #define MINUTES 60000
-#define SWARM_SIZE 100
+#define SWARM_SIZE 1000
 
 int main(void) {
 	Swarm& swarm = Swarm::getInstance();
@@ -41,7 +41,7 @@ int main(void) {
             }
             for (auto& peer : peers)
             {
-                peer.second->findRandomNodes(3);
+                peer.second->findRandomNodes(1);
             }
         });
 

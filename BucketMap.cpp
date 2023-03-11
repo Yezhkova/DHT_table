@@ -2,20 +2,15 @@
 #include "Node.h"
 #include "Utils.h"
 
-int BucketMap::g_bucketSize = 20; // maximum amount of nodes in a bucket
+int BucketMap::g_bucketSize = 100; // maximum amount of nodes in a bucket
 const int g_bucketMultiplier = 8; // optimization for 160 buckets in map
 const int g_bucketMax = 20; // maximum amount of buckets in a map
-const int g_maxLength = 159;
 std::map<BucketIndex, Bucket> &BucketMap::data() {
     return m_Buckets;
 };
 
 int BucketMap::calcBucketIndex(const ID& id) {
-    if(m_node.label() == 23) {
-        LOG(m_node.id() << ".prefixLength with " << id << " = " << m_node.id().prefixLength(id));
-        LOG("bucket index = " << (g_maxLength - m_node.id().prefixLength(id)) / g_bucketMultiplier);
-    }
-    return (g_maxLength - m_node.id().prefixLength(id)) / g_bucketMultiplier;
+    return (m_node.id().distance(id) - 1) / g_bucketMultiplier;
 }
 
 int BucketMap::bucketSize(int bucketIdx) {

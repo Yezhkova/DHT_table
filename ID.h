@@ -22,7 +22,10 @@ public:
     const std::array<uint8_t, DIGEST_BYTES>& id() const;
     ID uniformRandomize();
     ID normalRandomize();
-    int prefixLength(const ID & anotherId) const;
+    int equalPrefixLength(const ID & anotherId) const;
+    int distance(const ID & anotherId) const {
+        return DIGEST_BYTES * 8 - equalPrefixLength(anotherId);
+    }
     friend bool operator <  (const ID & l, const ID & r);
     friend bool operator ==  (const ID & l, const ID & r);
     friend bool operator !=  (const ID & l, const ID & r);

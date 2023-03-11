@@ -28,7 +28,7 @@ ID ID::normalRandomize()
     return *this;
 }
 
-int ID::prefixLength(const ID & anotherId) const
+int ID::equalPrefixLength(const ID & anotherId) const
 {
     int len = 0;
     int j = 0;

@@ -88,38 +88,38 @@ const ID Node::pickRandomNode(const std::set<Contact>& s) const
     return it->m_id;
 }
 
-void Node::fill(int idx, std::vector<ID>& ids, int k, const ID& id)
+void Node::fill(int bucketIdx, std::vector<ID>& outIds, int k, const ID& queriedId)
 {
-    std::set<Contact> bucket = m_BucketMap.data()[idx];
+    std::set<Contact> bucket = m_BucketMap.data()[bucketIdx];
     if(bucket.size() == 0) return;
-    std::pair<const ID*, int> candidates [k];
+    std::pair<const ID*, int> *candidates = new std::pair<const ID*, int>[k];
 
-    for(auto& ref : candidates) {
-        ref.first = nullptr;
-        ref.second = INT_MAX;
+    for(int i = 0; i < k; ++i) {
+        candidates[i].first = nullptr;
+        candidates[i].second = INT_MAX;
     }
 
-//    for(int n = 0; n < k; ++n) {
-        for(auto& contact : bucket) {
-            int distance = 159 - id.prefixLength(contact.m_id);
-            for(int i = 0; i < k; ++i) {
-                if(candidates[i].second > distance) {
-                    for(int j = k-1; j > i; --j) {
-                        candidates[j] = candidates[j-1];
-                    }
-                    candidates[i].first = &contact.m_id;
-                    candidates[i].second = distance;
-                    break;
+    for(auto& contact : bucket) {
+        int distance = id().distance(contact.m_id);
+        for(int i = 0; i < k; ++i) {
+            if(candidates[i].second > distance) {
+                for(int j = k-1; j > i; --j) {
+                    candidates[j] = candidates[j-1];
                 }
+                candidates[i].first = &contact.m_id;
+                candidates[i].second = distance;
+                break;
             }
         }
-//    }
+    }
 
-    for(auto& candidate : candidates) {
-        if(candidate.first != nullptr) {
-            ids.push_back(*candidate.first);
+    for(int i = 0; i < k; ++i) {
+        if(candidates[i].first != nullptr) {
+            outIds.push_back(*candidates[i].first);
         }
     }
+
+    delete[] candidates;
 }
 
 std::vector<ID> Node::findClosestNodes(int k, const ID& id)

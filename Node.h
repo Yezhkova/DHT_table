@@ -55,6 +55,10 @@ public:
     const ID pickRandomNode(const std::set<Contact>& s) const;
     std::vector<ID> findClosestNodes(int k, const ID& id);
 
+    const ID& findClosestNode(const ID& id) {
+        return findClosestNodes(1, id)[0];
+    }
+
     friend bool operator==(const Node & l, const Node & r);
 
     bool receivePing(const ID & requestorId);

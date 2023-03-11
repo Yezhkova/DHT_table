@@ -198,6 +198,7 @@ void Peer::findRandomNodes(int nodeNumber) {
     Swarm::getInstance().addTaskAfter(m_packetTime, [this, nodeNumber] {
         for (int i = 0; i < nodeNumber; ++i) {
             ID queriedId = pickRandomPeer();
+            //TODO
             ID recipientId = m_node.findClosestNodes(1, queriedId)[0];
 //            LOG(id() << " is looking for " << queriedId << " in " << recipientId << std::endl);
             sendFindNode(recipientId, id(), queriedId);

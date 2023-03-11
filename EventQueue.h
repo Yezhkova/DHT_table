@@ -62,7 +62,7 @@ public:
     Timestamp currentTime() const {
         return m_queueCurrentTime;
     }
-    void addTaskAt(Interval delay, std::function<void()> task = {});
+    void addTaskAt(Timestamp t, std::function<void()> task = {});
     void run();
     void setEndTime(Timestamp time);
     void removeAllEvents();
