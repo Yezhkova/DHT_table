@@ -32,7 +32,7 @@ int ID::equalPrefixLength(const ID & anotherId) const
 {
     int len = 0;
     int j = 0;
-    for(; m_id[j] == anotherId.m_id[j] && j < DIGEST_BYTES; ++j)
+    for(; j < DIGEST_BYTES && m_id[j] == anotherId.m_id[j]; ++j)
     {
         len += 8;
     }

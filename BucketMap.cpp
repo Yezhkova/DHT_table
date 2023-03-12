@@ -5,6 +5,7 @@
 int BucketMap::g_bucketSize = 100; // maximum amount of nodes in a bucket
 const int g_bucketMultiplier = 8; // optimization for 160 buckets in map
 const int g_bucketMax = 20; // maximum amount of buckets in a map
+
 std::map<BucketIndex, Bucket> &BucketMap::data() {
     return m_Buckets;
 };

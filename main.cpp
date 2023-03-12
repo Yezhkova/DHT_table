@@ -24,7 +24,7 @@ int main(void) {
     });
 
 
-    swarm.addTaskAfter(6 * MINUTES, [&swarm]
+    swarm.addTaskAfter(10 * MINUTES, [&swarm]
     {
         swarm.calculateStatistic();
 //        Swarm::getInstance().eventQueqe().removeAllEvents();
@@ -45,7 +45,7 @@ int main(void) {
             }
         });
 
-        swarm.addTaskAfter(10 * MINUTES, [&swarm]
+        swarm.addTaskAfter(20 * MINUTES, [&swarm]
         {
             swarm.calculateStatistic();
         });

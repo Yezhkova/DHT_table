@@ -55,7 +55,8 @@ public:
     const ID pickRandomNode(const std::set<Contact>& s) const;
     std::vector<ID> findClosestNodes(int k, const ID& id);
 
-    const ID& findClosestNode(const ID& id) {
+    // bug if const reference returned
+    ID findClosestNode(const ID& id) {
         return findClosestNodes(1, id)[0];
     }
 

@@ -196,10 +196,16 @@ void Peer::onNodeNotFound() {
 void Peer::findRandomNodes(int nodeNumber) {
     Swarm::getInstance().addTaskAfter(m_packetTime, [this, nodeNumber] {
         for (int i = 0; i < nodeNumber; ++i) {
+            //LOG("this Id " << m_node.id() << std::dec << " (" << m_node.label() << ")");
+
             ID queriedId = pickRandomPeer();
-            //TODO
-            ID recipientId = m_node.findClosestNodes(1, queriedId)[0];
-//            LOG(id() << " is looking for " << queriedId << " in " << recipientId << std::endl);
+            //int queriedLabel = Swarm::getInstance().getPeer(queriedId)->m_node.label();
+            //LOG("queriedId " << queriedId << std::dec << " (" << queriedLabel << ")");
+
+            ID recipientId = m_node.findClosestNode(queriedId);
+            //int recipientLabel = Swarm::getInstance().getPeer(recipientId)->m_node.label();
+            //LOG("recipientId " << recipientId << std::dec << " (" << recipientLabel << ")" << std::endl);
+            
             sendFindNode(recipientId, id(), queriedId);
         }
     });

@@ -128,6 +128,9 @@ std::vector<ID> Node::findClosestNodes(int k, const ID& id)
 
     // start with the bucket where ID could be
     int bucketIndex = m_BucketMap.calcBucketIndex(id);
+    if (this->id() == id) {
+        LOG(this->id() << " findClosestNodes " << id << "; bucketindex == " << bucketIndex);
+    }
     fill(bucketIndex, res, k, id);
 
     // not enough ids
