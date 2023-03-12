@@ -4,7 +4,7 @@
 #define TCP true
 #define SIM false
 #define MINUTES 60
-#define SWARM_SIZE 1000
+#define SWARM_SIZE 200
 
 int main(void) {
 	Swarm& swarm = Swarm::getInstance();

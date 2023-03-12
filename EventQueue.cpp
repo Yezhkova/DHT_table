@@ -7,8 +7,7 @@
 void EventQueue::addTaskAt(Interval delay, std::function<void()> task)
 {
     assert(m_queueCurrentTime <= delay);
-    Event e {delay, task};
-    m_queue.push(e);
+    m_queue.emplace(Event {delay, task});
 }
 
 void EventQueue::run() {
