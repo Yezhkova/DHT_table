@@ -13,249 +13,250 @@ size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;
 
 
-const ID& Node::id() const{
-    return m_contact.m_id;
+const ID& Node::id() const {
+	return m_contact.m_id;
 }
 
-const BucketMap& Node::bucketMap() const{
-    return m_BucketMap;
+const BucketArray& Node::buckets() const {
+	return m_BucketArray;
 }
 
 const Contact& Node::contact() const {
-    return m_contact;
+	return m_contact;
 }
 
 NodeInfo& Node::nodeInfo() {
-    return m_info;
+	return m_info;
 }
 
 INodeEventHandler& Node::eventHandler() {
-    return m_eventHandler;
+	return m_eventHandler;
 }
 
 void Node::randomizeId() {
-    m_contact.randomize();
+	m_contact.randomize();
 }
 
-uint64_t Node::label() const {
-    return m_index;
+const uint64_t Node::label() const {
+	return m_index;
 }
 
 void Node::setLabel(uint64_t label) {
-    m_index = label;
+	m_index = label;
 }
 // TODO: node offline mode not implemented
 
 bool Node::addNode(const ID& newId) {
-    if (this->id() != newId) {
-        int bucketIdx = m_BucketMap.calcBucketIndex(newId);
-        if(!m_BucketMap.bucketFull(bucketIdx)){
-            bool res = m_BucketMap.addNode(newId, bucketIdx);
-            m_protocol.sendPing(newId);
-            return res;
-        }
-        return false;
-    }
-    return false;
+	/*LOG(this->id() << " adds " << newId);
+	if (this->id() != newId) {
+		LOG("they are not equal");
+	}
+	else {
+		LOG("they are equal");
+	}*/
+
+	if (this->id() != newId) {
+		int bucketIdx = m_BucketArray.calcBucketIndex(newId);
+		if (!m_BucketArray.bucketFull(bucketIdx)) {
+			m_protocol.sendPing(newId);
+			return m_BucketArray.addNode(newId, bucketIdx);
+		}
+		return false;
+	}
+	return false;
 }
 
 bool Node::removeNode(const ID& id) {
-    return m_BucketMap.removeNode(id);
+	return m_BucketArray.removeNode(id);
 }
 
 void Node::updateLastSeen(const ID& id
-                          , boost::chrono::system_clock::time_point time) {
-    auto peerToUpdate = Swarm::getInstance().getPeer(id);
-    if(peerToUpdate != nullptr) {
-        peerToUpdate->info().updateLastSeen(time);
-    }
+	, boost::chrono::system_clock::time_point time) {
+	auto peerToUpdate = Swarm::getInstance().getPeer(id);
+	if (peerToUpdate != nullptr) {
+		peerToUpdate->info().updateLastSeen(time);
+	}
 }
 
 bool operator==(const Node& l, const Node& r) {
-    return l.m_contact.m_id == r.m_contact.m_id;
+	return l.m_contact.m_id == r.m_contact.m_id;
 }
 
 IDhtTransportProtocol& Node::protocol() {
-    return m_protocol;
+	return m_protocol;
 }
 
-const ID Node::pickRandomNode(const std::set<Contact>& s) const
+const ID& Node::pickRandomNode(const Bucket& bucket) const
 {
-    auto it = s.begin();
-    std::uniform_int_distribution<int> range(0, s.size()-1);
-    int randomNodeNumber = range(m_randomGenerator);
-    std::advance(it, randomNodeNumber);
-    return it->m_id;
+	auto it = bucket.begin();
+	std::uniform_int_distribution<int> range(0, bucket.size() - 1);
+	int randomNodeNumber = range(m_randomGenerator);
+	std::advance(it, randomNodeNumber);
+	return it->m_id;
 }
 
-void Node::fill(int bucketIdx, std::vector<ID>& outIds, int k, const ID& queriedId)
+void Node::fill(int bucketIdx, std::set<const ID*>& outIds, int k)
 {
-    std::set<Contact> bucket = m_BucketMap.data()[bucketIdx];
-    if(bucket.size() == 0) return;
-    std::pair<const ID*, int> *candidates = new std::pair<const ID*, int>[k];
+	//if (m_BucketMap.data()[bucketIdx].size() == 0) return;
+	auto& bucket = m_BucketArray.getBucket(bucketIdx);
+	if (bucket.size() == 0) return;
 
-    for(int i = 0; i < k; ++i) {
-        candidates[i].first = nullptr;
-        candidates[i].second = INT_MAX;
-    }
+	if (bucket.size() < k) {
+		for (auto& contact : bucket) {
+			outIds.insert(&contact.id());
+		}
+		return;
+	}
 
-    for(auto& contact : bucket) {
-        int distance = id().distance(contact.m_id);
-        for(int i = 0; i < k; ++i) {
-            if(candidates[i].second > distance) {
-                for(int j = k-1; j > i; --j) {
-                    candidates[j] = candidates[j-1];
-                }
-                candidates[i].first = &contact.m_id;
-                candidates[i].second = distance;
-                break;
-            }
-        }
-    }
-
-    for(int i = 0; i < k; ++i) {
-        if(candidates[i].first != nullptr) {
-            outIds.push_back(*candidates[i].first);
-        }
-    }
-
-    delete[] candidates;
+	while (outIds.size() < k) {
+		auto& id = pickRandomNode(bucket);
+		outIds.insert(&id);
+	}
 }
 
-std::vector<ID> Node::findClosestNodes(int k, const ID& id)
+std::vector<const ID*> Node::findClosestNodes(int k, const ID& id)
 {
-    std::vector<ID> res;
+	std::set<const ID*> res;
 
-    // start with the bucket where ID could be
-    int bucketIndex = m_BucketMap.calcBucketIndex(id);
-    if (this->id() == id) {
-        LOG(this->id() << " findClosestNodes " << id << "; bucketindex == " << bucketIndex);
-    }
-    fill(bucketIndex, res, k, id);
+	// start with the bucket where ID could be
+	int bucketIndex = m_BucketArray.calcBucketIndex(id);
+	fill(bucketIndex, res, k);
 
-    // not enough ids
-    if(res.size() < k) {
-        int nextBucketIndex = bucketIndex, prevBucketIndex = bucketIndex;
-        size_t i = 1;
-        for(; nextBucketIndex < m_treeSize && prevBucketIndex >= 0; ++i)
-        {
-            nextBucketIndex = bucketIndex + i;
-            prevBucketIndex = bucketIndex - i;
-            fill(nextBucketIndex, res, k, id);
-            fill(prevBucketIndex, res, k, id);
-        }
-        for(size_t j = i; res.size() < k && nextBucketIndex < m_treeSize; ++j)
-        {
-            nextBucketIndex = bucketIndex + j;
-            fill(nextBucketIndex, res, k, id);
-        }
-        for(size_t j = i; res.size() < k && prevBucketIndex >= 0; ++j)
-        {
-            prevBucketIndex = bucketIndex - j;
-            fill(prevBucketIndex, res, k, id);
-        }
-    }
-//    LOG(id << ": found " << res.size() << " closest nodes.");
-    return res;
+	// not enough ids
+	if (res.size() < k) {
+		int nextBucketIndex = bucketIndex, prevBucketIndex = bucketIndex;
+		size_t i = 1;
+		for (; nextBucketIndex < m_treeSize && prevBucketIndex >= 0; ++i)
+		{
+			nextBucketIndex = bucketIndex + i;
+			prevBucketIndex = bucketIndex - i;
+			fill(nextBucketIndex, res, k);
+			fill(prevBucketIndex, res, k);
+		}
+		for (size_t j = i; res.size() < k && nextBucketIndex < m_treeSize; ++j)
+		{
+			nextBucketIndex = bucketIndex + j;
+			fill(nextBucketIndex, res, k);
+		}
+		for (size_t j = i; res.size() < k && prevBucketIndex >= 0; ++j)
+		{
+			prevBucketIndex = bucketIndex - j;
+			fill(prevBucketIndex, res, k);
+		}
+	}
+	std::vector<const ID*> ids(res.begin(), res.end());
+	for (auto& e : res) {
+		if (e == nullptr) {
+			LOG("debug");
+		}
+	}
+	return ids;
 }
 
-std::vector<ID> Node::receiveFindNode(const ID& senderId
-                                      , const ID& queriedId)
-{   
-    addNode(senderId);
-    if(m_BucketMap.containsNode(queriedId)) {
-        return {queriedId};
-    }
-    else {
-        return findClosestNodes(CLOSEST_NODES, queriedId);
-    }
+std::vector<const ID*> Node::receiveFindNode(const ID& senderId
+	, const ID& queriedId)
+{
+	addNode(senderId);
+	if (m_BucketArray.containsNode(queriedId)) {
+		return { &queriedId };
+	}
+	else {
+		return findClosestNodes(CLOSEST_NODES, queriedId);
+	}
 }
 
-bool Node::receivePing(const ID & requestorId) {
-    return m_online;
+bool Node::receivePing(const ID& requestorId) {
+	return m_online;
 }
 
 void Node::receivePingResponse(bool online
-                              , const ID & queriedId)
+	, const ID& queriedId)
 {
-    if(auto it = m_pingMap.find(queriedId); it == m_pingMap.end()) {
-        return;
-    }
+	if (auto it = m_pingMap.find(queriedId); it == m_pingMap.end()) {
+		return;
+	}
 
-    if(!online && m_pingMap[queriedId] < PING_THRESHOLD)
-    {
-        m_protocol.sendPing(queriedId);
-    }
-    else {
-        onPingEnd(online, queriedId);
-    }
+	if (!online && m_pingMap[queriedId] < PING_THRESHOLD)
+	{
+		m_protocol.sendPing(queriedId);
+	}
+	else {
+		onPingEnd(online, queriedId);
+	}
 }
 
 void Node::receiveFindNodeResponse(const ID& queriedId
-                                    , std::vector<ID> ids
-                                    , const ID& responserId)
+	, const std::vector<const ID*>& ids
+	, const ID& responserId)
 {
-    if(auto it = m_findNodeMap.find(queriedId); it == m_findNodeMap.end()) {
-        return;
-    }
-    if (m_findNodeMap[queriedId] > FIND_NODE_THRESHOLD) {
-        onFindNodeEnd(false, queriedId);
-        return;
-    }
-    if(ids.size() == 0) {
-        return;
-    }
-    if (ids[0] == queriedId) {
-        onFindNodeEnd(true, queriedId);
-    }
+	LOG("Node::receiveFindNodeResponse");
+	for (auto& id : ids) {
+		LOG(*id);
+	}
+	if (auto it = m_findNodeMap.find(queriedId); it == m_findNodeMap.end()) {
+		return;
+	}
+	addNode(responserId);
+	if (m_findNodeMap[queriedId] > FIND_NODE_THRESHOLD) {
+		onFindNodeEnd(false, queriedId);
+		return;
+	}
+	//if (ids.size() == 0) {
+	//	return;
+	//}
+	LOG("strange: " << *ids[0] << ' ' << queriedId);
+	if (*ids[0] == queriedId) {
+		LOG("you must see this");
+		onFindNodeEnd(true, queriedId);
+	}
 
-    else {
-        //LOG(queriedId << " not found");
-        for (auto& id : ids) {
-            m_protocol.sendFindNode(id, this->id(), queriedId); // Swarm does this
-        }
-    }
+	else {
+		//LOG(queriedId << " not found");
+		for (auto id : ids) {
+			m_protocol.sendFindNode(*id, this->id(), queriedId); // Swarm does this
+		}
+	}
 
 }
 
 void Node::onFindNodeStart(const ID& queriedId)
 {
-    m_findNodeMap[queriedId]++;
+	m_findNodeMap[queriedId]++;
 }
 
 void Node::onFindNodeEnd(bool found, const ID& queriedId)
 {
-    m_findNodeMap.erase(queriedId);
-    if(found){
-
-    }
-    else {
-        m_eventHandler.onNodeNotFound();
-    }
+	m_findNodeMap.erase(queriedId);
+	if (found) {
+		m_eventHandler.onNodeFound();
+	}
+	else {
+		m_eventHandler.onNodeNotFound();
+	}
 }
 
 void Node::onPingStart(const ID& queriedId)
 {
-    m_pingMap[queriedId]= 1;
+	m_pingMap[queriedId] = 1;
 }
 
 void Node::onPingEnd(bool online, const ID& queriedId)
 {
-    m_pingMap.erase(queriedId);
-    if(!online) {
-        removeNode(queriedId);
-    }
-    m_timerProtocol.startTimer(PING_INTERVAL * MINUTES, [this, queriedId]{
-        m_protocol.sendPing(queriedId);
-    });
+	m_pingMap.erase(queriedId);
+	if (!online) {
+		removeNode(queriedId);
+	}
+	m_timerProtocol.startTimer(PING_INTERVAL * MINUTES, [this, queriedId] {
+		m_protocol.sendPing(queriedId);
+		});
 }
 
 void Node::setOffline() {
-    m_online = false;
+	m_online = false;
 }
 
 void Node::setOnline() {
-    m_online = true;
+	m_online = true;
 }
 
 

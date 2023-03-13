@@ -12,9 +12,9 @@ std::mt19937 Peer::s_randomGenerator;
 
 
 Peer::Peer(ID id, bool useTcp)
-    : m_node(id, *this, *this, *this) {
-    std::uniform_int_distribution<int> range(20, 30);
-    m_packetTime = range(s_randomGenerator) / MILLISEC_IN_SEC;
+	: m_node(id, *this, *this, *this) {
+	std::uniform_int_distribution<int> range(20, 30);
+	m_packetTime = range(s_randomGenerator) / MILLISEC_IN_SEC;
 }
 
 ID Peer::id() {
@@ -38,87 +38,81 @@ void Peer::randomize() {
 }
 
 ID Peer::pickRandomPeer() {
-    auto it = Swarm::getInstance().peers().begin();
-    std::uniform_int_distribution<int> range(0
-                   , Swarm::getInstance().peers().size() - 1);
-    int randomPeerNumber = range(s_randomGenerator);
-    std::advance(it, randomPeerNumber);
-    return it->second->id();
-}
-
-bool Peer::addNode(const ID& id) {
-	if (m_node.id() != id) {
-		return m_node.addNode(id);
-	}
-	return false;
+	auto it = Swarm::getInstance().peers().begin();
+	std::uniform_int_distribution<int> range(0
+		, Swarm::getInstance().peers().size() - 1);
+	int randomPeerNumber = range(s_randomGenerator);
+	std::advance(it, randomPeerNumber);
+	return it->second->id();
 }
 
 void Peer::start(const ID& bootstrapId) {
-	addNode(bootstrapId);
-    sendFindNode(bootstrapId, m_node.id(), m_node.id());
+	m_node.addNode(bootstrapId);
+	sendFindNode(bootstrapId, m_node.id(), m_node.id());
 }
 
 void Peer::sendPing(const ID& queriedId) {
-    m_node.onPingStart(queriedId);
-    Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId, id = id()] {
+	m_node.onPingStart(queriedId);
+	Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId, id = id()]{
 		auto recipient = Swarm::getInstance().getPeer(queriedId);
 		if (recipient != nullptr) {
-            recipient->receivePing(id);
+			recipient->receivePing(id);
 		}
 		else {
 			LOG("sendPing Warning: the recipient peer does not exist");
 		}
-    });
+		});
 
-    PeerStatistics::incPacketCounter();
-    PeerStatistics::incPingCounter();
+	PeerStatistics::incPacketCounter();
+	PeerStatistics::incPingCounter();
 }
 
 void Peer::receivePing(const ID& requestorId) {
-    bool online = m_node.receivePing(requestorId);
+	bool online = m_node.receivePing(requestorId);
 
-    Swarm::getInstance().addTaskAfter(m_packetTime, [requestorId
-                                                    , online
-                                                    , id = id()] {
-        auto requestor = Swarm::getInstance().getPeer(requestorId);
-        if (requestor != nullptr) {
-            requestor->receivePingResponse(online, id);
-		}
-		else {
-			LOG("receivePing Warning: the recipient peer does not exist");
-		}
+	Swarm::getInstance().addTaskAfter(m_packetTime, [requestorId
+		, online
+		, id = id()]{
+auto requestor = Swarm::getInstance().getPeer(requestorId);
+if (requestor != nullptr) {
+	requestor->receivePingResponse(online, id);
+}
+else {
+	LOG("receivePing Warning: the recipient peer does not exist");
+}
 		});
 
-    PeerStatistics::incPacketCounter();
-    PeerStatistics::incPingCounter();
+	PeerStatistics::incPacketCounter();
+	PeerStatistics::incPingCounter();
 }
 
 void Peer::receivePingResponse(bool online, const ID& queriedId) {
-    Swarm::getInstance().addTaskAfter(m_packetTime, [online, queriedId, this] {
-        m_node.receivePingResponse(online, queriedId);
-    });
+	Swarm::getInstance().addTaskAfter(m_packetTime, [online, queriedId, this] {
+		m_node.receivePingResponse(online, queriedId);
+		});
 }
 
 void Peer::sendFindNode(const ID& recipientId
-                        , const ID& initiatorId
-                        , const ID& queriedId) {
-    m_node.onFindNodeStart(queriedId);
-    // sender side
-    Swarm::getInstance().addTaskAfter(m_packetTime, [responserId = recipientId
+	, const ID& initiatorId
+	, const ID& queriedId) {
+	m_node.onFindNodeStart(queriedId);
+	// sender side
+	LOG(initiatorId << " initiates search for " << queriedId << " by asking " << recipientId);
+	Swarm::getInstance().addTaskAfter(m_packetTime, [responserId = recipientId
 		, queriedId
-        , initiatorId, this]
-		{	
-            if (m_node.bucketMap().containsNode(queriedId))
-            {
-                receiveFindNodeResponse(queriedId, { queriedId }, id());
-                PeerStatistics::incPacketCounter();
-                return;
-            }
-            // responser side
+		, initiatorId, this]
+		{
+			if (m_node.buckets().containsNode(queriedId))
+			{
+				receiveFindNodeResponse(queriedId, { &queriedId }, id());
+				PeerStatistics::incPacketCounter();
+				return;
+			}
+			// responser side
 			if (auto responser = Swarm::getInstance().getPeer(responserId);
 				responser != nullptr)
 			{
-                responser->receiveFindNode(initiatorId, queriedId);
+				responser->receiveFindNode(initiatorId, queriedId);
 			}
 			else
 			{
@@ -127,55 +121,66 @@ void Peer::sendFindNode(const ID& recipientId
 			}
 		});
 
-    PeerStatistics::incPacketCounter();
-    PeerStatistics::incFindNodeCounter();
+	PeerStatistics::incPacketCounter();
+	PeerStatistics::incFindNodeCounter();
 }
 
 void Peer::receiveFindNode(const ID& initiatorId
-                          , const ID& queriedId) {
-    // responser side
-    std::vector<ID> ids = m_node.receiveFindNode(initiatorId, queriedId);
-
-    Swarm::getInstance().addTaskAfter(m_packetTime, [initiatorId
+	, const ID& queriedId) {
+	// responser side
+	std::vector<const ID*> ids = m_node.receiveFindNode(initiatorId, queriedId);
+	LOG(this->id() << " answers to " << initiatorId << " by sending a vector: ");
+	for (auto& id : ids) {
+		LOG(*id);
+	}
+	Swarm::getInstance().addTaskAfter(m_packetTime, [initiatorId
 		, queriedId
-        , ids
-        , id = id()]
-        {
-            // requester side
-            if (auto initiator = Swarm::getInstance().getPeer(initiatorId);
-                    initiator != nullptr)
-            {
-                initiator->receiveFindNodeResponse(queriedId, ids, id);
+		, &ids
+		, id = id()]
+		{
+			LOG("Peer::receiveFindNode lambda");
+			for (auto& id : ids) {
+				LOG(*id);
+			}
+	// requester side
+			if (auto initiator = Swarm::getInstance().getPeer(initiatorId);
+				initiator != nullptr)
+			{
+				initiator->receiveFindNodeResponse(queriedId, ids, id);
 			}
 			else {
 				LOG("receiveFindNode Warning: the recipient peer does not exist");
 			}
 		});
 
-    PeerStatistics::incPacketCounter();
-    PeerStatistics::incFindNodeCounter();
+	PeerStatistics::incPacketCounter();
+	PeerStatistics::incFindNodeCounter();
 }
 
 void Peer::receiveFindNodeResponse(const ID& queriedId
-	, std::vector<ID> ids
+	, const std::vector<const ID*>& ids
 	, const ID& responserId)
 {
-    Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId
-                                                    , ids
-                                                    , responserId
-                                                    , this]{
-        m_node.receiveFindNodeResponse(queriedId, ids, responserId);
-    });
+	LOG("Peer::receiveFindNodeResponse");
+	for (auto& id : ids) {
+		LOG(*id);
+	}
+	Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId
+		, ids
+		, responserId
+		, this] {
+			m_node.receiveFindNodeResponse(queriedId, ids, responserId);
+		});
 
 }
 
 void Peer::onFindNodeResponse(bool find)
 {
 	if (find) {
-        // LOG("node found");
-    }
+		// LOG("node found");
+	}
 	else {
-//        LOG("---bad node: " << id());
+		//        LOG("---bad node: " << id());
 	}
 }
 
@@ -190,28 +195,32 @@ void Peer::onPacketSent() {
 }
 
 void Peer::onNodeNotFound() {
-    incFailedFindNode();
+	incFailedFindNode();
+}
+
+void Peer::onNodeFound() {
+	setDone();
 }
 
 void Peer::findRandomNodes(int nodeNumber) {
-    Swarm::getInstance().addTaskAfter(m_packetTime, [this, nodeNumber] {
-        for (int i = 0; i < nodeNumber; ++i) {
-            //LOG("this Id " << m_node.id() << std::dec << " (" << m_node.label() << ")");
+	Swarm::getInstance().addTaskAfter(m_packetTime, [this, nodeNumber] {
+		for (int i = 0; i < nodeNumber; ++i) {
+			//LOG("this Id " << m_node.id() << std::dec << " (" << m_node.label() << ")");
 
-            ID queriedId = pickRandomPeer();
-            //int queriedLabel = Swarm::getInstance().getPeer(queriedId)->m_node.label();
-            //LOG("queriedId " << queriedId << std::dec << " (" << queriedLabel << ")");
+			ID queriedId = pickRandomPeer();
+			//int queriedLabel = Swarm::getInstance().getPeer(queriedId)->m_node.label();
+			//LOG("queriedId " << queriedId << std::dec << " (" << queriedLabel << ")");
 
-            ID recipientId = m_node.findClosestNode(queriedId);
-            //int recipientLabel = Swarm::getInstance().getPeer(recipientId)->m_node.label();
-            //LOG("recipientId " << recipientId << std::dec << " (" << recipientLabel << ")" << std::endl);
-            
-            sendFindNode(recipientId, id(), queriedId);
-        }
-    });
+			ID recipientId = m_node.findClosestNode(queriedId);
+			//int recipientLabel = Swarm::getInstance().getPeer(recipientId)->m_node.label();
+			//LOG("recipientId " << recipientId << std::dec << " (" << recipientLabel << ")" << std::endl);
+
+			sendFindNode(recipientId, id(), queriedId);
+		}
+		});
 }
 
-void Peer::startTimer(EventQueue::Interval duration, std::function<void ()> F) {
-    Swarm::getInstance().addTaskAfter(duration, F);
+void Peer::startTimer(EventQueue::Interval duration, std::function<void()> F) {
+	Swarm::getInstance().addTaskAfter(duration, F);
 }
 

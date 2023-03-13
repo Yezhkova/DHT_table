@@ -32,10 +32,7 @@ public:
 
     void start(const ID & bootstrapId);
 
-    bool addNode(const ID & id);
-
     virtual void sendPing(const ID & queriedId) override;
-    void sendPingResponse(const ID & requestorId, const ID & queriedId);
 
     void receivePing(const ID & requestorId);
     void receivePingResponse(bool online, const ID & queriedId);
@@ -48,7 +45,7 @@ public:
                          , const ID& queriedId);
 
     void receiveFindNodeResponse(const ID & queriedId
-                                 , std::vector<ID> ids
+                                 , const std::vector<const ID*>& ids
                                  , const ID& responserId);
 
     void onFindNodeResponse(bool find) override;
@@ -57,7 +54,7 @@ public:
     void onPacketSent() override;
     void findRandomNodes(int nodeNumber);
     void onNodeNotFound() override;
-
+    void onNodeFound() override;
     virtual void startTimer(EventQueue::Interval duration, std::function<void ()> F) override;
 
 };

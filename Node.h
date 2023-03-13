@@ -9,6 +9,7 @@
 #include <cassert>
 #include "IDhtTransportProtocol.h"
 #include <boost/chrono.hpp>
+#include <map>
 
 using system_clock = boost::chrono::system_clock;
 
@@ -18,7 +19,7 @@ private:
     bool                         m_online = true;
     Contact                      m_contact;
     INodeEventHandler&           m_eventHandler;
-    BucketMap                    m_BucketMap;
+    BucketArray                  m_BucketArray;
     static size_t                m_treeSize;
     IDhtTransportProtocol&       m_protocol;
     ITimer&                      m_timerProtocol;
@@ -32,18 +33,18 @@ public:
     Node(ID id, IDhtTransportProtocol& protocol, ITimer& timer, INodeEventHandler& peer)
         : m_contact(id)
         , m_eventHandler(peer)
-        , m_BucketMap(*this)
+        , m_BucketArray(*this)
         , m_protocol(protocol)
         , m_timerProtocol(timer)
         , m_info(boost::chrono::system_clock::now()) {};
 
     const ID& id() const;
-    const BucketMap& bucketMap() const;
+    const BucketArray& buckets() const;
     const Contact& contact() const;
     IDhtTransportProtocol& protocol();
     NodeInfo& nodeInfo();
     INodeEventHandler& eventHandler();
-    uint64_t label() const;
+    const uint64_t label() const;
     void setLabel(uint64_t label);
 
     void randomizeId();
@@ -52,12 +53,12 @@ public:
     void updateLastSeen(const ID& id
                         , boost::chrono::system_clock::time_point time);
 
-    const ID pickRandomNode(const std::set<Contact>& s) const;
-    std::vector<ID> findClosestNodes(int k, const ID& id);
+    const ID& pickRandomNode(const Bucket& bucket) const;
+    std::vector<const ID*> findClosestNodes(int k, const ID& id);
 
     // bug if const reference returned
-    ID findClosestNode(const ID& id) {
-        return findClosestNodes(1, id)[0];
+    const ID& findClosestNode(const ID& id) {
+        return *(findClosestNodes(1, id)[0]);
     }
 
     friend bool operator==(const Node & l, const Node & r);
@@ -67,11 +68,11 @@ public:
     void receivePingResponse(bool online
                              , const ID & queriedId);
 
-    std::vector<ID> receiveFindNode(const ID& senderId
+    std::vector<const ID*> receiveFindNode(const ID& senderId
                                     , const ID& queriedId);
 
     void receiveFindNodeResponse(const ID& queriedId
-                                 , std::vector<ID> ids
+                                 , const std::vector<const ID*>& ids
                                  , const ID& responserId);
 
     void onFindNodeStart(const ID& queriedId);
@@ -85,7 +86,6 @@ public:
 
 private:
 
-    void fill(int idx, std::vector<ID>& ids, int k, const ID& id);
-
+    void fill(int bucketIdx, std::set<const ID*>& outIds, int k);
 };
 

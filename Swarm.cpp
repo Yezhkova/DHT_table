@@ -63,22 +63,25 @@ void Swarm::generateSwarm(bool mode, size_t Peers)
 
 void Swarm::calculateStatistic() {
     LOG("------------------------------------calculateStatistic-------------------------");
-    int nodeNotFoundCounter = 0;
-    int pingCounter = 0;
-    int packetCounter = 0;
-    int findNodeCounter = 0;
+    uint64_t nodeNotFoundCounter = 0;
+    uint64_t pingCounter = 0;
+    uint64_t packetCounter = 0;
+    uint64_t findNodeCounter = 0;
+    uint64_t doneCounter = 0;
 
     for (auto& p : m_peers) {
         nodeNotFoundCounter += p.second->failedFindNodeCounter();
         findNodeCounter += p.second->findNodeCounter();
         packetCounter += p.second->packetsCounter();
         pingCounter += p.second->pingCounter();
+        doneCounter += p.second->done();
     }
 
-    LOG("dead nodes: " << nodeNotFoundCounter);
+    LOG("dead nodes: " << std::dec << nodeNotFoundCounter);
     LOG("find node: " << findNodeCounter);
     LOG("packets: " << packetCounter);
     LOG("ping: " << pingCounter);
+    LOG("done: " << doneCounter);
 
 
 }

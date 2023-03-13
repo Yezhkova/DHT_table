@@ -10,6 +10,8 @@ class PeerStatistics: public INodeEventHandler
     uint64_t m_receiveFindNodeCounter = 0;
     uint64_t m_failedFindNodeCounter = 0; // timeout or packet limit/threshold
 
+    bool m_done = false;
+
 public:
     PeerStatistics() {};
 
@@ -32,6 +34,10 @@ public:
     uint64_t failedFindNodeCounter() const { return m_failedFindNodeCounter; }
     void incFailedFindNode() { ++m_failedFindNodeCounter; }
     void resetFailedNode() { m_failedFindNodeCounter = 0; }
+
+    bool done() const { return m_done; }
+    void setDone() { m_done = true; }
+    void resetDone() { m_done = false; }
 
 };
 

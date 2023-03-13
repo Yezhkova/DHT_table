@@ -4,7 +4,7 @@
 #define TCP true
 #define SIM false
 #define MINUTES 60
-#define SWARM_SIZE 200
+#define SWARM_SIZE 2
 
 int main(void) {
 	Swarm& swarm = Swarm::getInstance();
@@ -24,12 +24,16 @@ int main(void) {
     });
 
 
-    swarm.addTaskAfter(10 * MINUTES, [&swarm]
+    swarm.addTaskAfter(3 * MINUTES, [&swarm]
     {
+           /* auto peers = swarm.peers();
+            for (auto& peer : peers) {
+                LOG(peer.second->node().buckets());
+            }*/
         swarm.calculateStatistic();
 //        Swarm::getInstance().eventQueqe().removeAllEvents();
 
-        swarm.addTaskAfter(0 * MINUTES, [&swarm]
+        /*swarm.addTaskAfter(0 * MINUTES, [&swarm]
         {
             auto peers = swarm.peers();
             for (auto& peer : peers)
@@ -38,6 +42,7 @@ int main(void) {
                 peer.second->resetPacketCounter();
                 peer.second->resetReceiveFindNodeCounter();
                 peer.second->resetFailedNode();
+                peer.second->resetDone();
             }
             for (auto& peer : peers)
             {
@@ -45,10 +50,10 @@ int main(void) {
             }
         });
 
-        swarm.addTaskAfter(20 * MINUTES, [&swarm]
+        swarm.addTaskAfter(7 * MINUTES, [&swarm]
         {
             swarm.calculateStatistic();
-        });
+        });*/
     });
 
 	swarm.run();

@@ -2,74 +2,69 @@
 #include "Node.h"
 #include "Utils.h"
 
-int BucketMap::g_bucketSize = 100; // maximum amount of nodes in a bucket
-const int g_bucketMultiplier = 8; // optimization for 160 buckets in map
-const int g_bucketMax = 20; // maximum amount of buckets in a map
+int BucketArray::g_bucketSize = 20; // maximum amount of nodes in a bucket
+//const int g_bucketMultiplier = 8; // optimization for 160 buckets in map
+int BucketArray::g_treeSize = 160; // maximum amount of buckets in a map
 
-std::map<BucketIndex, Bucket> &BucketMap::data() {
-    return m_Buckets;
+const std::array<Bucket, 160>& BucketArray::data() const {
+	return m_Buckets;
 };
 
-int BucketMap::calcBucketIndex(const ID& id) {
-    return (m_node.id().distance(id) - 1) / g_bucketMultiplier;
+int BucketArray::calcBucketIndex(const ID& id) {
+	//return (m_node.id().distance(id) - 1) / g_bucketMultiplier;
+	/*if (m_node.id().distance(id) - 1 == 160) {
+		LOG("debug");
+	}*/
+	//LOG(m_node.id() << " dist " << id << " = " << std::dec << m_node.id().distance(id));
+	return id == m_node.id() ? 0 : m_node.id().distance(id) - 1;
 }
 
-int BucketMap::bucketSize(int bucketIdx) {
-    auto b = m_Buckets[bucketIdx];
-    return b.size();
+const Bucket& BucketArray::getBucket(int index) const {
+	return m_Buckets[index];
 }
 
-bool BucketMap::bucketFull(int bucketIdx) {
-    auto b = m_Buckets[bucketIdx];
-    return b.size() == g_bucketSize;
+const size_t BucketArray::bucketSize(int bucketIdx) const {
+	return m_Buckets[bucketIdx].size();
 }
 
-bool BucketMap::addNode(const ID& id, int BucketIndex) {
-    return m_Buckets[BucketIndex].insert(Contact{id}).second;
+const bool BucketArray::bucketFull(int bucketIdx) const {
+	return bucketSize(bucketIdx) == BucketArray::g_bucketSize;
 }
 
-bool BucketMap::removeNode(const ID& id) {
-    size_t BucketIndex = calcBucketIndex(id);
-    return m_Buckets[BucketIndex].erase(Contact{id});
+bool BucketArray::addNode(const ID& id, int BucketIndex) {
+	return m_Buckets[BucketIndex].insert(Contact{ id }).second;
 }
 
-bool BucketMap::containsNode(const ID& id) const
+bool BucketArray::removeNode(const ID& id) {
+	size_t BucketIndex = calcBucketIndex(id);
+	return m_Buckets[BucketIndex].erase(Contact{ id });
+}
+
+bool BucketArray::containsNode(const ID& id) const
 {
-    for(auto& bucket : m_Buckets)
-    {
-        Bucket b = bucket.second;
-        if(b.find(id) != b.end()) {
-            return true;
-        }
-    }
-    return false;
+	for (auto& bucket : m_Buckets)
+	{
+		if (bucket.find(id) != bucket.end()) {
+			return true;
+		}
+	}
+	return false;
 }
 
-std::vector<Bucket> BucketMap::nonEmptyBuckets()
+const size_t BucketArray::size() const {
+	return m_Buckets.size();
+}
+
+std::ostream& operator<< (std::ostream& out, const BucketArray& b)
 {
-    std::vector<Bucket> res;
-    for(auto & bucket : m_Buckets) {
-        if(bucket.second.size() > 0) {
-            res.push_back(bucket.second);
-        }
-    }
-    return res;
+	out << b.m_node.id() << " bucket map size: " << std::dec << b.m_Buckets.size() << '\n';
+	for (int i = 0; i < BucketArray::g_treeSize; ++i) {
+		if (!b.data()[i].empty()) {
+			out << "depth " << std::dec << i << '\n';
+			for (auto& conact : b.data()[i]) {
+				out << conact.id() << "\n";
+			}
+		}
+	}
+	return out;
 }
-
-const size_t BucketMap::size() const {
-    return m_Buckets.size();
-}
-
-std::ostream& operator<< (std::ostream& out, const BucketMap& b)
-{
-    LOG(b.m_node.id() << " bucket map size: " << b.m_Buckets.size());
-    for(auto& e: b.m_Buckets) {
-        out << "Bucket depth " << e.first << ":\n";
-        for(auto& e2: e.second){
-            out << e2.m_id << "\n";
-        }
-    }
-    return out;
-}
-
-
