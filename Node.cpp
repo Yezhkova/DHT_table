@@ -90,8 +90,7 @@ const ID Node::pickRandomNode(const std::set<Contact>& s) const
 
 void Node::fill(int bucketIdx, std::vector<ID>& outIds, int k, const ID& queriedId)
 {
-    std::set<Contact> bucket = m_BucketMap.data()[bucketIdx];
-    if(bucket.size() == 0) return;
+    if (m_BucketMap.data()[bucketIdx].size() == 0) return;
     std::pair<const ID*, int> *candidates = new std::pair<const ID*, int>[k];
 
     for(int i = 0; i < k; ++i) {
@@ -99,7 +98,7 @@ void Node::fill(int bucketIdx, std::vector<ID>& outIds, int k, const ID& queried
         candidates[i].second = INT_MAX;
     }
 
-    for(auto& contact : bucket) {
+    for(auto& contact : m_BucketMap.data()[bucketIdx]) {
         int distance = id().distance(contact.m_id);
         for(int i = 0; i < k; ++i) {
             if(candidates[i].second > distance) {
@@ -128,9 +127,6 @@ std::vector<ID> Node::findClosestNodes(int k, const ID& id)
 
     // start with the bucket where ID could be
     int bucketIndex = m_BucketMap.calcBucketIndex(id);
-    if (this->id() == id) {
-        LOG(this->id() << " findClosestNodes " << id << "; bucketindex == " << bucketIndex);
-    }
     fill(bucketIndex, res, k, id);
 
     // not enough ids
