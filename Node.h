@@ -18,11 +18,11 @@ class Node
 private:
     bool                         m_online = true;
     Contact                      m_contact;
-    INodeEventHandler&           m_eventHandler;
+    INodeEventHandler& m_eventHandler;
     BucketArray                  m_BucketArray;
     static size_t                m_treeSize;
-    IDhtTransportProtocol&       m_protocol;
-    ITimer&                      m_timerProtocol;
+    IDhtTransportProtocol& m_protocol;
+    ITimer& m_timerProtocol;
     uint64_t                     m_index;
     NodeInfo                     m_info; // last seen time
     static std::mt19937          m_randomGenerator;
@@ -51,7 +51,7 @@ public:
     bool addNode(const ID& id);
     bool removeNode(const ID& id);
     void updateLastSeen(const ID& id
-                        , boost::chrono::system_clock::time_point time);
+        , boost::chrono::system_clock::time_point time);
 
     const ID& pickRandomNode(const Bucket& bucket) const;
     std::vector<const ID*> findClosestNodes(int k, const ID& id);
@@ -61,19 +61,19 @@ public:
         return *(findClosestNodes(1, id)[0]);
     }
 
-    friend bool operator==(const Node & l, const Node & r);
+    friend bool operator==(const Node& l, const Node& r);
 
-    bool receivePing(const ID & requestorId);
+    bool receivePing(const ID& requestorId);
 
     void receivePingResponse(bool online
-                             , const ID & queriedId);
+        , const ID& queriedId);
 
     std::vector<const ID*> receiveFindNode(const ID& senderId
-                                    , const ID& queriedId);
+        , const ID& queriedId);
 
     void receiveFindNodeResponse(const ID& queriedId
-                                 , const std::vector<const ID*>& ids
-                                 , const ID& responserId);
+        , const std::vector<const ID*>& ids
+        , const ID& responserId);
 
     void onFindNodeStart(const ID& queriedId);
     void onFindNodeEnd(bool found, const ID& queriedId);
