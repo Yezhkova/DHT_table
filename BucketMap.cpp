@@ -2,7 +2,7 @@
 #include "Node.h"
 #include "Utils.h"
 
-int BucketArray::g_bucketSize = 20; // maximum amount of nodes in a bucket
+int BucketArray::g_bucketSize = 200; // maximum amount of nodes in a bucket
 //const int g_bucketMultiplier = 8; // optimization for 160 buckets in map
 int BucketArray::g_treeSize = 160; // maximum amount of buckets in a map
 
@@ -20,6 +20,9 @@ int BucketArray::calcBucketIndex(const ID& id) {
 }
 
 const Bucket& BucketArray::getBucket(int index) const {
+	for (auto& contact : m_Buckets[index]) {
+		LOG("contact (getBucket): "<< & contact.id(	));
+	}
 	return m_Buckets[index];
 }
 
@@ -40,15 +43,15 @@ bool BucketArray::removeNode(const ID& id) {
 	return m_Buckets[BucketIndex].erase(Contact{ id });
 }
 
-bool BucketArray::containsNode(const ID& id) const
+const Contact* BucketArray::getContactPtr(const ID& id) const
 {
 	for (auto& bucket : m_Buckets)
 	{
-		if (bucket.find(id) != bucket.end()) {
-			return true;
+		if (auto it = bucket.find(id); it != bucket.end()) {
+			return &(*it);
 		}
 	}
-	return false;
+	return nullptr;
 }
 
 const size_t BucketArray::size() const {

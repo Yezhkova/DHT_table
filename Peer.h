@@ -55,6 +55,6 @@ public:
     void findRandomNodes(int nodeNumber);
     void onNodeNotFound() override;
     void onNodeFound() override;
-    virtual void startTimer(EventQueue::Interval duration, std::function<void ()> F) override;
+    virtual void startTimer(EventQueue::Interval duration, std::function<void ()>&& F) override;
 
 };

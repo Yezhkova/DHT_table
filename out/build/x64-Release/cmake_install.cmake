@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/yezhk/source/repos/DHT_table
+# Install script for directory: C:/Users/yezhk/source/repos/160 buckets/DHT_table
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/yezhk/source/repos/DHT_table/out/install/x64-Release")
+  set(CMAKE_INSTALL_PREFIX "C:/Users/yezhk/source/repos/160 buckets/DHT_table/out/install/x64-Release")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -33,7 +33,7 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "C:/Users/yezhk/source/repos/DHT_table/out/build/x64-Release/kademlia.exe")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "C:/Users/yezhk/source/repos/160 buckets/DHT_table/out/build/x64-Release/kademlia.exe")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -44,5 +44,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/yezhk/source/repos/DHT_table/out/build/x64-Release/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/yezhk/source/repos/160 buckets/DHT_table/out/build/x64-Release/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

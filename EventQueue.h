@@ -30,7 +30,7 @@ private:
 
 public:
     EventQueue() {}
-    void addTaskAt(Interval delay, std::function<void()> task = {});
+    void addTaskAt(Interval delay, std::function<void()>&& task = {});
     void run();
     void removeAllEvents();
 

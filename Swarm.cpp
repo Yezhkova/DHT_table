@@ -20,8 +20,8 @@ void Swarm::init(bool mode, int PeerNumber)
     generateSwarm(mode, PeerNumber);
 }
 
-void Swarm::addTaskAfter(EventQueue::Interval duration, std::function<void ()> F) {
-    m_eventQueqe.addTaskAt(m_eventQueqe.currentTime() + duration, F);
+void Swarm::addTaskAfter(EventQueue::Interval duration, std::function<void ()>&& F) {
+    m_eventQueqe.addTaskAt(m_eventQueqe.currentTime() + duration, std::move(F));
 }
 
 void Swarm::run() {
@@ -49,6 +49,7 @@ std::shared_ptr<Peer> Swarm::getPeer(const ID& id) {
     if(it != m_peers.end()) {
         return it->second;
     }
+    assert(0);
     return nullptr;
 }
 
@@ -77,11 +78,11 @@ void Swarm::calculateStatistic() {
         doneCounter += p.second->done();
     }
 
-    LOG("dead nodes: " << std::dec << nodeNotFoundCounter);
-    LOG("find node: " << findNodeCounter);
-    LOG("packets: " << packetCounter);
-    LOG("ping: " << pingCounter);
-    LOG("done: " << doneCounter);
+    EX_LOG("dead nodes: " << std::dec << nodeNotFoundCounter);
+    EX_LOG("find node: " << findNodeCounter);
+    EX_LOG("packets: " << packetCounter);
+    EX_LOG("ping: " << pingCounter);
+    EX_LOG("done: " << doneCounter);
 
 
 }

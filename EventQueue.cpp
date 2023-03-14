@@ -4,10 +4,10 @@
 #include <cassert>
 
 #ifdef PRIORITY_QUEUE
-void EventQueue::addTaskAt(Interval delay, std::function<void()> task)
+void EventQueue::addTaskAt(Interval delay, std::function<void()>&& task)
 {
     assert(m_queueCurrentTime <= delay);
-    m_queue.emplace(Event {delay, task});
+    m_queue.emplace(Event {delay, std::move(task)});
 }
 
 void EventQueue::run() {

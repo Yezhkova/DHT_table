@@ -23,7 +23,7 @@ public:
     static Swarm& getInstance();
 
     void init(bool mode, int PeerNumber);
-    void addTaskAfter(EventQueue::Interval duration, std::function<void ()> F);
+    void addTaskAfter(EventQueue::Interval duration, std::function<void ()>&& F);
     void run();
     void stop();
 

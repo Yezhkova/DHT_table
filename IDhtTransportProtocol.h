@@ -18,5 +18,5 @@ public:
 class ITimer
 {
 public:
-    virtual void startTimer(EventQueue::Interval delay, std::function<void()>) = 0;
+    virtual void startTimer(EventQueue::Interval delay, std::function<void()>&&) = 0;
 };

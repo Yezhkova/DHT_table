@@ -4,9 +4,11 @@
 #define TCP true
 #define SIM false
 #define MINUTES 60
-#define SWARM_SIZE 2
+#define SWARM_SIZE 1000
 
 int main(void) {
+    auto start = std::chrono::system_clock::now();
+    
 	Swarm& swarm = Swarm::getInstance();
 	swarm.init(SIM, SWARM_SIZE);
     swarm.addTaskAfter(0, [&swarm]
@@ -26,14 +28,10 @@ int main(void) {
 
     swarm.addTaskAfter(3 * MINUTES, [&swarm]
     {
-           /* auto peers = swarm.peers();
-            for (auto& peer : peers) {
-                LOG(peer.second->node().buckets());
-            }*/
+        
         swarm.calculateStatistic();
-//        Swarm::getInstance().eventQueqe().removeAllEvents();
 
-        /*swarm.addTaskAfter(0 * MINUTES, [&swarm]
+        swarm.addTaskAfter(0 * MINUTES, [&swarm]
         {
             auto peers = swarm.peers();
             for (auto& peer : peers)
@@ -46,18 +44,30 @@ int main(void) {
             }
             for (auto& peer : peers)
             {
-                peer.second->findRandomNodes(1);
+                peer.second->findRandomNodes(3);
             }
+
         });
 
-        swarm.addTaskAfter(7 * MINUTES, [&swarm]
+        swarm.addTaskAfter(10 * MINUTES, [&swarm]
         {
             swarm.calculateStatistic();
-        });*/
+            Swarm::getInstance().eventQueqe().removeAllEvents();
+        });
+        
+
     });
 
 	swarm.run();
-	LOG("simulation done");
+    EX_LOG("simulation done");
+    auto end = std::chrono::system_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+    std::cout << "finished computation at " << std::ctime(&end_time)
+        << "elapsed time: " << elapsed_seconds.count() << "s"
+        << std::endl;
 	return 0;
 }
 

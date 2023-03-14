@@ -4,7 +4,7 @@
 #include <optional>
 
 #define CLOSEST_NODES 3
-#define FIND_NODE_THRESHOLD 1000
+#define FIND_NODE_THRESHOLD 10000
 #define PING_THRESHOLD 2
 #define PING_INTERVAL 15
 #define MINUTES 60
@@ -95,7 +95,7 @@ const ID& Node::pickRandomNode(const Bucket& bucket) const
 	return it->m_id;
 }
 
-void Node::fill(int bucketIdx, std::set<const ID*>& outIds, int k)
+void Node::fill(int bucketIdx, std::vector<const ID*>& outIds, int k)
 {
 	//if (m_BucketMap.data()[bucketIdx].size() == 0) return;
 	auto& bucket = m_BucketArray.getBucket(bucketIdx);
@@ -103,21 +103,21 @@ void Node::fill(int bucketIdx, std::set<const ID*>& outIds, int k)
 
 	if (bucket.size() < k) {
 		for (auto& contact : bucket) {
-			outIds.insert(&contact.id());
+			outIds.push_back(&contact.id());
 		}
 		return;
 	}
 
 	while (outIds.size() < k) {
 		auto& id = pickRandomNode(bucket);
-		outIds.insert(&id);
+		outIds.push_back(&id);
 	}
 }
 
 std::vector<const ID*> Node::findClosestNodes(int k, const ID& id)
 {
-	std::set<const ID*> res;
-
+	//std::set<const ID*> res;
+	std::vector<const ID*> res;
 	// start with the bucket where ID could be
 	int bucketIndex = m_BucketArray.calcBucketIndex(id);
 	fill(bucketIndex, res, k);
@@ -130,35 +130,44 @@ std::vector<const ID*> Node::findClosestNodes(int k, const ID& id)
 		{
 			nextBucketIndex = bucketIndex + i;
 			prevBucketIndex = bucketIndex - i;
-			fill(nextBucketIndex, res, k);
-			fill(prevBucketIndex, res, k);
+			if (nextBucketIndex < 160) {
+				fill(nextBucketIndex, res, k);
+			}
+			if (prevBucketIndex >= 0) {
+				fill(prevBucketIndex, res, k);
+			}
 		}
 		for (size_t j = i; res.size() < k && nextBucketIndex < m_treeSize; ++j)
 		{
 			nextBucketIndex = bucketIndex + j;
-			fill(nextBucketIndex, res, k);
+			if (nextBucketIndex < 160) {
+				fill(nextBucketIndex, res, k);
+			}
 		}
 		for (size_t j = i; res.size() < k && prevBucketIndex >= 0; ++j)
 		{
 			prevBucketIndex = bucketIndex - j;
-			fill(prevBucketIndex, res, k);
+			if (prevBucketIndex >= 0) {
+				fill(prevBucketIndex, res, k);
+			}
 		}
 	}
-	std::vector<const ID*> ids(res.begin(), res.end());
-	for (auto& e : res) {
-		if (e == nullptr) {
-			LOG("debug");
-		}
-	}
-	return ids;
+	//std::vector<const ID*> ids(res.begin(), res.end());
+	//for (auto& e : res) {
+	//	if (e == nullptr) {
+	//		LOG("debug");
+	//	}
+	//}
+	return res;
 }
 
 std::vector<const ID*> Node::receiveFindNode(const ID& senderId
 	, const ID& queriedId)
 {
 	addNode(senderId);
-	if (m_BucketArray.containsNode(queriedId)) {
-		return { &queriedId };
+	if (auto* contact = m_BucketArray.getContactPtr(queriedId); contact != nullptr) {
+		LOG("returning myself: "<< & queriedId);
+		return { &contact->m_id };
 	}
 	else {
 		return findClosestNodes(CLOSEST_NODES, queriedId);

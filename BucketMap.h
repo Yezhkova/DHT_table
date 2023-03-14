@@ -27,7 +27,7 @@ public:
 
     bool addNode(const ID& id, int BucketIndex);
     bool removeNode(const ID& id);
-    bool containsNode(const ID& id) const;
+    const Contact* getContactPtr(const ID& id) const;
 
     const std::array<Bucket, 160>& data() const;
     //const ID& id() const { return m_node.id(); }

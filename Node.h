@@ -18,11 +18,11 @@ class Node
 private:
     bool                         m_online = true;
     Contact                      m_contact;
-    INodeEventHandler& m_eventHandler;
+    INodeEventHandler&           m_eventHandler;
     BucketArray                  m_BucketArray;
     static size_t                m_treeSize;
-    IDhtTransportProtocol& m_protocol;
-    ITimer& m_timerProtocol;
+    IDhtTransportProtocol&       m_protocol;
+    ITimer&                      m_timerProtocol;
     uint64_t                     m_index;
     NodeInfo                     m_info; // last seen time
     static std::mt19937          m_randomGenerator;
@@ -86,6 +86,6 @@ public:
 
 private:
 
-    void fill(int bucketIdx, std::set<const ID*>& outIds, int k);
+    void fill(int bucketIdx, std::vector<const ID*>& outIds, int k);
 };
 
