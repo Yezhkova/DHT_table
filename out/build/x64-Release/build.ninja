@@ -180,7 +180,7 @@ build kademlia.exe: CXX_EXECUTABLE_LINKER__kademlia_Release CMakeFiles\kademlia.
 # Utility command for install/local
 
 build CMakeFiles\install\local.util: CUSTOM_COMMAND all
-  COMMAND = cmd.exe /C "cd /D "C:\Users\yezhk\source\repos\160 buckets\DHT_table\out\build\x64-Release" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake"
+  COMMAND = cmd.exe /C "cd /D C:\Users\yezhk\source\repos\DHT_table\out\build\x64-Release && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake"
   DESC = Installing only the local directory...
   pool = console
   restat = 1
@@ -192,7 +192,7 @@ build install\local: phony CMakeFiles\install\local.util
 # Utility command for install
 
 build CMakeFiles\install.util: CUSTOM_COMMAND all
-  COMMAND = cmd.exe /C "cd /D "C:\Users\yezhk\source\repos\160 buckets\DHT_table\out\build\x64-Release" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -P cmake_install.cmake"
+  COMMAND = cmd.exe /C "cd /D C:\Users\yezhk\source\repos\DHT_table\out\build\x64-Release && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -P cmake_install.cmake"
   DESC = Install the project...
   pool = console
   restat = 1
@@ -204,7 +204,7 @@ build install: phony CMakeFiles\install.util
 # Utility command for edit_cache
 
 build CMakeFiles\edit_cache.util: CUSTOM_COMMAND
-  COMMAND = cmd.exe /C "cd /D "C:\Users\yezhk\source\repos\160 buckets\DHT_table\out\build\x64-Release" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo "No interactive CMake dialog available.""
+  COMMAND = cmd.exe /C "cd /D C:\Users\yezhk\source\repos\DHT_table\out\build\x64-Release && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo "No interactive CMake dialog available.""
   DESC = No interactive CMake dialog available...
   restat = 1
 
@@ -215,7 +215,7 @@ build edit_cache: phony CMakeFiles\edit_cache.util
 # Utility command for rebuild_cache
 
 build CMakeFiles\rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = cmd.exe /C "cd /D "C:\Users\yezhk\source\repos\160 buckets\DHT_table\out\build\x64-Release" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" --regenerate-during-build -S"C:\Users\yezhk\source\repos\160 buckets\DHT_table" -B"C:\Users\yezhk\source\repos\160 buckets\DHT_table\out\build\x64-Release""
+  COMMAND = cmd.exe /C "cd /D C:\Users\yezhk\source\repos\DHT_table\out\build\x64-Release && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" --regenerate-during-build -SC:\Users\yezhk\source\repos\DHT_table -BC:\Users\yezhk\source\repos\DHT_table\out\build\x64-Release"
   DESC = Running CMake to regenerate build system...
   pool = console
   restat = 1
@@ -239,7 +239,7 @@ build kademlia: phony kademlia.exe
 # =============================================================================
 
 #############################################
-# Folder: C:/Users/yezhk/source/repos/160 buckets/DHT_table/out/build/x64-Release
+# Folder: C:/Users/yezhk/source/repos/DHT_table/out/build/x64-Release
 
 build all: phony kademlia.exe
 

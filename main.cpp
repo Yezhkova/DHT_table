@@ -6,8 +6,37 @@
 #define MINUTES 60
 #define SWARM_SIZE 1000
 
+std::chrono::system_clock::time_point start;
+
+void Step() {
+    static int stepCounter = 0;
+
+    Swarm& swarm = Swarm::getInstance();
+    swarm.calculateStatistic();
+
+    auto peers = swarm.peers();
+    for (auto& peer : peers)
+    {
+        peer.second->resetAllCounters();
+    }
+    for (auto& peer : peers)
+    {
+        peer.second->findRandomNodes(1);
+    }
+
+    swarm.addTaskAfter(10 * MINUTES, [&swarm] {
+        if (++stepCounter > 5) {
+            swarm.calculateStatistic();
+            Swarm::getInstance().eventQueqe().removeAllEvents();
+        }
+        else {
+            Step();
+        }
+    });
+}
+
 int main(void) {
-    auto start = std::chrono::system_clock::now();
+    start = std::chrono::system_clock::now();
     
 	Swarm& swarm = Swarm::getInstance();
 	swarm.init(SIM, SWARM_SIZE);
@@ -28,34 +57,7 @@ int main(void) {
 
     swarm.addTaskAfter(3 * MINUTES, [&swarm]
     {
-        
-        swarm.calculateStatistic();
-
-        swarm.addTaskAfter(0 * MINUTES, [&swarm]
-        {
-            auto peers = swarm.peers();
-            for (auto& peer : peers)
-            {
-                peer.second->resetFindNodeCounter();
-                peer.second->resetPacketCounter();
-                peer.second->resetReceiveFindNodeCounter();
-                peer.second->resetFailedNode();
-                peer.second->resetDone();
-            }
-            for (auto& peer : peers)
-            {
-                peer.second->findRandomNodes(3);
-            }
-
-        });
-
-        swarm.addTaskAfter(10 * MINUTES, [&swarm]
-        {
-            swarm.calculateStatistic();
-            Swarm::getInstance().eventQueqe().removeAllEvents();
-        });
-        
-
+         Step();
     });
 
 	swarm.run();
@@ -70,6 +72,10 @@ int main(void) {
         << std::endl;
 	return 0;
 }
+
+// TODO: statistics - max Bucket size, mid(max) Bucket size
+// TODO: profiling search for bottleneck
+// TODO: pass timediff to calculateStatistic
 
 
 

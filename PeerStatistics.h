@@ -39,6 +39,14 @@ public:
     void setDone() { m_done = true; }
     void resetDone() { m_done = false; }
 
+    void resetAllCounters() {
+        resetFindNodeCounter();
+        resetPacketCounter();
+        resetReceiveFindNodeCounter();
+        resetFailedNode();
+        resetDone();
+    }
+
 };
 
 

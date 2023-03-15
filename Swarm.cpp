@@ -1,5 +1,6 @@
 #include "Swarm.h"
 #include "Utils.h"
+#include "EventQueue.h"
 
 EventQueue& Swarm::eventQueqe() {
     return m_eventQueqe;
@@ -63,7 +64,8 @@ void Swarm::generateSwarm(bool mode, size_t Peers)
 }
 
 void Swarm::calculateStatistic() {
-    LOG("------------------------------------calculateStatistic-------------------------");
+    EX_LOG("------------------------------------calculateStatistic-------------------------");
+    EX_LOG("Swarm queue current time: " << Swarm::getInstance().eventQueqe().currentTime() / 60);
     uint64_t nodeNotFoundCounter = 0;
     uint64_t pingCounter = 0;
     uint64_t packetCounter = 0;

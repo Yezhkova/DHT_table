@@ -404,8 +404,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "C:/Users/yezhk/source/repos/160 buckets/DHT_table/out/build/x64-Release",
-		"source" : "C:/Users/yezhk/source/repos/160 buckets/DHT_table"
+		"build" : "C:/Users/yezhk/source/repos/DHT_table/out/build/x64-Release",
+		"source" : "C:/Users/yezhk/source/repos/DHT_table"
 	},
 	"version" : 
 	{
