@@ -36,7 +36,7 @@ public:
     const size_t bucketSize(int bucketIdx) const;
     const bool bucketFull(int bucketIdx) const;
 
-    int calcBucketIndex(const ID& id);
+    size_t calcBucketIndex(const ID& id) const;
     friend std::ostream& operator<< (std::ostream& out, const BucketArray& b);
 };
 

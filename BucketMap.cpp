@@ -1,4 +1,4 @@
-#include "BucketMap.h"
+﻿#include "BucketMap.h"
 #include "Node.h"
 #include "Utils.h"
 
@@ -10,7 +10,7 @@ const std::array<Bucket, 160>& BucketArray::data() const {
 	return m_Buckets;
 };
 
-int BucketArray::calcBucketIndex(const ID& id) {
+size_t BucketArray::calcBucketIndex(const ID& id) const{
 	//return (m_node.id().distance(id) - 1) / g_bucketMultiplier;
 	/*if (m_node.id().distance(id) - 1 == 160) {
 		LOG("debug");
@@ -20,9 +20,9 @@ int BucketArray::calcBucketIndex(const ID& id) {
 }
 
 const Bucket& BucketArray::getBucket(int index) const {
-	for (auto& contact : m_Buckets[index]) {
-		LOG("contact (getBucket): "<< & contact.id(	));
-	}
+	//for (auto& contact : m_Buckets[index]) {
+	//	//LOG("contact (getBucket): "<< & contact.id(	));
+	//}
 	return m_Buckets[index];
 }
 
@@ -45,11 +45,12 @@ bool BucketArray::removeNode(const ID& id) {
 
 const Contact* BucketArray::getContactPtr(const ID& id) const
 {
-	for (auto& bucket : m_Buckets)
-	{
-		if (auto it = bucket.find(id); it != bucket.end()) {
-			return &(*it);
-		}
+	// TODO: зачем проходить по всему массиву, если там заведомо нет этого контакта?
+	// мы ж его кладём в одно, особенное ведро
+	// высчитать номер ведра, зайтии в него и там посмотреть
+	size_t bucketIndex = calcBucketIndex(id);
+	if (auto it = m_Buckets[bucketIndex].find(id); it != m_Buckets[bucketIndex].end()) {
+		return &(*it);
 	}
 	return nullptr;
 }
