@@ -14,14 +14,14 @@ using Bucket = std::set<Contact>;
 class BucketArray
 {
 private:
-
     Node&                     m_node;
     std::array<Bucket, 160>   m_Buckets;
+
+public:
     static int                g_bucketSize;
     static int                g_treeSize;
 
 public:
-
     BucketArray() = delete;
     BucketArray(Node& node) : m_node(node) {};
 

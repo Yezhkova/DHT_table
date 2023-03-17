@@ -7,12 +7,14 @@
 #define SWARM_SIZE 1000
 
 std::chrono::system_clock::time_point start;
+std::chrono::system_clock::time_point end;
 
 void Step() {
+    end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end - start;
     static int stepCounter = 0;
-
     Swarm& swarm = Swarm::getInstance();
-    swarm.calculateStatistic();
+    swarm.calculateStatistic(elapsed_seconds);
 
     auto peers = swarm.peers();
     for (auto& peer : peers)
@@ -26,10 +28,13 @@ void Step() {
 
     swarm.addTaskAfter(10 * MINUTES, [&swarm] {
         if (++stepCounter > 5) {
-            swarm.calculateStatistic();
+            end = std::chrono::system_clock::now();
+            std::chrono::duration<double> elapsed_seconds = end - start;
+            swarm.calculateStatistic(elapsed_seconds);
             Swarm::getInstance().eventQueqe().removeAllEvents();
         }
         else {
+            EX_LOG("stepCounter = " << stepCounter);
             Step();
         }
     });
@@ -55,27 +60,23 @@ int main(void) {
     });
 
 
-    swarm.addTaskAfter(3 * MINUTES, [&swarm]
-    {
+    swarm.addTaskAfter(3 * MINUTES, [&swarm] {
          Step();
     });
 
 	swarm.run();
     EX_LOG("simulation done");
-    auto end = std::chrono::system_clock::now();
+    //auto end = std::chrono::system_clock::now();
 
-    std::chrono::duration<double> elapsed_seconds = end - start;
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+    //std::chrono::duration<double> elapsed_seconds = end - start;
+    //std::time_t end_time = std::chrono::system_clock::to_time_t(end);
 
-    std::cout << "finished computation at " << std::ctime(&end_time)
-        << "elapsed time: " << elapsed_seconds.count() << "s"
-        << std::endl;
+    //EX_LOG("finished computation at " << std::ctime(&end_time)
+    //    << "elapsed time: " << elapsed_seconds.count() << "s");
 	return 0;
 }
 
-// TODO: statistics - max Bucket size, mid(max) Bucket size
-// TODO: profiling search for bottleneck
 // TODO: pass timediff to calculateStatistic
-
+// TODO: #define FAST_MODE eliminate all addTasks 
 
 

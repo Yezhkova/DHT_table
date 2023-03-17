@@ -4,12 +4,11 @@
 #include <optional>
 
 #define CLOSEST_NODES 3
-#define FIND_NODE_THRESHOLD 10000
+#define FIND_NODE_THRESHOLD 1000
 #define PING_THRESHOLD 2
 #define PING_INTERVAL 15
 #define MINUTES 60
 
-size_t Node::m_treeSize = 160;
 std::mt19937 Node::m_randomGenerator;
 
 
@@ -56,7 +55,7 @@ bool Node::addNode(const ID& newId) {
 	}*/
 
 	if (this->id() != newId) {
-		int bucketIdx = m_BucketArray.calcBucketIndex(newId);
+		size_t bucketIdx = m_BucketArray.calcBucketIndex(newId);
 		if (!m_BucketArray.bucketFull(bucketIdx)) {
 			m_protocol.sendPing(newId);
 			return m_BucketArray.addNode(newId, bucketIdx);
@@ -126,7 +125,7 @@ std::vector<const ID*> Node::findClosestNodes(int k, const ID& id)
 	if (res.size() < k) {
 		int nextBucketIndex = bucketIndex, prevBucketIndex = bucketIndex;
 		size_t i = 1;
-		for (; nextBucketIndex < m_treeSize && prevBucketIndex >= 0; ++i)
+		for (; nextBucketIndex < BucketArray::g_treeSize && prevBucketIndex >= 0; ++i)
 		{
 			nextBucketIndex = bucketIndex + i;
 			prevBucketIndex = bucketIndex - i;
@@ -137,7 +136,7 @@ std::vector<const ID*> Node::findClosestNodes(int k, const ID& id)
 				fill(prevBucketIndex, res, k);
 			}
 		}
-		for (size_t j = i; res.size() < k && nextBucketIndex < m_treeSize; ++j)
+		for (size_t j = i; res.size() < k && nextBucketIndex < BucketArray::g_treeSize; ++j)
 		{
 			nextBucketIndex = bucketIndex + j;
 			if (nextBucketIndex < 160) {

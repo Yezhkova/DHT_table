@@ -11,18 +11,10 @@ const std::array<Bucket, 160>& BucketArray::data() const {
 };
 
 size_t BucketArray::calcBucketIndex(const ID& id) const{
-	//return (m_node.id().distance(id) - 1) / g_bucketMultiplier;
-	/*if (m_node.id().distance(id) - 1 == 160) {
-		LOG("debug");
-	}*/
-	//LOG(m_node.id() << " dist " << id << " = " << std::dec << m_node.id().distance(id));
 	return id == m_node.id() ? 0 : m_node.id().distance(id) - 1;
 }
 
 const Bucket& BucketArray::getBucket(int index) const {
-	//for (auto& contact : m_Buckets[index]) {
-	//	//LOG("contact (getBucket): "<< & contact.id(	));
-	//}
 	return m_Buckets[index];
 }
 
@@ -45,9 +37,6 @@ bool BucketArray::removeNode(const ID& id) {
 
 const Contact* BucketArray::getContactPtr(const ID& id) const
 {
-	// TODO: зачем проходить по всему массиву, если там заведомо нет этого контакта?
-	// мы ж его кладём в одно, особенное ведро
-	// высчитать номер ведра, зайтии в него и там посмотреть
 	size_t bucketIndex = calcBucketIndex(id);
 	if (auto it = m_Buckets[bucketIndex].find(id); it != m_Buckets[bucketIndex].end()) {
 		return &(*it);

@@ -34,7 +34,7 @@ public:
     std::shared_ptr<Peer> getPeer(const ID& id);
     EventQueue& eventQueqe();
 
-    void calculateStatistic();
+    void calculateStatistic(std::chrono::duration<double> elapsed_time);
 
 private:
 

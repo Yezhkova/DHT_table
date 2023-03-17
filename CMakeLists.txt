@@ -25,7 +25,8 @@ set(SOURCE main.cpp
            INodeEventHandler.h         INodeEventHandler.cpp
            EventQueue.h                EventQueue.cpp
            PeerStatistics.h            PeerStatistics.cpp
-)
+           NodeRef.h                   NodeRef.cpp
+   )
 
 if (UNIX)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)

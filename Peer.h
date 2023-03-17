@@ -20,10 +20,9 @@ public:
     Peer() = delete;
     Peer(const Peer&) = default;
     Peer(Peer&&) = default;
-    Peer(ID id,
-         bool useTcp);
+    Peer(ID id, bool useTcp);
 
-    ID id();
+    const ID& id() const;
     Node& node();
     NodeInfo& info();
     EventQueue::Interval packetTime() const;

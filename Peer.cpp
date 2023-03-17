@@ -17,7 +17,7 @@ Peer::Peer(ID id, bool useTcp)
 	m_packetTime = range(s_randomGenerator) / MILLISEC_IN_SEC;
 }
 
-ID Peer::id() {
+const ID& Peer::id() const {
 	return m_node.id();
 }
 

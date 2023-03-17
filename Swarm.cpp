@@ -63,14 +63,20 @@ void Swarm::generateSwarm(bool mode, size_t Peers)
     }
 }
 
-void Swarm::calculateStatistic() {
+void Swarm::calculateStatistic(std::chrono::duration<double> elapsed_seconds) {
     EX_LOG("------------------------------------calculateStatistic-------------------------");
+    EX_LOG("elapsed time: " << elapsed_seconds.count() << " s");
     EX_LOG("Swarm queue current time: " << Swarm::getInstance().eventQueqe().currentTime() / 60);
     uint64_t nodeNotFoundCounter = 0;
     uint64_t pingCounter = 0;
     uint64_t packetCounter = 0;
     uint64_t findNodeCounter = 0;
     uint64_t doneCounter = 0;
+    size_t overallMaxContactsInBucket = 0;
+    ID overallMCBId;
+    uint64_t sumMaxContactsInBucket = 0;
+    int medMaxContactsInBucket = 0;
+    std::vector<uint64_t> sizes(BucketArray::g_treeSize); // 160 zeroes
 
     for (auto& p : m_peers) {
         nodeNotFoundCounter += p.second->failedFindNodeCounter();
@@ -78,6 +84,20 @@ void Swarm::calculateStatistic() {
         packetCounter += p.second->packetsCounter();
         pingCounter += p.second->pingCounter();
         doneCounter += p.second->done();
+
+        size_t TmpMaxContactsInBucket = 0;
+        for (int i = 0; i < BucketArray::g_treeSize; ++i) {
+            auto& bucket = p.second->node().buckets().data()[i];
+            sizes[i] += bucket.size();
+            if (bucket.size() > TmpMaxContactsInBucket) {
+                TmpMaxContactsInBucket = bucket.size();
+            }
+        }
+        sumMaxContactsInBucket += TmpMaxContactsInBucket;
+        if (TmpMaxContactsInBucket > overallMaxContactsInBucket) {
+            overallMaxContactsInBucket = TmpMaxContactsInBucket;
+            overallMCBId = p.second->id();
+        }
     }
 
     EX_LOG("dead nodes: " << std::dec << nodeNotFoundCounter);
@@ -85,7 +105,12 @@ void Swarm::calculateStatistic() {
     EX_LOG("packets: " << packetCounter);
     EX_LOG("ping: " << pingCounter);
     EX_LOG("done: " << doneCounter);
-
-
+    EX_LOG("maximum bucket size: " << overallMaxContactsInBucket << " (found in " << overallMCBId << ')');
+    EX_LOG("AVG(maximum bucket size): " << sumMaxContactsInBucket / m_peers.size());
+    EX_LOG("average BucketArray load: ");
+    for (int i = 0; i < BucketArray::g_treeSize; ++i) {
+        EX_LOG(i << ' ' << sizes[i] / m_peers.size());
+    }
+    EX_LOG("-------------------------------------End Of Statistic-------------------------");
 }
 

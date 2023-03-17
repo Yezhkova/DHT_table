@@ -20,7 +20,6 @@ private:
     Contact                      m_contact;
     INodeEventHandler&           m_eventHandler;
     BucketArray                  m_BucketArray;
-    static size_t                m_treeSize;
     IDhtTransportProtocol&       m_protocol;
     ITimer&                      m_timerProtocol;
     uint64_t                     m_index;
