@@ -6,16 +6,12 @@
 #include "EventQueue.h"
 #include "PeerStatistics.h"
 
-inline uint64_t FindLimit = 50;
-
 class Peer: public PeerStatistics, public IDhtTransportProtocol, public ITimer
 {
 private:
     Node                                m_node;
     EventQueue::Interval                m_packetTime;
     static std::mt19937                 s_randomGenerator;
-    //std::vector<std::shared_ptr<Peer>>  m_interestingPeers; // fill within start()
-
 public:
     Peer() = delete;
     Peer(const Peer&) = default;

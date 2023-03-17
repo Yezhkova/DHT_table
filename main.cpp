@@ -75,8 +75,3 @@ int main(void) {
     //    << "elapsed time: " << elapsed_seconds.count() << "s");
 	return 0;
 }
-
-// TODO: pass timediff to calculateStatistic
-// TODO: #define FAST_MODE eliminate all addTasks 
-
-

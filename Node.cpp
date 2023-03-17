@@ -46,14 +46,6 @@ void Node::setLabel(uint64_t label) {
 // TODO: node offline mode not implemented
 
 bool Node::addNode(const ID& newId) {
-	/*LOG(this->id() << " adds " << newId);
-	if (this->id() != newId) {
-		LOG("they are not equal");
-	}
-	else {
-		LOG("they are equal");
-	}*/
-
 	if (this->id() != newId) {
 		size_t bucketIdx = m_BucketArray.calcBucketIndex(newId);
 		if (!m_BucketArray.bucketFull(bucketIdx)) {
@@ -94,29 +86,27 @@ const ID& Node::pickRandomNode(const Bucket& bucket) const
 	return it->m_id;
 }
 
-void Node::fill(int bucketIdx, std::vector<const ID*>& outIds, int k)
+void Node::fill(int bucketIdx, std::set<const ID*>& outIds, int k)
 {
-	//if (m_BucketMap.data()[bucketIdx].size() == 0) return;
 	auto& bucket = m_BucketArray.getBucket(bucketIdx);
 	if (bucket.size() == 0) return;
 
 	if (bucket.size() < k) {
 		for (auto& contact : bucket) {
-			outIds.push_back(&contact.id());
+			outIds.insert(&contact.id());
 		}
 		return;
 	}
 
 	while (outIds.size() < k) {
 		auto& id = pickRandomNode(bucket);
-		outIds.push_back(&id);
+		outIds.insert(&id);
 	}
 }
 
 std::vector<const ID*> Node::findClosestNodes(int k, const ID& id)
 {
-	//std::set<const ID*> res;
-	std::vector<const ID*> res;
+	std::set<const ID*> res;
 	// start with the bucket where ID could be
 	int bucketIndex = m_BucketArray.calcBucketIndex(id);
 	fill(bucketIndex, res, k);
@@ -151,13 +141,8 @@ std::vector<const ID*> Node::findClosestNodes(int k, const ID& id)
 			}
 		}
 	}
-	//std::vector<const ID*> ids(res.begin(), res.end());
-	//for (auto& e : res) {
-	//	if (e == nullptr) {
-	//		LOG("debug");
-	//	}
-	//}
-	return res;
+	std::vector<const ID*> ids(res.begin(), res.end());
+	return ids;
 }
 
 std::vector<const ID*> Node::receiveFindNode(const ID& senderId
@@ -197,10 +182,6 @@ void Node::receiveFindNodeResponse(const ID& queriedId
 	, const std::vector<const ID*>& ids
 	, const ID& responserId)
 {
-	LOG("Node::receiveFindNodeResponse");
-	for (auto& id : ids) {
-		LOG(*id);
-	}
 	if (auto it = m_findNodeMap.find(queriedId); it == m_findNodeMap.end()) {
 		return;
 	}
@@ -209,15 +190,9 @@ void Node::receiveFindNodeResponse(const ID& queriedId
 		onFindNodeEnd(false, queriedId);
 		return;
 	}
-	//if (ids.size() == 0) {
-	//	return;
-	//}
-	LOG("strange: " << *ids[0] << ' ' << queriedId);
 	if (*ids[0] == queriedId) {
-		LOG("you must see this");
 		onFindNodeEnd(true, queriedId);
 	}
-
 	else {
 		//LOG(queriedId << " not found");
 		for (auto id : ids) {

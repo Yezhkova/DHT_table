@@ -106,7 +106,7 @@ void Swarm::calculateStatistic(std::chrono::duration<double> elapsed_seconds) {
     EX_LOG("ping: " << pingCounter);
     EX_LOG("done: " << doneCounter);
     EX_LOG("maximum bucket size: " << overallMaxContactsInBucket << " (found in " << overallMCBId << ')');
-    EX_LOG("AVG(maximum bucket size): " << sumMaxContactsInBucket / m_peers.size());
+    EX_LOG("AVG(maximum bucket size): " << std::dec << sumMaxContactsInBucket / m_peers.size());
     EX_LOG("average BucketArray load: ");
     for (int i = 0; i < BucketArray::g_treeSize; ++i) {
         EX_LOG(i << ' ' << sizes[i] / m_peers.size());

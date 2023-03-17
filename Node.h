@@ -85,6 +85,6 @@ public:
 
 private:
 
-    void fill(int bucketIdx, std::vector<const ID*>& outIds, int k);
+    void fill(int bucketIdx, std::set<const ID*>& outIds, int k);
 };
 
