@@ -36,24 +36,25 @@ endif (UNIX)
 add_executable(kademlia ${SOURCE})
 
 if (WIN32)
-set(BOOST_ROOT "C:/Program Files/boost/boost_1_81_0")
-set(BOOST_LIBRARYDIR "C:/Program Files/boost/boost_1_81_0/stage/lib")
+#set(BOOST_ROOT "C:/Program Files/boost/boost_1_81_0")
+#set(BOOST_LIBRARYDIR "C:/Program Files/boost/boost_1_81_0/stage/lib")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--stack,100000000")
 endif (WIN32)
 if (UNIX)
-set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
-set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
+#set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
+#set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
 endif (UNIX)
 
-set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
-set(Boost_USE_MULTITHREADED      ON)
-set(Boost_USE_STATIC_RUNTIME    OFF)
+#set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
+#set(Boost_USE_MULTITHREADED      ON)
+#set(Boost_USE_STATIC_RUNTIME    OFF)
 
-find_package(Boost COMPONENTS chrono)
+#find_package(Boost COMPONENTS chrono)
 
-if(Boost_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-  target_link_libraries(kademlia ${Boost_LIBRARIES})
-endif()
+#if(Boost_FOUND)
+  #include_directories(${Boost_INCLUDE_DIRS})
+  #target_link_libraries(kademlia ${Boost_LIBRARIES})
+#endif()
 
 install (TARGETS kademlia
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})

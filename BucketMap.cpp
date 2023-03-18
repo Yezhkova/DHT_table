@@ -2,7 +2,7 @@
 #include "Node.h"
 #include "Utils.h"
 
-int BucketArray::g_bucketSize = 200; // maximum amount of nodes in a bucket
+int BucketArray::g_bucketSize = 20; // maximum amount of nodes in a bucket
 //const int g_bucketMultiplier = 8; // optimization for 160 buckets in map
 int BucketArray::g_treeSize = 160; // maximum amount of buckets in a map
 

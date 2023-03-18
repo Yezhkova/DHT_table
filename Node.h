@@ -5,13 +5,13 @@
 #include "INodeEventHandler.h"
 #include "NodeInfo.h"
 #include "BucketMap.h"
-#include <boost/asio.hpp>
+//#include <boost/asio.hpp>
 #include <cassert>
 #include "IDhtTransportProtocol.h"
-#include <boost/chrono.hpp>
+//#include <boost/chrono.hpp>
 #include <map>
 
-using system_clock = boost::chrono::system_clock;
+//using system_clock = boost::chrono::system_clock;
 
 class Node
 {
@@ -23,7 +23,6 @@ private:
     IDhtTransportProtocol&       m_protocol;
     ITimer&                      m_timerProtocol;
     uint64_t                     m_index;
-    NodeInfo                     m_info; // last seen time
     static std::mt19937          m_randomGenerator;
     std::map<ID, int>            m_findNodeMap; // pair<queriedId, packetCounter>
     std::map<ID, int>            m_pingMap;
@@ -34,14 +33,13 @@ public:
         , m_eventHandler(peer)
         , m_BucketArray(*this)
         , m_protocol(protocol)
-        , m_timerProtocol(timer)
-        , m_info(boost::chrono::system_clock::now()) {};
+        , m_timerProtocol(timer) {};
+        //, m_info(boost::chrono::system_clock::now()) {};
 
     const ID& id() const;
     const BucketArray& buckets() const;
     const Contact& contact() const;
     IDhtTransportProtocol& protocol();
-    NodeInfo& nodeInfo();
     INodeEventHandler& eventHandler();
     const uint64_t label() const;
     void setLabel(uint64_t label);
@@ -49,8 +47,8 @@ public:
     void randomizeId();
     bool addNode(const ID& id);
     bool removeNode(const ID& id);
-    void updateLastSeen(const ID& id
-        , boost::chrono::system_clock::time_point time);
+    //void updateLastSeen(const ID& id
+    //    , boost::chrono::system_clock::time_point time);
 
     const ID& pickRandomNode(const Bucket& bucket) const;
     std::vector<const ID*> findClosestNodes(int k, const ID& id);

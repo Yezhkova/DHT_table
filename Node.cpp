@@ -4,7 +4,7 @@
 #include <optional>
 
 #define CLOSEST_NODES 3
-#define FIND_NODE_THRESHOLD 1000
+#define FIND_NODE_THRESHOLD 500
 #define PING_THRESHOLD 2
 #define PING_INTERVAL 15
 #define MINUTES 60
@@ -22,10 +22,6 @@ const BucketArray& Node::buckets() const {
 
 const Contact& Node::contact() const {
 	return m_contact;
-}
-
-NodeInfo& Node::nodeInfo() {
-	return m_info;
 }
 
 INodeEventHandler& Node::eventHandler() {
@@ -61,13 +57,13 @@ bool Node::removeNode(const ID& id) {
 	return m_BucketArray.removeNode(id);
 }
 
-void Node::updateLastSeen(const ID& id
-	, boost::chrono::system_clock::time_point time) {
-	auto peerToUpdate = Swarm::getInstance().getPeer(id);
-	if (peerToUpdate != nullptr) {
-		peerToUpdate->info().updateLastSeen(time);
-	}
-}
+//void Node::updateLastSeen(const ID& id
+//	, boost::chrono::system_clock::time_point time) {
+//	auto peerToUpdate = Swarm::getInstance().getPeer(id);
+//	if (peerToUpdate != nullptr) {
+//		peerToUpdate->info().updateLastSeen(time);
+//	}
+//}
 
 bool operator==(const Node& l, const Node& r) {
 	return l.m_contact.m_id == r.m_contact.m_id;
@@ -99,6 +95,7 @@ void Node::fill(int bucketIdx, std::set<const ID*>& outIds, int k)
 	}
 
 	while (outIds.size() < k) {
+		// TODO: compare with initiator, not with myself
 		auto& id = pickRandomNode(bucket);
 		outIds.insert(&id);
 	}

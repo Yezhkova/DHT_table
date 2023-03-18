@@ -1,11 +1,10 @@
 #include "Peer.h"
 #include "Utils.h"
 #include "Swarm.h"
-#include <boost/chrono.hpp>
 #include "Swarm.h"
 
 #define MILLISEC_IN_SEC 1000.0
-//#define FAST_MODE
+#define FAST_MODE
 
 std::mt19937 Peer::s_randomGenerator;
 
@@ -21,10 +20,6 @@ const ID& Peer::id() const {
 
 Node& Peer::node() {
 	return m_node;
-}
-
-NodeInfo& Peer::info() {
-	return m_node.nodeInfo();
 }
 
 EventQueue::Interval Peer::packetTime() const {
@@ -50,24 +45,24 @@ void Peer::start(const ID& bootstrapId) {
 }
 
 void Peer::sendPing(const ID& queriedId) {
-	m_node.onPingStart(queriedId);
-	const ID& id = this->id();
-#ifndef FAST_MODE
-	Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId, id] {
-#endif
-		auto recipient = Swarm::getInstance().getPeer(queriedId);
-		if (recipient != nullptr) {
-			recipient->receivePing(id);
-		}
-		else {
-			LOG("sendPing Warning: the recipient peer does not exist");
-		}
-
-#ifndef FAST_MODE
-		});
-#endif
-	PeerStatistics::incPacketCounter();
-	PeerStatistics::incPingCounter();
+//	m_node.onPingStart(queriedId);
+//	const ID& id = this->id();
+//#ifndef FAST_MODE
+//	Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId, id] {
+//#endif
+//		auto recipient = Swarm::getInstance().getPeer(queriedId);
+//		if (recipient != nullptr) {
+//			recipient->receivePing(id);
+//		}
+//		else {
+//			LOG("sendPing Warning: the recipient peer does not exist");
+//		}
+//
+//#ifndef FAST_MODE
+//		});
+//#endif
+//	PeerStatistics::incPacketCounter();
+//	PeerStatistics::incPingCounter();
 }
 
 void Peer::receivePing(const ID& requestorId) {
@@ -108,10 +103,12 @@ void Peer::sendFindNode(const ID& recipientId, const ID& initiatorId, const ID& 
 #endif
 		if (auto* contact = m_node.buckets().getContactPtr(queriedId); contact != nullptr)
 		{
+			// in case we have this contact in our bucketArray, use this
 			receiveFindNodeResponse(queriedId, { &contact->m_id }, id());
 			PeerStatistics::incPacketCounter();
 			return;
 		}
+
 		// responser side
 		if (auto responser = Swarm::getInstance().getPeer(recipientId);
 			responser != nullptr)
@@ -156,13 +153,13 @@ void Peer::receiveFindNodeResponse(const ID& queriedId
 	, const std::vector<const ID*>& ids
 	, const ID& responserId)
 {
-#ifndef FAST_MODE
+//#ifndef FAST_MODE
 	Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId, ids, responserId, this] {
-#endif
+//#endif
 		 m_node.receiveFindNodeResponse(queriedId, ids, responserId);
-#ifndef FAST_MODE
+//#ifndef FAST_MODE
 	});
-#endif
+//#endif
 }
 
 void Peer::onFindNodeResponse(bool find)

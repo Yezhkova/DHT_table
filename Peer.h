@@ -20,7 +20,6 @@ public:
 
     const ID& id() const;
     Node& node();
-    NodeInfo& info();
     EventQueue::Interval packetTime() const;
     void randomize();
     ID pickRandomPeer();
