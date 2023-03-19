@@ -8,7 +8,7 @@
 inline std::recursive_mutex gLogMutex;
 
 #define HIDE_LOGS
-// LOG
+
 #ifndef QDBG 
     #ifndef HIDE_LOGS 
         #define LOG(expr) { \

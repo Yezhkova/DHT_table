@@ -1,12 +1,13 @@
 #pragma once
 
-#define SWARM_SIZE			5000
+#define SWARM_SIZE			500
 
 #define BUCKET_SIZE			20
 #define FIND_NODE_THRESHOLD 500
 #define PING_THRESHOLD		2
 #define PING_INTERVAL		15
 #define CLOSEST_NODES		3
+#define FIND_RANDOM_NODES   1
 
 #define TCP					true
 #define SIM					false

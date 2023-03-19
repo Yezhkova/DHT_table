@@ -5,6 +5,7 @@
 #include "Constants.h"
 
 #define FAST_MODE
+//#define DO_PING
 
 std::mt19937 Peer::s_randomGenerator;
 
@@ -45,24 +46,26 @@ void Peer::start(const ID& bootstrapId) {
 }
 
 void Peer::sendPing(const ID& queriedId) {
-//	m_node.onPingStart(queriedId);
-//	const ID& id = this->id();
-//#ifndef FAST_MODE
-//	Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId, id] {
-//#endif
-//		auto recipient = Swarm::getInstance().getPeer(queriedId);
-//		if (recipient != nullptr) {
-//			recipient->receivePing(id);
-//		}
-//		else {
-//			LOG("sendPing Warning: the recipient peer does not exist");
-//		}
-//
-//#ifndef FAST_MODE
-//		});
-//#endif
-//	PeerStatistics::incPacketCounter();
-//	PeerStatistics::incPingCounter();
+#ifdef DO_PING
+	m_node.onPingStart(queriedId);
+	const ID& id = this->id();
+#ifndef FAST_MODE
+	Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId, id] {
+#endif
+		auto recipient = Swarm::getInstance().getPeer(queriedId);
+		if (recipient != nullptr) {
+			recipient->receivePing(id);
+		}
+		else {
+			LOG("sendPing Warning: the recipient peer does not exist");
+		}
+
+#ifndef FAST_MODE
+		});
+#endif
+	PeerStatistics::incPacketCounter();
+	PeerStatistics::incPingCounter();
+#endif
 }
 
 void Peer::receivePing(const ID& requestorId) {
@@ -153,13 +156,9 @@ void Peer::receiveFindNodeResponse(const ID& queriedId
 	, const std::vector<const ID*>& ids
 	, const ID& responserId)
 {
-//#ifndef FAST_MODE
 	Swarm::getInstance().addTaskAfter(m_packetTime, [queriedId, ids, responserId, this] {
-//#endif
 		 m_node.receiveFindNodeResponse(queriedId, ids, responserId);
-//#ifndef FAST_MODE
 	});
-//#endif
 }
 
 void Peer::onFindNodeResponse(bool find)

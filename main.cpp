@@ -18,7 +18,7 @@ void Step() {
     }
     for (auto& peer : peers)
     {
-        peer.second->findRandomNodes(1);
+        peer.second->findRandomNodes(FIND_RANDOM_NODES);
     }
 
     swarm.addTaskAfter(10 * MINUTES, [&swarm] {
@@ -47,7 +47,7 @@ int main(void) {
         for (auto& peer : peers)
         {
             peer.second->node().setLabel(++i);
-//            LOG(peer.second->id() << " enters the swarm, " << std::dec << peer.second->packetTime());
+            LOG(peer.second->id() << " enters the swarm, " << std::dec << peer.second->packetTime());
             if (peer.second->id() != swarm.bootstrapNode()->id()) {
                 peer.second->start(swarm.bootstrapNode()->id());
             }
