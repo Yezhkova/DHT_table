@@ -4,6 +4,8 @@
 #include "Constants.h"
 #include <optional>
 
+#define OPT_MODE
+
 std::mt19937 Node::m_randomGenerator;
 
 const ID& Node::id() const {
@@ -170,11 +172,12 @@ void Node::receiveFindNodeResponse(const ID& queriedId
 	, const std::vector<const ID*>& ids
 	, const ID& responserId)
 {
-	if (auto it = m_findNodeMap.find(queriedId); it == m_findNodeMap.end()) {
+	if (auto it = m_findThisId.find(queriedId); it == m_findThisId.end()) {
 		return;
 	}
+	m_interrogatedNodes.insert(responserId);
 	addNode(responserId);
-	if (m_findNodeMap[queriedId] > FIND_NODE_THRESHOLD) {
+	if (m_findThisId[queriedId] > FIND_NODE_THRESHOLD) {
 		onFindNodeEnd(false, queriedId);
 		return;
 	}
@@ -182,9 +185,14 @@ void Node::receiveFindNodeResponse(const ID& queriedId
 		onFindNodeEnd(true, queriedId);
 	}
 	else {
-		//LOG(queriedId << " not found");
 		for (auto id : ids) {
-			m_protocol.sendFindNode(*id, this->id(), queriedId); // Swarm does this
+#ifdef OPT_MODE
+			if (auto it = m_interrogatedNodes.find(*id); it == m_interrogatedNodes.end()) {
+#endif
+				m_protocol.sendFindNode(*id, this->id(), queriedId); // Swarm does this
+#ifdef OPT_MODE
+			}
+#endif
 		}
 	}
 
@@ -192,12 +200,13 @@ void Node::receiveFindNodeResponse(const ID& queriedId
 
 void Node::onFindNodeStart(const ID& queriedId)
 {
-	m_findNodeMap[queriedId]++;
+	m_findThisId[queriedId]++;
 }
 
 void Node::onFindNodeEnd(bool found, const ID& queriedId)
 {
-	m_findNodeMap.erase(queriedId);
+	m_findThisId.erase(queriedId);
+	m_interrogatedNodes.clear();
 	if (found) {
 		m_eventHandler.onNodeFound();
 	}
