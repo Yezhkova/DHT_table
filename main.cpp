@@ -1,11 +1,6 @@
 #include "Swarm.h"
 #include "Utils.h"
-
-#define TCP true
-#define SIM false
-#define MINUTES 60
-#define SWARM_SIZE 1000
-
+#include "Constants.h"
 std::chrono::system_clock::time_point start;
 std::chrono::system_clock::time_point end;
 

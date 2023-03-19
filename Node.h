@@ -22,7 +22,7 @@ private:
     BucketArray                  m_BucketArray;
     IDhtTransportProtocol&       m_protocol;
     ITimer&                      m_timerProtocol;
-    uint64_t                     m_index;
+    uint64_t                     m_index = 0;
     static std::mt19937          m_randomGenerator;
     std::map<ID, int>            m_findNodeMap; // pair<queriedId, packetCounter>
     std::map<ID, int>            m_pingMap;
@@ -34,7 +34,6 @@ public:
         , m_BucketArray(*this)
         , m_protocol(protocol)
         , m_timerProtocol(timer) {};
-        //, m_info(boost::chrono::system_clock::now()) {};
 
     const ID& id() const;
     const BucketArray& buckets() const;
@@ -47,15 +46,12 @@ public:
     void randomizeId();
     bool addNode(const ID& id);
     bool removeNode(const ID& id);
-    //void updateLastSeen(const ID& id
-    //    , boost::chrono::system_clock::time_point time);
 
     const ID& pickRandomNode(const Bucket& bucket) const;
-    std::vector<const ID*> findClosestNodes(int k, const ID& id);
+    std::vector<const ID*> findClosestNodes(int k, const ID& senderId, const ID& queriedId);
 
-    // bug if const reference returned
-    const ID& findClosestNode(const ID& id) {
-        return *(findClosestNodes(1, id)[0]);
+    const ID& findClosestNode(const ID& senderId, const ID& queriedId) {
+        return *(findClosestNodes(1, senderId, queriedId)[0]);
     }
 
     friend bool operator==(const Node& l, const Node& r);
@@ -83,6 +79,6 @@ public:
 
 private:
 
-    void fill(int bucketIdx, std::set<const ID*>& outIds, int k);
+    void fill(int bucketIdx, std::vector<const ID*>& outIds, const ID& senderId, int k);
 };
 

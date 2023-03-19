@@ -18,10 +18,6 @@ private:
     std::array<Bucket, 160>   m_Buckets;
 
 public:
-    static int                g_bucketSize;
-    static int                g_treeSize;
-
-public:
     BucketArray() = delete;
     BucketArray(Node& node) : m_node(node) {};
 
@@ -30,7 +26,6 @@ public:
     const Contact* getContactPtr(const ID& id) const;
 
     const std::array<Bucket, 160>& data() const;
-    //const ID& id() const { return m_node.id(); }
     const Bucket& getBucket(int index) const;
     const size_t size() const;
     const size_t bucketSize(int bucketIdx) const;

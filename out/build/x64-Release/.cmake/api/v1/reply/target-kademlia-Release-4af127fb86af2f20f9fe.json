@@ -70,13 +70,11 @@
 				10,
 				12,
 				14,
-				16,
 				18,
 				20,
 				22,
 				24,
-				26,
-				28
+				26
 			]
 		}
 	],
@@ -135,13 +133,11 @@
 				10,
 				12,
 				14,
-				16,
 				18,
 				20,
 				22,
 				24,
-				26,
-				28
+				26
 			]
 		},
 		{
@@ -156,12 +152,12 @@
 				11,
 				13,
 				15,
+				16,
 				17,
 				19,
 				21,
 				23,
-				25,
-				27
+				25
 			]
 		}
 	],
@@ -257,20 +253,8 @@
 		},
 		{
 			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "ISimulationTask.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
 			"path" : "IDhtTransportProtocol.h",
 			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "IDhtTransportProtocol.cpp",
-			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,

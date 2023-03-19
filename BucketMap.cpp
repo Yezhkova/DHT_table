@@ -1,10 +1,7 @@
 ﻿#include "BucketMap.h"
 #include "Node.h"
 #include "Utils.h"
-
-int BucketArray::g_bucketSize = 20; // maximum amount of nodes in a bucket
-//const int g_bucketMultiplier = 8; // optimization for 160 buckets in map
-int BucketArray::g_treeSize = 160; // maximum amount of buckets in a map
+#include "Constants.h"
 
 const std::array<Bucket, 160>& BucketArray::data() const {
 	return m_Buckets;
@@ -23,7 +20,7 @@ const size_t BucketArray::bucketSize(int bucketIdx) const {
 }
 
 const bool BucketArray::bucketFull(int bucketIdx) const {
-	return bucketSize(bucketIdx) == BucketArray::g_bucketSize;
+	return bucketSize(bucketIdx) == BUCKET_SIZE;
 }
 
 bool BucketArray::addNode(const ID& id, int BucketIndex) {
@@ -51,7 +48,7 @@ const size_t BucketArray::size() const {
 std::ostream& operator<< (std::ostream& out, const BucketArray& b)
 {
 	out << b.m_node.id() << " bucket map size: " << std::dec << b.m_Buckets.size() << '\n';
-	for (int i = 0; i < BucketArray::g_treeSize; ++i) {
+	for (int i = 0; i < TREE_SIZE; ++i) {
 		if (!b.data()[i].empty()) {
 			out << "depth " << std::dec << i << '\n';
 			for (auto& conact : b.data()[i]) {

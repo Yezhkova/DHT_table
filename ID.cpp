@@ -37,8 +37,11 @@ int ID::equalPrefixLength(const ID & anotherId) const
         len += 8;
     }
     if(j < DIGEST_BYTES) {
-        for(int i = 7; !(((m_id[j] >> i)&1) ^ ((anotherId.m_id[j] >> i)&1)) && i >= 0; --i)
+        for(int i = 7; i >= 0; --i)
         {
+            if ((m_id[j] >> i) != (anotherId.m_id[j] >> i)) {
+                break;
+            }
             ++len;
         }
     }

@@ -2,8 +2,8 @@
 #include "Utils.h"
 #include "Swarm.h"
 #include "Swarm.h"
+#include "Constants.h"
 
-#define MILLISEC_IN_SEC 1000.0
 #define FAST_MODE
 
 std::mt19937 Peer::s_randomGenerator;
@@ -196,7 +196,7 @@ void Peer::findRandomNodes(int nodeNumber) {
 #endif
 		for (int i = 0; i < nodeNumber; ++i) {
 			ID queriedId = pickRandomPeer();
-			ID recipientId = m_node.findClosestNode(queriedId);
+			ID recipientId = m_node.findClosestNode(id(), queriedId);
 			sendFindNode(recipientId, id(), queriedId);
 		}
 #ifndef FAST_MODE

@@ -1,7 +1,7 @@
 #include "Swarm.h"
 #include "Utils.h"
 #include "EventQueue.h"
-
+#include "Constants.h"
 EventQueue& Swarm::eventQueqe() {
     return m_eventQueqe;
 }
@@ -76,7 +76,7 @@ void Swarm::calculateStatistic(std::chrono::duration<double> elapsed_seconds) {
     ID overallMCBId;
     uint64_t sumMaxContactsInBucket = 0;
     int medMaxContactsInBucket = 0;
-    std::vector<uint64_t> sizes(BucketArray::g_treeSize); // 160 zeroes
+    //std::vector<uint64_t> sizes(TREE_SIZE); // 160 zeroes
 
     for (auto& p : m_peers) {
         nodeNotFoundCounter += p.second->failedFindNodeCounter();
@@ -86,9 +86,9 @@ void Swarm::calculateStatistic(std::chrono::duration<double> elapsed_seconds) {
         doneCounter += p.second->done();
 
         size_t TmpMaxContactsInBucket = 0;
-        for (int i = 0; i < BucketArray::g_treeSize; ++i) {
+        for (int i = 0; i < TREE_SIZE; ++i) {
             auto& bucket = p.second->node().buckets().data()[i];
-            sizes[i] += bucket.size();
+            //sizes[i] += bucket.size();
             if (bucket.size() > TmpMaxContactsInBucket) {
                 TmpMaxContactsInBucket = bucket.size();
             }
@@ -107,7 +107,7 @@ void Swarm::calculateStatistic(std::chrono::duration<double> elapsed_seconds) {
     EX_LOG("done: " << doneCounter);
     EX_LOG("maximum bucket size: " << overallMaxContactsInBucket << " (found in " << overallMCBId << ')');
     EX_LOG("AVG(maximum bucket size): " << std::dec << sumMaxContactsInBucket / m_peers.size());
-    /*EX_LOG("average BucketArray load: ");
+    /*EXLOG("average BucketArray load: ");
     for (int i = 0; i < BucketArray::g_treeSize; ++i) {
         EX_LOG(i << ' ' << sizes[i] / m_peers.size());
     }*/

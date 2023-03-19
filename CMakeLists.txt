@@ -19,10 +19,10 @@ set(SOURCE main.cpp
            BucketMap.h                 BucketMap.cpp
            Peer.h                      Peer.cpp
            Swarm.h                     Swarm.cpp
-           ISimulationTask.h           ISimulationTask.cpp
-           IDhtTransportProtocol.h     IDhtTransportProtocol.cpp
+           Constants.h           
+           IDhtTransportProtocol.h     
            Contact.h                   Contact.cpp
-           INodeEventHandler.h         INodeEventHandler.cpp
+           INodeEventHandler.h         
            EventQueue.h                EventQueue.cpp
            PeerStatistics.h            PeerStatistics.cpp
            NodeRef.h                   NodeRef.cpp

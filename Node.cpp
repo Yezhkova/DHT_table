@@ -1,16 +1,10 @@
 ﻿#include "Node.h"
 #include "Swarm.h"
 #include "Utils.h"
+#include "Constants.h"
 #include <optional>
 
-#define CLOSEST_NODES 3
-#define FIND_NODE_THRESHOLD 500
-#define PING_THRESHOLD 2
-#define PING_INTERVAL 15
-#define MINUTES 60
-
 std::mt19937 Node::m_randomGenerator;
-
 
 const ID& Node::id() const {
 	return m_contact.m_id;
@@ -57,14 +51,6 @@ bool Node::removeNode(const ID& id) {
 	return m_BucketArray.removeNode(id);
 }
 
-//void Node::updateLastSeen(const ID& id
-//	, boost::chrono::system_clock::time_point time) {
-//	auto peerToUpdate = Swarm::getInstance().getPeer(id);
-//	if (peerToUpdate != nullptr) {
-//		peerToUpdate->info().updateLastSeen(time);
-//	}
-//}
-
 bool operator==(const Node& l, const Node& r) {
 	return l.m_contact.m_id == r.m_contact.m_id;
 }
@@ -82,64 +68,69 @@ const ID& Node::pickRandomNode(const Bucket& bucket) const
 	return it->m_id;
 }
 
-void Node::fill(int bucketIdx, std::set<const ID*>& outIds, int k)
+void Node::fill(int bucketIdx, std::vector<const ID*>& outIds, const ID& senderId, int k)
 {
 	auto& bucket = m_BucketArray.getBucket(bucketIdx);
 	if (bucket.size() == 0) return;
 
 	if (bucket.size() < k) {
 		for (auto& contact : bucket) {
-			outIds.insert(&contact.id());
+			outIds.push_back(&contact.id());
 		}
 		return;
 	}
 
+	std::multimap<int, const ID*> distances;
+	for (auto& contact : bucket) {
+		int dist = senderId.distance(contact.id());
+		distances.insert(std::make_pair(dist, &contact.id()));
+	}
+	assert(distances.size() >= k);
+	auto it = distances.begin();
 	while (outIds.size() < k) {
-		// TODO: compare with initiator, not with myself
-		auto& id = pickRandomNode(bucket);
-		outIds.insert(&id);
+		outIds.push_back(it->second);
+		++it;
 	}
 }
 
-std::vector<const ID*> Node::findClosestNodes(int k, const ID& id)
+std::vector<const ID*> Node::findClosestNodes(int k, const ID& senderId, const ID& queriedId)
 {
-	std::set<const ID*> res;
+	std::vector<const ID*> res;
 	// start with the bucket where ID could be
-	int bucketIndex = m_BucketArray.calcBucketIndex(id);
-	fill(bucketIndex, res, k);
+	int bucketIndex = m_BucketArray.calcBucketIndex(queriedId);
+	fill(bucketIndex, res, senderId, k);
 
 	// not enough ids
 	if (res.size() < k) {
 		int nextBucketIndex = bucketIndex, prevBucketIndex = bucketIndex;
 		size_t i = 1;
-		for (; nextBucketIndex < BucketArray::g_treeSize && prevBucketIndex >= 0; ++i)
+		for (; nextBucketIndex < TREE_SIZE && prevBucketIndex >= 0; ++i)
 		{
 			nextBucketIndex = bucketIndex + i;
 			prevBucketIndex = bucketIndex - i;
-			if (nextBucketIndex < 160) {
-				fill(nextBucketIndex, res, k);
+			if (nextBucketIndex < TREE_SIZE) {
+				fill(nextBucketIndex, res, senderId, k);
 			}
 			if (prevBucketIndex >= 0) {
-				fill(prevBucketIndex, res, k);
+				fill(prevBucketIndex, res, senderId, k);
 			}
 		}
-		for (size_t j = i; res.size() < k && nextBucketIndex < BucketArray::g_treeSize; ++j)
+		for (size_t j = i; res.size() < k && nextBucketIndex < TREE_SIZE; ++j)
 		{
 			nextBucketIndex = bucketIndex + j;
-			if (nextBucketIndex < 160) {
-				fill(nextBucketIndex, res, k);
+			if (nextBucketIndex < TREE_SIZE) {
+				fill(nextBucketIndex, res, senderId, k);
 			}
 		}
 		for (size_t j = i; res.size() < k && prevBucketIndex >= 0; ++j)
 		{
 			prevBucketIndex = bucketIndex - j;
 			if (prevBucketIndex >= 0) {
-				fill(prevBucketIndex, res, k);
+				fill(prevBucketIndex, res, senderId, k);
 			}
 		}
 	}
-	std::vector<const ID*> ids(res.begin(), res.end());
-	return ids;
+	return res;
 }
 
 std::vector<const ID*> Node::receiveFindNode(const ID& senderId
@@ -151,7 +142,7 @@ std::vector<const ID*> Node::receiveFindNode(const ID& senderId
 		return { &contact->m_id };
 	}
 	else {
-		return findClosestNodes(CLOSEST_NODES, queriedId);
+		return findClosestNodes(CLOSEST_NODES, senderId, queriedId);
 	}
 }
 

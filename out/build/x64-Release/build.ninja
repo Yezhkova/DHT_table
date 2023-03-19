@@ -99,20 +99,6 @@ build CMakeFiles\kademlia.dir\Swarm.cpp.obj: CXX_COMPILER__kademlia_Release ..\.
   TARGET_COMPILE_PDB = CMakeFiles\kademlia.dir\
   TARGET_PDB = kademlia.pdb
 
-build CMakeFiles\kademlia.dir\ISimulationTask.cpp.obj: CXX_COMPILER__kademlia_Release ..\..\..\ISimulationTask.cpp || cmake_object_order_depends_target_kademlia
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG -std:c++17
-  OBJECT_DIR = CMakeFiles\kademlia.dir
-  OBJECT_FILE_DIR = CMakeFiles\kademlia.dir
-  TARGET_COMPILE_PDB = CMakeFiles\kademlia.dir\
-  TARGET_PDB = kademlia.pdb
-
-build CMakeFiles\kademlia.dir\IDhtTransportProtocol.cpp.obj: CXX_COMPILER__kademlia_Release ..\..\..\IDhtTransportProtocol.cpp || cmake_object_order_depends_target_kademlia
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG -std:c++17
-  OBJECT_DIR = CMakeFiles\kademlia.dir
-  OBJECT_FILE_DIR = CMakeFiles\kademlia.dir
-  TARGET_COMPILE_PDB = CMakeFiles\kademlia.dir\
-  TARGET_PDB = kademlia.pdb
-
 build CMakeFiles\kademlia.dir\Contact.cpp.obj: CXX_COMPILER__kademlia_Release ..\..\..\Contact.cpp || cmake_object_order_depends_target_kademlia
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG -std:c++17
   OBJECT_DIR = CMakeFiles\kademlia.dir
@@ -156,7 +142,7 @@ build CMakeFiles\kademlia.dir\NodeRef.cpp.obj: CXX_COMPILER__kademlia_Release ..
 #############################################
 # Link the executable kademlia.exe
 
-build kademlia.exe: CXX_EXECUTABLE_LINKER__kademlia_Release CMakeFiles\kademlia.dir\main.cpp.obj CMakeFiles\kademlia.dir\ID.cpp.obj CMakeFiles\kademlia.dir\Utils.cpp.obj CMakeFiles\kademlia.dir\Node.cpp.obj CMakeFiles\kademlia.dir\NodeInfo.cpp.obj CMakeFiles\kademlia.dir\BucketMap.cpp.obj CMakeFiles\kademlia.dir\Peer.cpp.obj CMakeFiles\kademlia.dir\Swarm.cpp.obj CMakeFiles\kademlia.dir\ISimulationTask.cpp.obj CMakeFiles\kademlia.dir\IDhtTransportProtocol.cpp.obj CMakeFiles\kademlia.dir\Contact.cpp.obj CMakeFiles\kademlia.dir\INodeEventHandler.cpp.obj CMakeFiles\kademlia.dir\EventQueue.cpp.obj CMakeFiles\kademlia.dir\PeerStatistics.cpp.obj CMakeFiles\kademlia.dir\NodeRef.cpp.obj
+build kademlia.exe: CXX_EXECUTABLE_LINKER__kademlia_Release CMakeFiles\kademlia.dir\main.cpp.obj CMakeFiles\kademlia.dir\ID.cpp.obj CMakeFiles\kademlia.dir\Utils.cpp.obj CMakeFiles\kademlia.dir\Node.cpp.obj CMakeFiles\kademlia.dir\NodeInfo.cpp.obj CMakeFiles\kademlia.dir\BucketMap.cpp.obj CMakeFiles\kademlia.dir\Peer.cpp.obj CMakeFiles\kademlia.dir\Swarm.cpp.obj CMakeFiles\kademlia.dir\Contact.cpp.obj CMakeFiles\kademlia.dir\INodeEventHandler.cpp.obj CMakeFiles\kademlia.dir\EventQueue.cpp.obj CMakeFiles\kademlia.dir\PeerStatistics.cpp.obj CMakeFiles\kademlia.dir\NodeRef.cpp.obj
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG
   LINK_FLAGS = /machine:x64 -Wl,--stack,100000000 /INCREMENTAL:NO /subsystem:console
   LINK_LIBRARIES = kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
