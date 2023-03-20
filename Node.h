@@ -18,10 +18,10 @@ class Node
 private:
     bool                         m_online = true;
     Contact                      m_contact;
-    INodeEventHandler&           m_eventHandler;
+    INodeEventHandler& m_eventHandler;
     BucketArray                  m_BucketArray;
-    IDhtTransportProtocol&       m_protocol;
-    ITimer&                      m_timerProtocol;
+    IDhtTransportProtocol& m_protocol;
+    ITimer& m_timerProtocol;
     uint64_t                     m_index = 0;
     static std::mt19937          m_randomGenerator;
 
@@ -39,13 +39,23 @@ public:
         , m_protocol(protocol)
         , m_timerProtocol(timer) {};
 
-    const ID& id() const;
-    const BucketArray& buckets() const;
-    const Contact& contact() const;
-    IDhtTransportProtocol& protocol();
-    INodeEventHandler& eventHandler();
-    const uint64_t label() const;
-    void setLabel(uint64_t label);
+    const ID& id() const { return m_contact.m_id; }
+
+    const BucketArray& buckets() const { return m_BucketArray; }
+
+    const Contact& contact() const { return m_contact; }
+
+    IDhtTransportProtocol& protocol(){ return m_protocol; }
+
+    INodeEventHandler& eventHandler() { return m_eventHandler; }
+
+    std::map<ID, int>& findThisIdQueries() { return m_findThisId; }
+
+    std::set<ID>& interrogatedNodes() { return m_interrogatedNodes; }
+
+    const uint64_t label() const { return m_index; }
+
+    void setLabel(uint64_t label) { m_index = label; }
 
     void randomizeId();
     bool addNode(const ID& id);
@@ -77,8 +87,10 @@ public:
     void onPingStart(const ID& queriedId);
     void onPingEnd(bool online, const ID& queriedId);
 
-    void setOffline();
-    void setOnline();
+    void setOffline() { m_online = false; }
+
+    void setOnline() { m_online = true; }
+
     bool online() { return m_online; };
 
 private:

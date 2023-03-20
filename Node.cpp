@@ -4,37 +4,14 @@
 #include "Constants.h"
 #include <optional>
 
-#define OPT_MODE
+//#define OPT_MODE
 
 std::mt19937 Node::m_randomGenerator;
-
-const ID& Node::id() const {
-	return m_contact.m_id;
-}
-
-const BucketArray& Node::buckets() const {
-	return m_BucketArray;
-}
-
-const Contact& Node::contact() const {
-	return m_contact;
-}
-
-INodeEventHandler& Node::eventHandler() {
-	return m_eventHandler;
-}
 
 void Node::randomizeId() {
 	m_contact.randomize();
 }
 
-const uint64_t Node::label() const {
-	return m_index;
-}
-
-void Node::setLabel(uint64_t label) {
-	m_index = label;
-}
 // TODO: node offline mode not implemented
 
 bool Node::addNode(const ID& newId) {
@@ -57,10 +34,6 @@ bool operator==(const Node& l, const Node& r) {
 	return l.m_contact.m_id == r.m_contact.m_id;
 }
 
-IDhtTransportProtocol& Node::protocol() {
-	return m_protocol;
-}
-
 const ID& Node::pickRandomNode(const Bucket& bucket) const
 {
 	auto it = bucket.begin();
@@ -70,7 +43,7 @@ const ID& Node::pickRandomNode(const Bucket& bucket) const
 	return it->m_id;
 }
 
-void Node::fill(int bucketIdx, std::vector<const ID*>& outIds, const ID& senderId, int k)
+void Node::fill(int bucketIdx, std::vector<const ID*>& outIds, const ID& queriedId, int k)
 {
 	auto& bucket = m_BucketArray.getBucket(bucketIdx);
 	if (bucket.size() == 0) return;
@@ -83,8 +56,9 @@ void Node::fill(int bucketIdx, std::vector<const ID*>& outIds, const ID& senderI
 	}
 
 	std::multimap<int, const ID*> distances;
+	
 	for (auto& contact : bucket) {
-		int dist = senderId.distance(contact.id());
+		int dist = queriedId.distance(contact.id());
 		distances.insert(std::make_pair(dist, &contact.id()));
 	}
 	assert(distances.size() >= k);
@@ -100,7 +74,7 @@ std::vector<const ID*> Node::findClosestNodes(int k, const ID& senderId, const I
 	std::vector<const ID*> res;
 	// start with the bucket where ID could be
 	int bucketIndex = m_BucketArray.calcBucketIndex(queriedId);
-	fill(bucketIndex, res, senderId, k);
+	fill(bucketIndex, res, queriedId, k);
 
 	// not enough ids
 	if (res.size() < k) {
@@ -111,24 +85,24 @@ std::vector<const ID*> Node::findClosestNodes(int k, const ID& senderId, const I
 			nextBucketIndex = bucketIndex + i;
 			prevBucketIndex = bucketIndex - i;
 			if (nextBucketIndex < TREE_SIZE) {
-				fill(nextBucketIndex, res, senderId, k);
+				fill(nextBucketIndex, res, queriedId, k);
 			}
 			if (prevBucketIndex >= 0) {
-				fill(prevBucketIndex, res, senderId, k);
+				fill(prevBucketIndex, res, queriedId, k);
 			}
 		}
 		for (size_t j = i; res.size() < k && nextBucketIndex < TREE_SIZE; ++j)
 		{
 			nextBucketIndex = bucketIndex + j;
 			if (nextBucketIndex < TREE_SIZE) {
-				fill(nextBucketIndex, res, senderId, k);
+				fill(nextBucketIndex, res, queriedId, k);
 			}
 		}
 		for (size_t j = i; res.size() < k && prevBucketIndex >= 0; ++j)
 		{
 			prevBucketIndex = bucketIndex - j;
 			if (prevBucketIndex >= 0) {
-				fill(prevBucketIndex, res, senderId, k);
+				fill(prevBucketIndex, res, queriedId, k);
 			}
 		}
 	}
@@ -185,13 +159,20 @@ void Node::receiveFindNodeResponse(const ID& queriedId
 		onFindNodeEnd(true, queriedId);
 	}
 	else {
+		//uint32_t i = 0;
 		for (auto id : ids) {
 #ifdef OPT_MODE
 			if (auto it = m_interrogatedNodes.find(*id); it == m_interrogatedNodes.end()) {
 #endif
 				m_protocol.sendFindNode(*id, this->id(), queriedId); // Swarm does this
+				//++i;
 #ifdef OPT_MODE
-			}
+			}// i == ids.size() -> sent to everyone
+			 // 0 < i < ids,size() -> sent, but to certain
+			 // i == 0 -> sent to nobody
+			//if (i == 0) {
+			//	onFindNodeEnd(false, queriedId);
+			//}
 #endif
 		}
 	}
@@ -231,12 +212,5 @@ void Node::onPingEnd(bool online, const ID& queriedId)
 		});
 }
 
-void Node::setOffline() {
-	m_online = false;
-}
-
-void Node::setOnline() {
-	m_online = true;
-}
 
 

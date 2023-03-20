@@ -84,6 +84,12 @@ void Swarm::calculateStatistic(std::chrono::duration<double> elapsed_seconds) {
         packetCounter += p.second->packetsCounter();
         pingCounter += p.second->pingCounter();
         doneCounter += p.second->done();
+        
+        nodeNotFoundCounter += p.second->node().findThisIdQueries().size();
+        if (p.second->node().findThisIdQueries().size() > 0) {
+            p.second->node().findThisIdQueries().clear();
+            p.second->node().interrogatedNodes().clear();
+        }
 
         size_t TmpMaxContactsInBucket = 0;
         for (int i = 0; i < TREE_SIZE; ++i) {

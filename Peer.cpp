@@ -4,7 +4,7 @@
 #include "Swarm.h"
 #include "Constants.h"
 
-#define FAST_MODE
+//#define FAST_MODE
 //#define DO_PING
 
 std::mt19937 Peer::s_randomGenerator;
