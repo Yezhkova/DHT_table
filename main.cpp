@@ -22,7 +22,7 @@ void Step() {
     }
 
     swarm.addTaskAfter(10 * MINUTES, [&swarm] {
-        if (++stepCounter > 100) {
+        if (++stepCounter > STEPS) {
             end = std::chrono::system_clock::now();
             std::chrono::duration<double> elapsed_seconds = end - start;
             swarm.calculateStatistic(elapsed_seconds);

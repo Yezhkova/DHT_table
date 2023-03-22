@@ -1,6 +1,0 @@
-C:/Users/yezhk/source/repos/DHT_table/out/build/x64-Release/CMakeFiles/kademlia.dir
-C:/Users/yezhk/source/repos/DHT_table/out/build/x64-Release/CMakeFiles/install/local.dir
-C:/Users/yezhk/source/repos/DHT_table/out/build/x64-Release/CMakeFiles/install.dir
-C:/Users/yezhk/source/repos/DHT_table/out/build/x64-Release/CMakeFiles/edit_cache.dir
-C:/Users/yezhk/source/repos/DHT_table/out/build/x64-Release/CMakeFiles/rebuild_cache.dir
-C:/Users/yezhk/source/repos/DHT_table/out/build/x64-Release/CMakeFiles/list_install_components.dir

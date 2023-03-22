@@ -55,16 +55,26 @@ void Node::fill(int bucketIdx, std::vector<const ID*>& outIds, const ID& queried
 		return;
 	}
 
-	std::multimap<int, const ID*> distances;
-	
-	for (auto& contact : bucket) {
-		int dist = queriedId.distance(contact.id());
-		distances.insert(std::make_pair(dist, &contact.id()));
-	}
-	assert(distances.size() >= k);
-	auto it = distances.begin();
+    struct Candidate { int distance;  const ID* Id; };
+
+    std::vector<Candidate> candidates;
+    for (auto& contact : bucket) {
+        int dist = queriedId.distance(contact.id());
+        if (candidates.size() < k+1){
+            candidates.emplace_back(Candidate{dist, &contact.m_id});
+        }
+        else {
+            candidates[k].distance = dist;
+            candidates[k].Id = &contact.m_id;
+        }
+        std::sort(candidates.begin(), candidates.end(), [](const auto& a, const auto& b){
+            return a.distance < b.distance;
+        });
+    }
+    assert(candidates.size() >= k);
+    auto it = candidates.begin();
 	while (outIds.size() < k) {
-		outIds.push_back(it->second);
+        outIds.push_back(it->Id);
 		++it;
 	}
 }
