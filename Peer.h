@@ -10,8 +10,7 @@ class Peer: public PeerStatistics, public IDhtTransportProtocol, public ITimer
 {
 private:
     Node                                m_node;
-    EventQueue::Interval                m_packetTime;
-    static std::mt19937                 s_randomGenerator;
+    EventQueue::Interval             m_packetTime;
 public:
     Peer() = delete;
     Peer(const Peer&) = default;

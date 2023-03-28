@@ -2,11 +2,10 @@
 #include "Swarm.h"
 #include "Utils.h"
 #include "Constants.h"
-#include <optional>
 
 #define OPT_MODE
 
-std::mt19937 Node::m_randomGenerator;
+std::mt19937 Node::g_randomGenerator;
 
 void Node::randomizeId() {
 	m_contact.randomize();
@@ -36,7 +35,7 @@ const ID& Node::pickRandomNode(const Bucket& bucket) const
 {
 	auto it = bucket.begin();
 	std::uniform_int_distribution<int> range(0, bucket.size() - 1);
-	int randomNodeNumber = range(m_randomGenerator);
+    int randomNodeNumber = range(g_randomGenerator);
 	std::advance(it, randomNodeNumber);
 	return it->m_id;
 }
@@ -85,14 +84,15 @@ std::vector<const ID*> Node::findClosestNodes(int k, const ID& senderId, const I
 	fill(bucketIndex, res, queriedId, k);
 
     // not enough ids
-	if (res.size() < k) {
+    if (res.size() < k) {
         //- MAKES A WORSE RESULT!!!!!!!!!!
-//        for(size_t i = bucketIndex - 1; i >= 0; --i) {
+//        for(size_t i = bucketIndex + 1; i < TREE_SIZE && res.size() < k; ++i) {
 //            fill(i, res, queriedId, k);
 //        }
-//        for(size_t i = bucketIndex + 1; i < TREE_SIZE; ++i) {
+//        for(size_t i = bucketIndex - 1 && res.size() < k; i >= 0; --i) {
 //            fill(i, res, queriedId, k);
 //        }
+
         int nextBucketIndex = bucketIndex, prevBucketIndex = bucketIndex;
         size_t i = 1;
         for (; nextBucketIndex < TREE_SIZE && prevBucketIndex >= 0; ++i)
@@ -186,7 +186,6 @@ void Node::receiveFindNodeResponse(const ID& queriedId
 #endif
 		}
 	}
-
 }
 
 void Node::onFindNodeStart(const ID& queriedId)

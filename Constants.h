@@ -1,7 +1,7 @@
 #pragma once
 
 #define SWARM_SIZE                      1000
-#define BUCKET_SIZE                      50 // 100, 200
+#define BUCKET_SIZE                      8 // 100, 200
 #define FIND_NODE_THRESHOLD      500 // swarm size / 2
 #define PING_THRESHOLD               2
 #define PING_INTERVAL                   15

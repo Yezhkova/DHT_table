@@ -37,7 +37,7 @@ void Step() {
 
 int main(void) {
     start = std::chrono::system_clock::now();
-    
+    Node::g_randomGenerator.seed(1);
 	Swarm& swarm = Swarm::getInstance();
 	swarm.init(SIM, SWARM_SIZE);
     swarm.addTaskAfter(0, [&swarm]

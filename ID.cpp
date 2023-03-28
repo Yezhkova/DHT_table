@@ -1,8 +1,6 @@
 
 #include "ID.h"
-#include "Utils.h"
-
-std::mt19937 ID::g_random_generator;
+#include "Node.h"
 
 ID::ID() : m_id({0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}) {}
 
@@ -14,7 +12,7 @@ ID ID::uniformRandomize()
 {
     std::uniform_int_distribution<> range(0, UINT8_MAX);
     for(auto it = m_id.begin(); it != m_id.end(); ++it) {
-        *it = range(g_random_generator);
+        *it = range(Node::g_randomGenerator);
     }
     return *this;
 }
@@ -23,7 +21,7 @@ ID ID::normalRandomize()
 {
     std::normal_distribution<> range{128, 127};
     for(auto it = m_id.begin(); it != m_id.end(); ++it) {
-        *it = std::round(range(g_random_generator));
+        *it = std::round(range(Node::g_randomGenerator));
     }
     return *this;
 }

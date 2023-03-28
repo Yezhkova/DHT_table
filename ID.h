@@ -12,8 +12,6 @@
 
 class ID
 {
-    static std::mt19937 g_random_generator;
-
 private:
     std::array<uint8_t, DIGEST_BYTES>   m_id;
 

@@ -7,12 +7,10 @@
 //#define FAST_MODE - MAKES A WORSE RESULT!!!!!!!!!!
 //#define DO_PING
 
-std::mt19937 Peer::s_randomGenerator;
-
 Peer::Peer(ID id, bool useTcp)
 	: m_node(id, *this, *this, *this) {
 	std::uniform_int_distribution<int> range(20, 30);
-	m_packetTime = range(s_randomGenerator) / MILLISEC_IN_SEC;
+    m_packetTime = range(Node::g_randomGenerator) / MILLISEC_IN_SEC;
 }
 
 const ID& Peer::id() const {
@@ -35,7 +33,7 @@ ID Peer::pickRandomPeer() {
 	auto it = Swarm::getInstance().peers().begin();
 	std::uniform_int_distribution<int> range(0
 		, Swarm::getInstance().peers().size() - 1);
-	int randomPeerNumber = range(s_randomGenerator);
+    int randomPeerNumber = range(Node::g_randomGenerator);
 	std::advance(it, randomPeerNumber);
 	return it->second->id();
 }
@@ -199,8 +197,6 @@ void Peer::findRandomNodes(int nodeNumber) {
 #endif
 		for (int i = 0; i < nodeNumber; ++i) {
 			ID queriedId = pickRandomPeer();
-//			ID recipientId = m_node.findClosestNode(id(), queriedId);
-//			sendFindNode(recipientId, id(), queriedId);
             auto ids = m_node.findClosestNodes(CLOSEST_NODES, id(), queriedId);
             for(auto& id: ids) {
                 sendFindNode(*id, this->id(), queriedId);

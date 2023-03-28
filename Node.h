@@ -23,13 +23,12 @@ private:
     IDhtTransportProtocol&   m_protocol;
     ITimer&                       m_timerProtocol;
     uint64_t                       m_index = 0;
-    static std::mt19937         m_randomGenerator;
-
-    // TODO: map<const ID*, int>, set<const ID*> - ?????????????????????
-
     std::map<ID, int>           m_findThisId; // pair<queriedId, packetCounter>
     std::map<ID, int>           m_pingMap;
     std::set<ID>                  m_interrogatedNodes;
+
+public:
+    static std::mt19937         g_randomGenerator;
 
 public:
     Node(ID id, IDhtTransportProtocol& protocol, ITimer& timer, INodeEventHandler& peer)
