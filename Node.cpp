@@ -4,7 +4,7 @@
 #include "Constants.h"
 #include <optional>
 
-//#define OPT_MODE
+#define OPT_MODE
 
 std::mt19937 Node::m_randomGenerator;
 
@@ -86,36 +86,42 @@ std::vector<const ID*> Node::findClosestNodes(int k, const ID& senderId, const I
 	int bucketIndex = m_BucketArray.calcBucketIndex(queriedId);
 	fill(bucketIndex, res, queriedId, k);
 
-	// not enough ids
+    // not enough ids
 	if (res.size() < k) {
-		int nextBucketIndex = bucketIndex, prevBucketIndex = bucketIndex;
-		size_t i = 1;
-		for (; nextBucketIndex < TREE_SIZE && prevBucketIndex >= 0; ++i)
-		{
-			nextBucketIndex = bucketIndex + i;
-			prevBucketIndex = bucketIndex - i;
-			if (nextBucketIndex < TREE_SIZE) {
-				fill(nextBucketIndex, res, queriedId, k);
-			}
-			if (prevBucketIndex >= 0) {
-				fill(prevBucketIndex, res, queriedId, k);
-			}
-		}
-		for (size_t j = i; res.size() < k && nextBucketIndex < TREE_SIZE; ++j)
-		{
-			nextBucketIndex = bucketIndex + j;
-			if (nextBucketIndex < TREE_SIZE) {
-				fill(nextBucketIndex, res, queriedId, k);
-			}
-		}
-		for (size_t j = i; res.size() < k && prevBucketIndex >= 0; ++j)
-		{
-			prevBucketIndex = bucketIndex - j;
-			if (prevBucketIndex >= 0) {
-				fill(prevBucketIndex, res, queriedId, k);
-			}
-		}
-	}
+//        for(size_t i = bucketIndex - 1; i >= 0; --i) {
+//            fill(i, res, queriedId, k);
+//        }
+//        for(size_t i = bucketIndex + 1; i < TREE_SIZE; ++i) {
+//            fill(i, res, queriedId, k);
+//        }
+        int nextBucketIndex = bucketIndex, prevBucketIndex = bucketIndex;
+        size_t i = 1;
+        for (; nextBucketIndex < TREE_SIZE && prevBucketIndex >= 0; ++i)
+        {
+            nextBucketIndex = bucketIndex + i;
+            prevBucketIndex = bucketIndex - i;
+            if (nextBucketIndex < TREE_SIZE) {
+                fill(nextBucketIndex, res, queriedId, k);
+            }
+            if (prevBucketIndex >= 0) {
+                fill(prevBucketIndex, res, queriedId, k);
+            }
+        }
+        for (size_t j = i; res.size() < k && nextBucketIndex < TREE_SIZE; ++j)
+        {
+            nextBucketIndex = bucketIndex + j;
+            if (nextBucketIndex < TREE_SIZE) {
+                fill(nextBucketIndex, res, queriedId, k);
+            }
+        }
+        for (size_t j = i; res.size() < k && prevBucketIndex >= 0; ++j)
+        {
+            prevBucketIndex = bucketIndex - j;
+            if (prevBucketIndex >= 0) {
+                fill(prevBucketIndex, res, queriedId, k);
+            }
+        }
+    }
 	return res;
 }
 
@@ -169,20 +175,16 @@ void Node::receiveFindNodeResponse(const ID& queriedId
 		onFindNodeEnd(true, queriedId);
 	}
 	else {
-		//uint32_t i = 0;
+        int dist = responserId.distance(queriedId);
 		for (auto id : ids) {
 #ifdef OPT_MODE
 			if (auto it = m_interrogatedNodes.find(*id); it == m_interrogatedNodes.end()) {
 #endif
-				m_protocol.sendFindNode(*id, this->id(), queriedId); // Swarm does this
-				//++i;
+//                if(id->distance(queriedId) <= dist) {
+                    m_protocol.sendFindNode(*id, this->id(), queriedId); // Swarm does this
+//                }
 #ifdef OPT_MODE
-			}// i == ids.size() -> sent to everyone
-			 // 0 < i < ids,size() -> sent, but to certain
-			 // i == 0 -> sent to nobody
-			//if (i == 0) {
-			//	onFindNodeEnd(false, queriedId);
-			//}
+            }
 #endif
 		}
 	}

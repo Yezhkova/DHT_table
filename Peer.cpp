@@ -195,8 +195,12 @@ void Peer::findRandomNodes(int nodeNumber) {
 #endif
 		for (int i = 0; i < nodeNumber; ++i) {
 			ID queriedId = pickRandomPeer();
-			ID recipientId = m_node.findClosestNode(id(), queriedId);
-			sendFindNode(recipientId, id(), queriedId);
+//			ID recipientId = m_node.findClosestNode(id(), queriedId);
+//			sendFindNode(recipientId, id(), queriedId);
+            auto ids = m_node.findClosestNodes(CLOSEST_NODES, id(), queriedId);
+            for(auto& id: ids) {
+                sendFindNode(*id, this->id(), queriedId);
+            }
 		}
 #ifndef FAST_MODE
 		});
