@@ -47,8 +47,8 @@ public:
     void onPacketReceived() override;
     void onPacketSent() override;
     void findRandomNodes(int nodeNumber);
-    void onNodeNotFound() override;
-    void onNodeFound() override;
+    void onNodeNotFound(const ID& queriedId) override;
+    void onNodeFound(const ID& queriedId) override;
     virtual void startTimer(EventQueue::Interval duration, std::function<void ()>&& F) override;
 
 };

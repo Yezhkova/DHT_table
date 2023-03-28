@@ -4,7 +4,7 @@
 #include "Swarm.h"
 #include "Constants.h"
 
-//#define FAST_MODE
+//#define FAST_MODE - MAKES A WORSE RESULT!!!!!!!!!!
 //#define DO_PING
 
 std::mt19937 Peer::s_randomGenerator;
@@ -104,13 +104,13 @@ void Peer::sendFindNode(const ID& recipientId, const ID& initiatorId, const ID& 
 #ifndef FAST_MODE
 	Swarm::getInstance().addTaskAfter(m_packetTime, [recipientId, queriedId, initiatorId, this] {
 #endif
-		if (auto* contact = m_node.buckets().getContactPtr(queriedId); contact != nullptr)
-		{
-			// in case we have this contact in our bucketArray, use this
-			receiveFindNodeResponse(queriedId, { &contact->m_id }, id());
-			PeerStatistics::incPacketCounter();
-			return;
-		}
+        if (auto* contact = m_node.buckets().getContactPtr(queriedId); contact != nullptr)
+        {
+            // in case we have this contact in our bucketArray, use this
+            receiveFindNodeResponse(queriedId, { &contact->m_id }, id());
+            PeerStatistics::incPacketCounter();
+            return;
+        }
 
 		// responser side
 		if (auto responser = Swarm::getInstance().getPeer(recipientId);
@@ -181,11 +181,15 @@ void Peer::onPacketSent() {
 
 }
 
-void Peer::onNodeNotFound() {
-	incFailedFindNode();
+void Peer::onNodeNotFound(const ID& queriedId) {
+    setSearchSpeedCounter(m_node.findThisIdQueries()[queriedId]);
+    m_node.findThisIdQueries().erase(queriedId);
+    incFailedFindNode();
 }
 
-void Peer::onNodeFound() {
+void Peer::onNodeFound(const ID& queriedId) {
+    setSearchSpeedCounter(m_node.findThisIdQueries()[queriedId]);
+    m_node.findThisIdQueries().erase(queriedId);
 	setDone();
 }
 

@@ -68,7 +68,7 @@ void Swarm::calculateStatistic(std::chrono::duration<double> elapsed_seconds) {
     EX_LOG("elapsed time: " << elapsed_seconds.count() << " s");
 //    EX_LOG("Swarm queue current time: " << Swarm::getInstance().eventQueqe().currentTime() / 60);
     uint64_t nodeNotFoundCounter = 0;
-    uint64_t pingCounter = 0;
+    uint64_t speedCounter = 0;
     uint64_t packetCounter = 0;
     uint64_t findNodeCounter = 0;
     uint64_t doneCounter = 0;
@@ -82,7 +82,7 @@ void Swarm::calculateStatistic(std::chrono::duration<double> elapsed_seconds) {
         nodeNotFoundCounter += p.second->failedFindNodeCounter();
         findNodeCounter += p.second->findNodeCounter();
         packetCounter += p.second->packetsCounter();
-        pingCounter += p.second->pingCounter();
+        speedCounter += p.second->searchSpeedCounter();
         doneCounter += p.second->done();
         
         nodeNotFoundCounter += p.second->node().findThisIdQueries().size();
@@ -108,7 +108,8 @@ void Swarm::calculateStatistic(std::chrono::duration<double> elapsed_seconds) {
 
     EX_LOG("dead nodes: " << std::dec << nodeNotFoundCounter);
     EX_LOG("find node: " << findNodeCounter);
-    EX_LOG("packets: " << packetCounter << " (" << packetCounter - findNodeCounter << ")");
+    EX_LOG("one node found in " << speedCounter/SWARM_SIZE << " queries (avg)");
+    EX_LOG("packets: " << packetCounter << " (" << packetCounter - findNodeCounter << " found without routing)");
 //    EX_LOG("ping: " << pingCounter);
     EX_LOG("done: " << doneCounter);
 //    EX_LOG("maximum bucket size: " << overallMaxContactsInBucket << " (found in " << overallMCBId << ')');

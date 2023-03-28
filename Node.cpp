@@ -12,8 +12,6 @@ void Node::randomizeId() {
 	m_contact.randomize();
 }
 
-// TODO: node offline mode not implemented
-
 bool Node::addNode(const ID& newId) {
 	if (this->id() != newId) {
 		size_t bucketIdx = m_BucketArray.calcBucketIndex(newId);
@@ -88,6 +86,7 @@ std::vector<const ID*> Node::findClosestNodes(int k, const ID& senderId, const I
 
     // not enough ids
 	if (res.size() < k) {
+        //- MAKES A WORSE RESULT!!!!!!!!!!
 //        for(size_t i = bucketIndex - 1; i >= 0; --i) {
 //            fill(i, res, queriedId, k);
 //        }
@@ -122,7 +121,7 @@ std::vector<const ID*> Node::findClosestNodes(int k, const ID& senderId, const I
             }
         }
     }
-	return res;
+    return res;
 }
 
 std::vector<const ID*> Node::receiveFindNode(const ID& senderId
@@ -180,9 +179,8 @@ void Node::receiveFindNodeResponse(const ID& queriedId
 #ifdef OPT_MODE
 			if (auto it = m_interrogatedNodes.find(*id); it == m_interrogatedNodes.end()) {
 #endif
-//                if(id->distance(queriedId) <= dist) {
-                    m_protocol.sendFindNode(*id, this->id(), queriedId); // Swarm does this
-//                }
+//                if(id->distance(queriedId) <= dist) - MAKES A WORSE RESULT!!!!!!!!!!
+                        m_protocol.sendFindNode(*id, this->id(), queriedId); // Swarm does this
 #ifdef OPT_MODE
             }
 #endif
@@ -198,13 +196,13 @@ void Node::onFindNodeStart(const ID& queriedId)
 
 void Node::onFindNodeEnd(bool found, const ID& queriedId)
 {
-	m_findThisId.erase(queriedId);
+    //m_findThisId.erase(queriedId);
 	m_interrogatedNodes.clear();
 	if (found) {
-		m_eventHandler.onNodeFound();
+        m_eventHandler.onNodeFound(queriedId);
 	}
 	else {
-		m_eventHandler.onNodeNotFound();
+        m_eventHandler.onNodeNotFound(queriedId);
 	}
 }
 
