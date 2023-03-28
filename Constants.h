@@ -1,6 +1,6 @@
 #pragma once
 
-#define SWARM_SIZE                  1000
+#define SWARM_SIZE                  5000
 
 #define BUCKET_SIZE                  40 // 100, 200
 #define FIND_NODE_THRESHOLD  500 // swarm size / 2

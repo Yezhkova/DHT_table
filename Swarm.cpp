@@ -66,7 +66,7 @@ void Swarm::generateSwarm(bool mode, size_t Peers)
 void Swarm::calculateStatistic(std::chrono::duration<double> elapsed_seconds) {
     EX_LOG("------------------------------------calculateStatistic-------------------------");
     EX_LOG("elapsed time: " << elapsed_seconds.count() << " s");
-    EX_LOG("Swarm queue current time: " << Swarm::getInstance().eventQueqe().currentTime() / 60);
+//    EX_LOG("Swarm queue current time: " << Swarm::getInstance().eventQueqe().currentTime() / 60);
     uint64_t nodeNotFoundCounter = 0;
     uint64_t pingCounter = 0;
     uint64_t packetCounter = 0;
@@ -108,10 +108,10 @@ void Swarm::calculateStatistic(std::chrono::duration<double> elapsed_seconds) {
 
     EX_LOG("dead nodes: " << std::dec << nodeNotFoundCounter);
     EX_LOG("find node: " << findNodeCounter);
-    EX_LOG("packets: " << packetCounter);
-    EX_LOG("ping: " << pingCounter);
+    EX_LOG("packets: " << packetCounter << " (" << packetCounter - findNodeCounter << ")");
+//    EX_LOG("ping: " << pingCounter);
     EX_LOG("done: " << doneCounter);
-    EX_LOG("maximum bucket size: " << overallMaxContactsInBucket << " (found in " << overallMCBId << ')');
+//    EX_LOG("maximum bucket size: " << overallMaxContactsInBucket << " (found in " << overallMCBId << ')');
     EX_LOG("AVG(maximum bucket size): " << std::dec << sumMaxContactsInBucket / m_peers.size());
     /*EXLOG("average BucketArray load: ");
     for (int i = 0; i < BucketArray::g_treeSize; ++i) {
